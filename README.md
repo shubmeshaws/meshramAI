@@ -36,8 +36,8 @@ sudo apt-get install unzip -y
 ---
 
 
-## Project Structure
-
+## 📁 Project Structure
+```
 meshramAI/
 ├── meshram              # Main CLI script (symlinked to /usr/local/bin/meshram)
 ├── modules/
@@ -51,7 +51,7 @@ meshramAI/
 ├── logs/                # Auto-created by the CLI
 ├── regions.conf         # Region mappings (e.g., mumbai=ap-south-1)
 └── README.md
-
+```
 
 
 

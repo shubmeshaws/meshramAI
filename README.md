@@ -20,10 +20,10 @@ Follow the steps below to install and configure the **Meshram CLI** on your Ubun
 
 Ensure the following tools are installed:
 
-- Ubuntu OS
+- `Ubuntu EC2 Machine`
 - `git`
 - `unzip`
-- Internet access
+- `Internet access`
 
 If unzip is not installed, use following command to install it
 ```bash

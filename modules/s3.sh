@@ -1,12 +1,6 @@
 #!/bin/bash
 
-SOURCE="${BASH_SOURCE[0]}"
-while [ -L "$SOURCE" ]; do
-  DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
-  SOURCE="$(readlink "$SOURCE")"
-  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
-done
-SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+#bash "$SCRIPT_DIR/modules/s3/create.sh"
 
 function show_s3_help() {
   echo "S3 service commands:"

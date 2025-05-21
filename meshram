@@ -4,6 +4,8 @@ VERSION="v1.0"
 echo "🔧 Meshram Infra CLI $VERSION"
 
 set -e
+
+# Resolve real path even if script is symlinked
 SOURCE="${BASH_SOURCE[0]}"
 while [ -L "$SOURCE" ]; do
   DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
@@ -11,57 +13,68 @@ while [ -L "$SOURCE" ]; do
   [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
 done
 SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+echo "$SCRIPT_DIR"
 
+LOG_FILE="$SCRIPT_DIR/logs/infra.log"
+REGIONS_FILE="$SCRIPT_DIR/regions.conf"
 
+mkdir -p "$SCRIPT_DIR/logs"
 
-LOG_FILE="SCRIPT_DIR/logs/infra.log"
-SCRIPTS_DIR="SCRIPT_DIR/scripts"
+# Source modules
+source "$SCRIPT_DIR/modules/ec2.sh"
+source "$SCRIPT_DIR/modules/vpc.sh"
+source "$SCRIPT_DIR/modules/s3.sh"
 
-mkdir -p "./logs"
-
-function show_help() {
+function show_global_help() {
   echo "Usage: meshram [COMMAND]"
   echo ""
   echo "Commands:"
-  echo "  create vpc                 - Create a VPC with subnets and NAT"
-  echo "  create ec2                 - Launch an EC2 instance"
-  echo "  create s3 <bucket> <region> - Create an S3 bucket"
-  echo "  help                      - Show this help message"
+  echo "  create vpc                    - Create a VPC with subnets and NAT"
+  echo "  create ec2                    - Launch an EC2 instance"
+  echo "  create s3 <bucket> <region>   - Create an S3 bucket"
+  echo "  s3 help                       - Show S3 service commands"
+  echo "  ec2 help                      - Show EC2 service commands"
+  echo "  vpc help                      - Show VPC service commands"
+  echo "  help                          - Show this help message"
 }
 
 case "$1" in
+  help|--help|-h|"")
+    show_global_help
+    ;;
+  s3)
+    s3_handler "${@:2}"
+    ;;
+  ec2)
+    ec2_handler "${@:2}"
+    ;;
+  vpc)
+    vpc_handler "${@:2}"
+    ;;
   create)
+    if [[ -z "$2" ]]; then
+      echo "[ERROR] Missing service for create command."
+      show_global_help
+      exit 1
+    fi
     case "$2" in
       vpc)
-        echo "[INFO] Running VPC creation script..." | tee -a "$LOG_FILE"
-        bash "$SCRIPTS_DIR/create_vpc.sh" | tee -a "$LOG_FILE"
+        vpc_create
         ;;
       ec2)
-        echo "[INFO] Running EC2 creation script..." | tee -a "$LOG_FILE"
-        bash "$SCRIPTS_DIR/create_ec2.sh" | tee -a "$LOG_FILE"
+        ec2_create
         ;;
       s3)
-        if [[ -z "$3" || -z "$4" ]]; then
-          echo "[ERROR] Missing arguments for S3 creation."
-          echo "Usage: meshram create s3 <bucket-name> <region>"
-          exit 1
-        fi
-        BUCKET_NAME="$3"
-        REGION="$4"
-        echo "[INFO] Running S3 creation script for bucket '$BUCKET_NAME' in region '$REGION'..." | tee -a "$LOG_FILE"
-        bash "$SCRIPTS_DIR/create_s3.sh" "$BUCKET_NAME" "$REGION" | tee -a "$LOG_FILE"
+        s3_create "${@:3}"
         ;;
       *)
         echo "[ERROR] Unknown create target: $2"
-        show_help
+        show_global_help
         ;;
     esac
     ;;
-  help|--help|-h)
-    show_help
-    ;;
   *)
     echo "[ERROR] Invalid command: $1"
-    show_help
+    show_global_help
     ;;
 esac

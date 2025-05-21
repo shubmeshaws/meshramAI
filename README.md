@@ -16,6 +16,7 @@ Follow the steps below to install and configure the **Meshram CLI** on your Ubun
 
 ---
 
+
 ### 🔧 Prerequisites
 
 Ensure the following tools are installed:
@@ -33,6 +34,27 @@ sudo apt-get update
 sudo apt-get install unzip -y
 ```
 ---
+
+
+## Project Structure
+
+meshramAI/
+├── meshram              # Main CLI script (symlinked to /usr/local/bin/meshram)
+├── modules/
+│   ├── ec2.sh
+│   ├── vpc.sh
+│   ├── s3.sh
+│   └── s3/
+│       ├── create.sh
+│       ├── list.sh
+│       └── delete.sh
+├── logs/                # Auto-created by the CLI
+├── regions.conf         # Region mappings (e.g., mumbai=ap-south-1)
+└── README.md
+
+
+
+
 
 ## 📌 One-Time Setup
 

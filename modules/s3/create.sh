@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SCRIPT_DIR="/home/ubuntu/infra-tools"
+
+
 function s3_create() {
   BUCKET_NAME="$1"
   INPUT_REGION="$2"
@@ -15,19 +18,22 @@ function s3_create() {
 
   echo "[INFO] Creating bucket '$BUCKET_NAME' in region '$REGION' with ACL '$ACL'..."
 
-  if [[ "$REGION" == "ap-south-1" ]]; then
+  if [[ "$REGION" == "us-east-1" ]]; then
     aws s3api create-bucket \
       --bucket "$BUCKET_NAME" \
-      --region "$REGION" \
-      --acl "$ACL"
+      --region "$REGION"
+      #--acl "$ACL"
   else
     aws s3api create-bucket \
       --bucket "$BUCKET_NAME" \
       --region "$REGION" \
-      --create-bucket-configuration LocationConstraint="$REGION" \
-      --acl "$ACL"
+      --create-bucket-configuration LocationConstraint="$REGION"
+      #--acl "$ACL"
   fi
 
   echo "[SUCCESS] Bucket '$BUCKET_NAME' created in region '$REGION'."
 }
+
+# ✅ ACTUALLY CALL THE FUNCTION
+s3_create "$@"
 

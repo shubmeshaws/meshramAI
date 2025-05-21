@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_DIR="/home/ubuntu"
+SCRIPT_DIR="/home/ubuntu/infra-tools"
 # S3 service functions
 
 function show_s3_help() {

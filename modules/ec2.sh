@@ -1,5 +1,7 @@
 #!/bin/bash
 
+SCRIPT_DIR="/home/ubuntu/infra-tools"
+
 function show_ec2_help() {
   echo "EC2 service commands:"
   echo "  meshram ec2 create                 - Launch an EC2 instance"
@@ -32,12 +34,12 @@ function ec2_handler() {
 
 function ec2_create() {
   echo "[INFO] Launching EC2 instance..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/scripts/ec2/create.sh" | tee -a "$LOG_FILE"
+  bash "/home/ubuntu/infra-tools/modules/ec2/create.sh" | tee -a "$LOG_FILE"
 }
 
 function ec2_list() {
   echo "[INFO] Listing EC2 instances..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/scripts/ec2/list.sh" | tee -a "$LOG_FILE"
+  bash "$SCRIPT_DIR/modules/ec2/list.sh" | tee -a "$LOG_FILE"
 }
 
 function ec2_terminate() {
@@ -47,6 +49,6 @@ function ec2_terminate() {
     exit 1
   fi
   echo "[INFO] Terminating EC2 instance $instance_id..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/scripts/ec2/terminate.sh" "$instance_id" | tee -a "$LOG_FILE"
+  bash "$SCRIPT_DIR/modules/ec2/terminate.sh" "$instance_id" | tee -a "$LOG_FILE"
 }
 

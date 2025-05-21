@@ -1,12 +1,13 @@
 #!/bin/bash
 
+SCRIPT_DIR="/home/ubuntu"
 # S3 service functions
 
 function show_s3_help() {
   echo "S3 service commands:"
-  echo "  meshram s3 create <bucket-name> <region> [public|private] - Create S3 bucket"
-  echo "  meshram s3 list                 - List all S3 buckets"
-  echo "  meshram s3 delete <bucket-name> - Delete an S3 bucket"
+  echo "  meshram s3 create <bucket-name> <region> [public|private] 	- Create S3 bucket"
+  echo "  meshram s3 list                 				- List all S3 buckets"
+  echo "  meshram s3 delete <bucket-name> 				- Delete an S3 bucket"
 }
 
 function map_region_name() {

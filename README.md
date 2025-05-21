@@ -77,9 +77,9 @@ cd meshramAI
 chmod +x meshram
 ```
 
-#### Move the script to /usr/local/bin for global access
+#### Create Symlink for the script to /usr/local/bin for global access
 ```bash
-sudo mv meshram /usr/local/bin/
+sudo ln -sf "$(pwd)/meshram" /usr/local/bin/meshram
 ```
 
 #### Test the CLI tool

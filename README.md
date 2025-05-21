@@ -25,6 +25,13 @@ Ensure the following tools are installed:
 - `unzip`
 - Internet access
 
+If unzip is not installed, use following command to install it
+```bash
+sudo apt-get update
+```
+```bash
+sudo apt-get install unzip -y
+```
 ---
 
 ## 📌 One-Time Setup

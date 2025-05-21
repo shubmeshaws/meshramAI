@@ -1,6 +1,13 @@
 #!/bin/bash
 
-SCRIPT_DIR="/home/ubuntu/infra-tools"
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+
 
 function show_ec2_help() {
   echo "EC2 service commands:"
@@ -34,7 +41,7 @@ function ec2_handler() {
 
 function ec2_create() {
   echo "[INFO] Launching EC2 instance..." | tee -a "$LOG_FILE"
-  bash "/home/ubuntu/infra-tools/modules/ec2/create.sh" | tee -a "$LOG_FILE"
+  bash "$SCRIPT_DIR/modules/ec2/create.sh" | tee -a "$LOG_FILE"
 }
 
 function ec2_list() {

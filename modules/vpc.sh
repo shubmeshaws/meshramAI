@@ -1,5 +1,14 @@
 #!/bin/bash
 
+SOURCE="${BASH_SOURCE[0]}"
+while [ -L "$SOURCE" ]; do
+  DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
+
+
 function show_vpc_help() {
   echo "VPC service commands:"
   echo "  meshram vpc create                 - Create a VPC with subnets and NAT"
@@ -32,12 +41,12 @@ function vpc_handler() {
 
 function vpc_create() {
   echo "[INFO] Creating VPC..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/scripts/vpc/create.sh" | tee -a "$LOG_FILE"
+  bash "$SCRIPT_DIR/modules/vpc/create.sh" | tee -a "$LOG_FILE"
 }
 
 function vpc_list() {
   echo "[INFO] Listing VPCs..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/scripts/vpc/list.sh" | tee -a "$LOG_FILE"
+  bash "$SCRIPT_DIR/modules/vpc/list.sh" | tee -a "$LOG_FILE"
 }
 
 function vpc_delete() {
@@ -47,6 +56,6 @@ function vpc_delete() {
     exit 1
   fi
   echo "[INFO] Deleting VPC $vpc_id..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/scripts/vpc/delete.sh" "$vpc_id" | tee -a "$LOG_FILE"
+  bash "$SCRIPT_DIR/modules/vpc/delete.sh" "$vpc_id" | tee -a "$LOG_FILE"
 }
 

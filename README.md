@@ -47,11 +47,6 @@ sudo su ubuntu
 cd /home/ubuntu
 ```
 
-#### Clone the Meshram CLI repository
-```bash
-git clone https://github.com/shubmeshaws/meshramAI.git
-```
-
 #### Download AWS CLI v2
 ```bash
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -67,9 +62,14 @@ unzip awscliv2.zip
 sudo ./aws/install
 ```
 
-#### Rename the CLI script
+#### Clone the Meshram CLI repository
 ```bash
-mv cli.sh meshram
+git clone https://github.com/shubmeshaws/meshramAI.git
+```
+
+#### Go inside the meshramAI directory
+```bash
+cd meshramAI
 ```
 
 #### Make the script executable

@@ -1,3 +1,4 @@
+```bash
 #!/bin/bash
 
 #bash "$SCRIPT_DIR/modules/ec2/create.sh"
@@ -10,6 +11,11 @@ function show_ec2_help() {
 }
 
 function ec2_handler() {
+  if [ $# -eq 0 ]; then
+    show_ec2_help
+    return
+  fi
+
   local cmd="$1"
   shift
   case "$cmd" in
@@ -23,7 +29,11 @@ function ec2_handler() {
       ec2_list
       ;;
     terminate)
-      ec2_terminate "$@"
+      if [ $# -ne 1 ]; then
+        echo "[ERROR] Usage: meshram ec2 terminate <instance-id>"
+        exit 1
+      fi
+      ec2_terminate "$1"
       ;;
     *)
       echo "[ERROR] Unknown ec2 command: $cmd"
@@ -51,4 +61,4 @@ function ec2_terminate() {
   echo "[INFO] Terminating EC2 instance $instance_id..." | tee -a "$LOG_FILE"
   bash "$SCRIPT_DIR/modules/ec2/terminate.sh" "$instance_id" | tee -a "$LOG_FILE"
 }
-
+```

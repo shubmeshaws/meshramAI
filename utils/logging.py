@@ -3,10 +3,12 @@ import logging
 import os
 
 # Set up logging configuration
+LOGGING_LEVEL = os.environ.get('LOGGING_LEVEL', 'INFO')
+
 logging.basicConfig(
     format='%(asctime)s [%(levelname)s] %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S',
-    level=logging.INFO
+    level=getattr(logging, LOGGING_LEVEL.upper())
 )
 
 class Logger:
@@ -32,4 +34,5 @@ def get_logger(name):
 # logger = get_logger(__name__)
 # logger.info('This is an info message')
 # logger.error('This is an error message')
+```
 ```

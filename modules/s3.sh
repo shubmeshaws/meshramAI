@@ -1,3 +1,4 @@
+```bash
 #!/bin/bash
 
 #bash "$SCRIPT_DIR/modules/s3/create.sh"
@@ -57,12 +58,18 @@ function s3_create() {
   local acl="${3:-private}" # default to private
   local region=$(map_region_name "$input_region")
   echo "[INFO] Creating bucket '$bucket_name' in region '$region' with ACL '$acl'..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/modules/s3/create.sh" "$bucket_name" "$region" "$acl" | tee -a "$LOG_FILE"
+  if ! bash "$SCRIPT_DIR/modules/s3/create.sh" "$bucket_name" "$region" "$acl" | tee -a "$LOG_FILE"; then
+    echo "[ERROR] Failed to create bucket '$bucket_name'" | tee -a "$LOG_FILE"
+    exit 1
+  fi
 }
 
 function s3_list() {
   echo "[INFO] Listing S3 buckets..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/modules/s3/list.sh" | tee -a "$LOG_FILE"
+  if ! bash "$SCRIPT_DIR/modules/s3/list.sh" | tee -a "$LOG_FILE"; then
+    echo "[ERROR] Failed to list S3 buckets" | tee -a "$LOG_FILE"
+    exit 1
+  fi
 }
 
 function s3_delete() {
@@ -71,6 +78,9 @@ function s3_delete() {
     exit 1
   fi
   echo "[INFO] Deleting bucket '$1'..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/modules/s3/delete.sh" "$1" | tee -a "$LOG_FILE"
+  if ! bash "$SCRIPT_DIR/modules/s3/delete.sh" "$1" | tee -a "$LOG_FILE"; then
+    echo "[ERROR] Failed to delete bucket '$1'" | tee -a "$LOG_FILE"
+    exit 1
+  fi
 }
-
+```

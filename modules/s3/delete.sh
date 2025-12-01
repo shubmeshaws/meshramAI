@@ -1,3 +1,4 @@
+```bash
 #!/bin/bash
 
 function s3_delete() {
@@ -14,10 +15,11 @@ function s3_delete() {
 
   echo "[WARNING] Deleting S3 bucket '$BUCKET_NAME' in region '$REGION'..."
   
-  aws s3api delete-bucket \
-    --bucket "$BUCKET_NAME" \
-    --region "$REGION"
+  if ! aws s3api delete-bucket --bucket "$BUCKET_NAME" --region "$REGION"; then
+    echo "[ERROR] Failed to delete bucket '$BUCKET_NAME' in region '$REGION': $?"
+    return 1
+  fi
 
   echo "[SUCCESS] Bucket '$BUCKET_NAME' deleted from region '$REGION'."
 }
-
+```

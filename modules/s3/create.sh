@@ -1,3 +1,4 @@
+```bash
 #!/bin/bash
 
 SOURCE="${BASH_SOURCE[0]}"
@@ -24,16 +25,15 @@ function s3_create() {
   echo "[INFO] Creating bucket '$BUCKET_NAME' in region '$REGION' with ACL '$ACL'..."
 
   if [[ "$REGION" == "us-east-1" ]]; then
-    aws s3api create-bucket \
-      --bucket "$BUCKET_NAME" \
-      --region "$REGION"
-      #--acl "$ACL"
+    if ! aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --acl "$ACL"; then
+      echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION': $?"
+      return 1
+    fi
   else
-    aws s3api create-bucket \
-      --bucket "$BUCKET_NAME" \
-      --region "$REGION" \
-      --create-bucket-configuration LocationConstraint="$REGION"
-      #--acl "$ACL"
+    if ! aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --create-bucket-configuration LocationConstraint="$REGION" --acl "$ACL"; then
+      echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION': $?"
+      return 1
+    fi
   fi
 
   echo "[SUCCESS] Bucket '$BUCKET_NAME' created in region '$REGION'."
@@ -41,4 +41,4 @@ function s3_create() {
 
 # ✅ ACTUALLY CALL THE FUNCTION
 s3_create "$@"
-
+```

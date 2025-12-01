@@ -1,3 +1,4 @@
+```bash
 #!/bin/bash
 
 #bash "$SCRIPT_DIR/modules/vpc/create.sh"
@@ -10,6 +11,12 @@ function show_vpc_help() {
 }
 
 function vpc_handler() {
+  if [[ -z "$1" ]]; then
+    echo "[ERROR] No command provided"
+    show_vpc_help
+    return 1
+  fi
+
   local cmd="$1"
   shift
   case "$cmd" in
@@ -51,4 +58,4 @@ function vpc_delete() {
   echo "[INFO] Deleting VPC $vpc_id..." | tee -a "$LOG_FILE"
   bash "$SCRIPT_DIR/modules/vpc/delete.sh" "$vpc_id" | tee -a "$LOG_FILE"
 }
-
+```

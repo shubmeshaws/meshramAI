@@ -1,24 +1,10 @@
 ```bash
 #!/bin/bash
 
-function ec2_create() {
-  NAME="$1"
-  OS="$2"
-  CPU="$3"
-  MEM="$4"
-  INPUT_REGION="$5"
+function get_ami_id() {
+  local OS="$1"
+  local REGION="$2"
 
-  if [[ -z "$NAME" || -z "$OS" || -z "$CPU" || -z "$MEM" || -z "$INPUT_REGION" ]]; then
-    echo "[ERROR] Usage: meshram ec2 create <name> <os> <cpu> <memory> <region>"
-    return 1
-  fi
-
-  REGION="$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf")"
-  REGION="${REGION:-$INPUT_REGION}"
-
-  echo "[INFO] Region set to $REGION"
-
-  # Determine AMI ID
   case "$OS" in
     ubuntu24)
       AMI_ID=$(aws ec2 describe-images         --owners 099720109477         --filters "Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-jammy-24.04-amd64-server-*"                   "Name=state,Values=available"         --region "$REGION"         --query 'Images[*].[ImageId,CreationDate]' --output text |         sort -k2 -r | head -n1 | awk '{print $1}')
@@ -37,6 +23,32 @@ function ec2_create() {
 
   if [ -z "$AMI_ID" ]; then
     echo "[ERROR] Failed to get AMI ID for $OS"
+    return 1
+  fi
+
+  echo "$AMI_ID"
+}
+
+function ec2_create() {
+  NAME="$1"
+  OS="$2"
+  CPU="$3"
+  MEM="$4"
+  INPUT_REGION="$5"
+
+  if [[ -z "$NAME" || -z "$OS" || -z "$CPU" || -z "$MEM" || -z "$INPUT_REGION" ]]; then
+    echo "[ERROR] Usage: meshram ec2 create <name> <os> <cpu> <memory> <region>"
+    return 1
+  fi
+
+  REGION="$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf")"
+  REGION="${REGION:-$INPUT_REGION}"
+
+  echo "[INFO] Region set to $REGION"
+
+  # Determine AMI ID
+  AMI_ID=$(get_ami_id "$OS" "$REGION")
+  if [ $? -ne 0 ]; then
     return 1
   fi
 

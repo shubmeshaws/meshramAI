@@ -12,11 +12,16 @@ function show_s3_help() {
 
 function map_region_name() {
   local input_region="$1"
+  local region_config_file="$SCRIPT_DIR/regions.conf"
+  if [ ! -f "$region_config_file" ]; then
+    echo "[ERROR] Region configuration file '$region_config_file' not found" | tee -a "$LOG_FILE"
+    exit 1
+  fi
   declare -A regions_map
   while IFS='=' read -r key value; do
     [[ -z "$key" || "$key" =~ ^# ]] && continue
     regions_map["$key"]="$value"
-  done < "$SCRIPT_DIR/regions.conf"
+  done < "$region_config_file"
 
   if [[ -n "${regions_map[$input_region]}" ]]; then
     echo "${regions_map[$input_region]}"

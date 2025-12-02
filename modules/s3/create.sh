@@ -25,13 +25,15 @@ function s3_create() {
   echo "[INFO] Creating bucket '$BUCKET_NAME' in region '$REGION' with ACL '$ACL'..."
 
   if [[ "$REGION" == "us-east-1" ]]; then
-    if ! aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --acl "$ACL"; then
-      echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION': $?"
+    if ! output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --acl "$ACL" 2>&1); then
+      echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION':"
+      echo "$output"
       return 1
     fi
   else
-    if ! aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --create-bucket-configuration LocationConstraint="$REGION" --acl "$ACL"; then
-      echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION': $?"
+    if ! output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --create-bucket-configuration LocationConstraint="$REGION" --acl "$ACL" 2>&1); then
+      echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION':"
+      echo "$output"
       return 1
     fi
   fi

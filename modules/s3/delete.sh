@@ -13,6 +13,11 @@ function s3_delete() {
   REGION="$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf")"
   REGION="${REGION:-$INPUT_REGION}"
 
+  if ! aws s3api head-bucket --bucket "$BUCKET_NAME" --region "$REGION" &> /dev/null; then
+    echo "[WARNING] Bucket '$BUCKET_NAME' does not exist in region '$REGION'."
+    return 0
+  fi
+
   echo "[WARNING] Deleting S3 bucket '$BUCKET_NAME' in region '$REGION'..."
   
   if ! aws s3api delete-bucket --bucket "$BUCKET_NAME" --region "$REGION"; then

@@ -43,13 +43,17 @@ function ec2_handler() {
 }
 
 function ec2_create() {
-  echo "[INFO] Launching EC2 instance..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/modules/ec2/create.sh" | tee -a "$LOG_FILE"
+  if ! bash "$SCRIPT_DIR/modules/ec2/create.sh" | tee -a "$LOG_FILE"; then
+    echo "[ERROR] Failed to launch EC2 instance" | tee -a "$LOG_FILE"
+    exit 1
+  fi
 }
 
 function ec2_list() {
-  echo "[INFO] Listing EC2 instances..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/modules/ec2/list.sh" | tee -a "$LOG_FILE"
+  if ! bash "$SCRIPT_DIR/modules/ec2/list.sh" | tee -a "$LOG_FILE"; then
+    echo "[ERROR] Failed to list EC2 instances" | tee -a "$LOG_FILE"
+    exit 1
+  fi
 }
 
 function ec2_terminate() {
@@ -58,7 +62,9 @@ function ec2_terminate() {
     echo "[ERROR] Usage: meshram ec2 terminate <instance-id>"
     exit 1
   fi
-  echo "[INFO] Terminating EC2 instance $instance_id..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/modules/ec2/terminate.sh" "$instance_id" | tee -a "$LOG_FILE"
+  if ! bash "$SCRIPT_DIR/modules/ec2/terminate.sh" "$instance_id" | tee -a "$LOG_FILE"; then
+    echo "[ERROR] Failed to terminate EC2 instance $instance_id" | tee -a "$LOG_FILE"
+    exit 1
+  fi
 }
 ```

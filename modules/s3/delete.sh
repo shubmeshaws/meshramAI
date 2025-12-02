@@ -20,8 +20,8 @@ function s3_delete() {
 
   echo "[WARNING] Deleting S3 bucket '$BUCKET_NAME' in region '$REGION'..."
   
-  if ! aws s3api delete-bucket --bucket "$BUCKET_NAME" --region "$REGION"; then
-    echo "[ERROR] Failed to delete bucket '$BUCKET_NAME' in region '$REGION': $?"
+  if ! output=$(aws s3api delete-bucket --bucket "$BUCKET_NAME" --region "$REGION" 2>&1); then
+    echo "[ERROR] Failed to delete bucket '$BUCKET_NAME' in region '$REGION': $output"
     return 1
   fi
 

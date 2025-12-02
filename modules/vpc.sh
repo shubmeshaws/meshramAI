@@ -12,7 +12,7 @@ function show_vpc_help() {
 
 function vpc_handler() {
   if [[ -z "$1" ]]; then
-    echo "[ERROR] No command provided"
+    echo "[ERROR] No command provided. Please use one of the following commands: create, list, delete"
     show_vpc_help
     return 1
   fi
@@ -30,10 +30,15 @@ function vpc_handler() {
       vpc_list
       ;;
     delete)
+      if [[ -z "$1" ]]; then
+        echo "[ERROR] Usage: meshram vpc delete <vpc-id>"
+        show_vpc_help
+        return 1
+      fi
       vpc_delete "$@"
       ;;
     *)
-      echo "[ERROR] Unknown vpc command: $cmd"
+      echo "[ERROR] Unknown vpc command: $cmd. Please use one of the following commands: create, list, delete"
       show_vpc_help
       ;;
   esac
@@ -51,10 +56,6 @@ function vpc_list() {
 
 function vpc_delete() {
   local vpc_id="$1"
-  if [[ -z "$vpc_id" ]]; then
-    echo "[ERROR] Usage: meshram vpc delete <vpc-id>"
-    exit 1
-  fi
   echo "[INFO] Deleting VPC $vpc_id..." | tee -a "$LOG_FILE"
   bash "$SCRIPT_DIR/modules/vpc/delete.sh" "$vpc_id" | tee -a "$LOG_FILE"
 }

@@ -1,60 +1,79 @@
 ```python
-# utils/validation_utils.py
+"""
+Validation utility functions.
+"""
 
 import re
-from typing import Any
 
-def validate_string(input_str: str) -> bool:
+def validate_string(input_string, min_length=1, max_length=255, allow_empty=False):
     """
-    Validate if the input is a non-empty string.
-    
-    Args:
-    input_str (str): The input string to be validated.
-    
-    Returns:
-    bool: True if the input is a non-empty string, False otherwise.
-    """
-    return isinstance(input_str, str) and input_str.strip() != ""
+    Validate a string.
 
-def validate_email(email: str) -> bool:
-    """
-    Validate if the input is a valid email address.
-    
     Args:
-    email (str): The email address to be validated.
-    
+        input_string (str): The input string to validate.
+        min_length (int, optional): The minimum length of the string. Defaults to 1.
+        max_length (int, optional): The maximum length of the string. Defaults to 255.
+        allow_empty (bool, optional): Whether to allow empty strings. Defaults to False.
+
     Returns:
-    bool: True if the input is a valid email address, False otherwise.
+        bool: True if the string is valid, False otherwise.
+    """
+    if not allow_empty and not input_string:
+        return False
+    if len(input_string) < min_length or len(input_string) > max_length:
+        return False
+    return True
+
+
+def validate_integer(input_integer, min_value=None, max_value=None):
+    """
+    Validate an integer.
+
+    Args:
+        input_integer (int): The input integer to validate.
+        min_value (int, optional): The minimum value of the integer. Defaults to None.
+        max_value (int, optional): The maximum value of the integer. Defaults to None.
+
+    Returns:
+        bool: True if the integer is valid, False otherwise.
+    """
+    if not isinstance(input_integer, int):
+        return False
+    if min_value is not None and input_integer < min_value:
+        return False
+    if max_value is not None and input_integer > max_value:
+        return False
+    return True
+
+
+def validate_email(input_email):
+    """
+    Validate an email address.
+
+    Args:
+        input_email (str): The input email address to validate.
+
+    Returns:
+        bool: True if the email address is valid, False otherwise.
     """
     email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, email))
+    return bool(re.match(email_regex, input_email))
 
-def validate_aws_region(region: str) -> bool:
-    """
-    Validate if the input is a valid AWS region.
-    
-    Args:
-    region (str): The AWS region to be validated.
-    
-    Returns:
-    bool: True if the input is a valid AWS region, False otherwise.
-    """
-    # Load valid AWS regions from regions.conf
-    with open("regions.conf", "r") as f:
-        valid_regions = [line.strip() for line in f.readlines()]
-    
-    return region in valid_regions
 
-def validate_input(input_value: Any, input_type: type) -> bool:
+def validate_dict(input_dict, required_keys=None):
     """
-    Validate if the input matches the expected data type.
-    
+    Validate a dictionary.
+
     Args:
-    input_value (Any): The input value to be validated.
-    input_type (type): The expected data type.
-    
+        input_dict (dict): The input dictionary to validate.
+        required_keys (list, optional): The required keys in the dictionary. Defaults to None.
+
     Returns:
-    bool: True if the input matches the expected data type, False otherwise.
+        bool: True if the dictionary is valid, False otherwise.
     """
-    return isinstance(input_value, input_type)
+    if not isinstance(input_dict, dict):
+        return False
+    if required_keys is not None and not all(key in input_dict for key in required_keys):
+        return False
+    return True
 ```

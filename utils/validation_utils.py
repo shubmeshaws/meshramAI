@@ -1,87 +1,60 @@
 ```python
-"""
-Validation utility functions.
-"""
+# utils/validation_utils.py
 
 import re
-import ipaddress
+from typing import Any
 
-def validate_aws_region(region):
+def validate_string(input_str: str) -> bool:
     """
-    Validate an AWS region.
-
+    Validate if the input is a non-empty string.
+    
     Args:
-        region (str): The region to validate.
-
+    input_str (str): The input string to be validated.
+    
     Returns:
-        bool: True if the region is valid, False otherwise.
+    bool: True if the input is a non-empty string, False otherwise.
     """
-    # List of valid AWS regions
-    valid_regions = ["us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"]
+    return isinstance(input_str, str) and input_str.strip() != ""
+
+def validate_email(email: str) -> bool:
+    """
+    Validate if the input is a valid email address.
+    
+    Args:
+    email (str): The email address to be validated.
+    
+    Returns:
+    bool: True if the input is a valid email address, False otherwise.
+    """
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(email_regex, email))
+
+def validate_aws_region(region: str) -> bool:
+    """
+    Validate if the input is a valid AWS region.
+    
+    Args:
+    region (str): The AWS region to be validated.
+    
+    Returns:
+    bool: True if the input is a valid AWS region, False otherwise.
+    """
+    # Load valid AWS regions from regions.conf
+    with open("regions.conf", "r") as f:
+        valid_regions = [line.strip() for line in f.readlines()]
+    
     return region in valid_regions
 
-def validate_ip_address(ip):
+def validate_input(input_value: Any, input_type: type) -> bool:
     """
-    Validate an IP address.
-
+    Validate if the input matches the expected data type.
+    
     Args:
-        ip (str): The IP address to validate.
-
+    input_value (Any): The input value to be validated.
+    input_type (type): The expected data type.
+    
     Returns:
-        bool: True if the IP address is valid, False otherwise.
+    bool: True if the input matches the expected data type, False otherwise.
     """
-    try:
-        ipaddress.ip_address(ip)
-        return True
-    except ValueError:
-        return False
-
-def validate_cidr_block(cidr):
-    """
-    Validate a CIDR block.
-
-    Args:
-        cidr (str): The CIDR block to validate.
-
-    Returns:
-        bool: True if the CIDR block is valid, False otherwise.
-    """
-    try:
-        ipaddress.ip_network(cidr, strict=False)
-        return True
-    except ValueError:
-        return False
-
-def validate_s3_bucket_name(bucket_name):
-    """
-    Validate an S3 bucket name.
-
-    Args:
-        bucket_name (str): The bucket name to validate.
-
-    Returns:
-        bool: True if the bucket name is valid, False otherwise.
-    """
-    # S3 bucket name must be between 3 and 63 characters long
-    # and must be a valid DNS name
-    if len(bucket_name) < 3 or len(bucket_name) > 63:
-        return False
-    if not re.match("^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$", bucket_name):
-        return False
-    return True
-
-def validate_ec2_instance_id(instance_id):
-    """
-    Validate an EC2 instance ID.
-
-    Args:
-        instance_id (str): The instance ID to validate.
-
-    Returns:
-        bool: True if the instance ID is valid, False otherwise.
-    """
-    # EC2 instance ID must be in the format i-xxxxxxxxxxxxxxxxx
-    if not re.match("^i-[a-f0-9]{8,17}$", instance_id):
-        return False
-    return True
+    return isinstance(input_value, input_type)
 ```

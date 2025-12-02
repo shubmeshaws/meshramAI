@@ -18,10 +18,17 @@ function map_region_name() {
     exit 1
   fi
   declare -A regions_map
+  local config_line_count=0
   while IFS='=' read -r key value; do
     [[ -z "$key" || "$key" =~ ^# ]] && continue
+    ((config_line_count++))
     regions_map["$key"]="$value"
   done < "$region_config_file"
+
+  if [ $config_line_count -eq 0 ]; then
+    echo "[ERROR] Region configuration file '$region_config_file' is empty or contains only comments" | tee -a "$LOG_FILE"
+    exit 1
+  fi
 
   if [[ -n "${regions_map[$input_region]}" ]]; then
     echo "${regions_map[$input_region]}"

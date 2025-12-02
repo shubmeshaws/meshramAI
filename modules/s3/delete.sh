@@ -10,6 +10,12 @@ function s3_delete() {
     return 1
   fi
 
+  # Validate bucket name using regex pattern
+  if ! [[ "$BUCKET_NAME" =~ ^[a-z0-9.-]{3,63}$ ]]; then
+    echo "[ERROR] Invalid bucket name '$BUCKET_NAME'. Bucket names must be between 3 and 63 characters long and can only contain lowercase letters, numbers, periods, and hyphens."
+    return 1
+  fi
+
   REGION="$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf")"
   REGION="${REGION:-$INPUT_REGION}"
 

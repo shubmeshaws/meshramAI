@@ -5,6 +5,12 @@ import os
 # Set up logging configuration
 LOGGING_LEVEL = os.environ.get('LOGGING_LEVEL', 'INFO')
 
+# Validate the LOGGING_LEVEL environment variable
+valid_levels = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
+if LOGGING_LEVEL.upper() not in valid_levels:
+    print(f"Invalid LOGGING_LEVEL: {LOGGING_LEVEL}. Defaulting to INFO.")
+    LOGGING_LEVEL = 'INFO'
+
 logging.basicConfig(
     format='%(asctime)s [%(levelname)s] %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S',
@@ -34,5 +40,4 @@ def get_logger(name):
 # logger = get_logger(__name__)
 # logger.info('This is an info message')
 # logger.error('This is an error message')
-```
 ```

@@ -56,6 +56,11 @@ function vpc_list() {
 
 function vpc_delete() {
   local vpc_id="$1"
+  if ! [[ "$vpc_id" =~ ^vpc-[a-z0-9]{17}$ ]]; then
+    echo "[ERROR] Invalid VPC ID: $vpc_id. Please use a valid VPC ID."
+    show_vpc_help
+    return 1
+  fi
   echo "[INFO] Deleting VPC $vpc_id..." | tee -a "$LOG_FILE"
   bash "$SCRIPT_DIR/modules/vpc/delete.sh" "$vpc_id" | tee -a "$LOG_FILE"
 }

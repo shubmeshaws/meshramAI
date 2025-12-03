@@ -1,79 +1,85 @@
 ```python
-import re
-import ipaddress
-from typing import Any
+# utils/validation_utils.py
 
-def validate_email(email: str) -> bool:
+import re
+
+def validate_string(input_string, min_length=1, max_length=255):
     """
-    Validate an email address.
+    Validate a string based on its length.
 
     Args:
-        email (str): The email address to validate.
+        input_string (str): The string to be validated.
+        min_length (int, optional): The minimum allowed length. Defaults to 1.
+        max_length (int, optional): The maximum allowed length. Defaults to 255.
+
+    Returns:
+        bool: True if the string is valid, False otherwise.
+    """
+    return isinstance(input_string, str) and min_length <= len(input_string) <= max_length
+
+
+def validate_email(email):
+    """
+    Validate an email address using a regular expression.
+
+    Args:
+        email (str): The email address to be validated.
 
     Returns:
         bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
     return bool(re.match(email_regex, email))
 
 
-def validate_ip_address(ip: str) -> bool:
+def validate_integer(input_value, min_value=None, max_value=None):
     """
-    Validate an IP address.
+    Validate an integer value.
 
     Args:
-        ip (str): The IP address to validate.
+        input_value (int): The integer to be validated.
+        min_value (int, optional): The minimum allowed value. Defaults to None.
+        max_value (int, optional): The maximum allowed value. Defaults to None.
 
     Returns:
-        bool: True if the IP address is valid, False otherwise.
+        bool: True if the integer is valid, False otherwise.
     """
-    try:
-        ipaddress.ip_address(ip)
-        return True
-    except ValueError:
+    if not isinstance(input_value, int):
         return False
-
-
-def validate_string_length(input_str: str, min_length: int = 1, max_length: int = None) -> bool:
-    """
-    Validate the length of a string.
-
-    Args:
-        input_str (str): The input string to validate.
-        min_length (int, optional): The minimum allowed length. Defaults to 1.
-        max_length (int, optional): The maximum allowed length. Defaults to None.
-
-    Returns:
-        bool: True if the string length is valid, False otherwise.
-    """
-    if max_length is not None and len(input_str) > max_length:
+    if min_value is not None and input_value < min_value:
         return False
-    return len(input_str) >= min_length
+    if max_value is not None and input_value > max_value:
+        return False
+    return True
 
 
-def validate_value_in_list(input_value: Any, allowed_values: list) -> bool:
+def validate_aws_region(region):
     """
-    Validate if a value is in a list of allowed values.
+    Validate an AWS region.
 
     Args:
-        input_value (Any): The input value to validate.
-        allowed_values (list): The list of allowed values.
+        region (str): The AWS region to be validated.
 
     Returns:
-        bool: True if the value is in the list, False otherwise.
+        bool: True if the region is valid, False otherwise.
     """
-    return input_value in allowed_values
-
-
-def validate_non_empty_list(input_list: list) -> bool:
-    """
-    Validate if a list is not empty.
-
-    Args:
-        input_list (list): The input list to validate.
-
-    Returns:
-        bool: True if the list is not empty, False otherwise.
-    """
-    return len(input_list) > 0
+    # List of valid AWS regions (this list might not be exhaustive)
+    valid_regions = [
+        "us-east-1",
+        "us-east-2",
+        "us-west-1",
+        "us-west-2",
+        "ca-central-1",
+        "ap-northeast-1",
+        "ap-northeast-2",
+        "ap-south-1",
+        "ap-southeast-1",
+        "ap-southeast-2",
+        "eu-central-1",
+        "eu-west-1",
+        "eu-west-2",
+        "eu-west-3",
+        "sa-east-1",
+    ]
+    return region in valid_regions
 ```

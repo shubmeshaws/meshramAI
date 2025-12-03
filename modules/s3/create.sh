@@ -19,6 +19,11 @@ function s3_create() {
     return 1
   fi
 
+  if [[ "$ACL" != "public" && "$ACL" != "private" ]]; then
+    echo "[ERROR] Invalid ACL value. Only 'public' or 'private' are allowed."
+    return 1
+  fi
+
   REGION="$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf")"
   REGION="${REGION:-$INPUT_REGION}"
 

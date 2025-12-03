@@ -1,85 +1,75 @@
 ```python
-# utils/validation_utils.py
-
 import re
 
 def validate_string(input_string, min_length=1, max_length=255):
     """
-    Validate a string based on its length.
+    Validate a string.
 
     Args:
-        input_string (str): The string to be validated.
+        input_string (str): The string to validate.
         min_length (int, optional): The minimum allowed length. Defaults to 1.
         max_length (int, optional): The maximum allowed length. Defaults to 255.
 
     Returns:
         bool: True if the string is valid, False otherwise.
     """
-    return isinstance(input_string, str) and min_length <= len(input_string) <= max_length
+    if not isinstance(input_string, str):
+        return False
+    if len(input_string) < min_length or len(input_string) > max_length:
+        return False
+    return True
 
-
-def validate_email(email):
+def validate_integer(input_integer, min_value=None, max_value=None):
     """
-    Validate an email address using a regular expression.
+    Validate an integer.
 
     Args:
-        email (str): The email address to be validated.
-
-    Returns:
-        bool: True if the email is valid, False otherwise.
-    """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
-
-
-def validate_integer(input_value, min_value=None, max_value=None):
-    """
-    Validate an integer value.
-
-    Args:
-        input_value (int): The integer to be validated.
+        input_integer (int): The integer to validate.
         min_value (int, optional): The minimum allowed value. Defaults to None.
         max_value (int, optional): The maximum allowed value. Defaults to None.
 
     Returns:
         bool: True if the integer is valid, False otherwise.
     """
-    if not isinstance(input_value, int):
+    if not isinstance(input_integer, int):
         return False
-    if min_value is not None and input_value < min_value:
+    if min_value is not None and input_integer < min_value:
         return False
-    if max_value is not None and input_value > max_value:
+    if max_value is not None and input_integer > max_value:
         return False
     return True
 
-
-def validate_aws_region(region):
+def validate_aws_resource_name(input_string):
     """
-    Validate an AWS region.
+    Validate an AWS resource name.
 
     Args:
-        region (str): The AWS region to be validated.
+        input_string (str): The resource name to validate.
 
     Returns:
-        bool: True if the region is valid, False otherwise.
+        bool: True if the resource name is valid, False otherwise.
     """
-    # List of valid AWS regions (this list might not be exhaustive)
-    valid_regions = [
-        "us-east-1",
-        "us-east-2",
-        "us-west-1",
-        "us-west-2",
-        "ca-central-1",
-        "ap-northeast-1",
-        "ap-northeast-2",
-        "ap-south-1",
-        "ap-southeast-1",
-        "ap-southeast-2",
-        "eu-central-1",
-        "eu-west-1",
-        "eu-west-2",
-        "eu-west-3",
-        "sa-east-1",
-    ]
-    return region in valid_regions
+    pattern = re.compile(r'^[a-zA-Z0-9-]+$')
+    if not pattern.match(input_string):
+        return False
+    if len(input_string) < 1 or len(input_string) > 255:
+        return False
+    return True
+
+def validate_aws_tag_key(input_string):
+    """
+    Validate an AWS tag key.
+
+    Args:
+        input_string (str): The tag key to validate.
+
+    Returns:
+        bool: True if the tag key is valid, False otherwise.
+    """
+    pattern = re.compile(r'^[a-zA-Z0-9-_]+$')
+    if not pattern.match(input_string):
+        return False
+    if len(input_string) < 1 or len(input_string) > 128:
+        return False
+    return True
 ```

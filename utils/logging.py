@@ -11,27 +11,45 @@ if LOGGING_LEVEL.upper() not in valid_levels:
     print(f"Invalid LOGGING_LEVEL: {LOGGING_LEVEL}. Defaulting to INFO.")
     LOGGING_LEVEL = 'INFO'
 
-logging.basicConfig(
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S',
-    level=getattr(logging, LOGGING_LEVEL.upper())
-)
+try:
+    logging.basicConfig(
+        format='%(asctime)s [%(levelname)s] %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
+        level=getattr(logging, LOGGING_LEVEL.upper())
+    )
+except Exception as e:
+    print(f"Error setting up logging: {str(e)}")
 
 class Logger:
     def __init__(self, name):
-        self.logger = logging.getLogger(name)
+        try:
+            self.logger = logging.getLogger(name)
+        except Exception as e:
+            print(f"Error creating logger: {str(e)}")
 
     def info(self, message):
-        self.logger.info(message)
+        try:
+            self.logger.info(message)
+        except Exception as e:
+            print(f"Error logging info message: {str(e)}")
 
     def error(self, message):
-        self.logger.error(message)
+        try:
+            self.logger.error(message)
+        except Exception as e:
+            print(f"Error logging error message: {str(e)}")
 
     def debug(self, message):
-        self.logger.debug(message)
+        try:
+            self.logger.debug(message)
+        except Exception as e:
+            print(f"Error logging debug message: {str(e)}")
 
     def warn(self, message):
-        self.logger.warning(message)
+        try:
+            self.logger.warning(message)
+        except Exception as e:
+            print(f"Error logging warning message: {str(e)}")
 
 def get_logger(name):
     return Logger(name)

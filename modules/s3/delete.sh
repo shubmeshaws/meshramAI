@@ -20,15 +20,39 @@ function s3_delete() {
   REGION="${REGION:-$INPUT_REGION}"
 
   if ! aws s3api head-bucket --bucket "$BUCKET_NAME" --region "$REGION" &> /dev/null; then
-    echo "[WARNING] Bucket '$BUCKET_NAME' does not exist in region '$REGION'."
-    return 0
+    case $? in
+      254) # No such bucket
+        echo "[WARNING] Bucket '$BUCKET_NAME' does not exist in region '$REGION'."
+        return 0
+        ;;
+      255) # AWS CLI error
+        echo "[ERROR] AWS CLI error: Failed to check bucket '$BUCKET_NAME' in region '$REGION'"
+        return 1
+        ;;
+      *) # Other errors
+        echo "[ERROR] Unknown error: Failed to check bucket '$BUCKET_NAME' in region '$REGION'"
+        return 1
+        ;;
+    esac
   fi
 
   echo "[WARNING] Deleting S3 bucket '$BUCKET_NAME' in region '$REGION'..."
   
   if ! output=$(aws s3api delete-bucket --bucket "$BUCKET_NAME" --region "$REGION" 2>&1); then
-    echo "[ERROR] Failed to delete bucket '$BUCKET_NAME' in region '$REGION': $output"
-    return 1
+    case $? in
+      254) # Bucket is not empty
+        echo "[ERROR] Failed to delete bucket '$BUCKET_NAME' in region '$REGION': Bucket is not empty"
+        return 1
+        ;;
+      255) # AWS CLI error
+        echo "[ERROR] AWS CLI error: Failed to delete bucket '$BUCKET_NAME' in region '$REGION': $output"
+        return 1
+        ;;
+      *) # Other errors
+        echo "[ERROR] Unknown error: Failed to delete bucket '$BUCKET_NAME' in region '$REGION': $output"
+        return 1
+        ;;
+    esac
   fi
 
   echo "[SUCCESS] Bucket '$BUCKET_NAME' deleted from region '$REGION'."

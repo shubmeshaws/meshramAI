@@ -24,7 +24,12 @@ function get_available_images() {
       ;;
   esac
 
-  aws ec2 describe-images --owners "$OWNER" --filters "$FILTERS" "Name=state,Values=available" --region "$REGION" --query 'Images[*].[ImageId,CreationDate]' --output text
+  aws ec2 describe-images --owners "$OWNER" --filters "$FILTERS" "Name=state,Values=available" --region "$REGION" --query 'Images[*].[ImageId,CreationDate]' --output text 2>&1
+  local RETURN_CODE=$?
+  if [ $RETURN_CODE -ne 0 ]; then
+    echo "[ERROR] Failed to describe images for $OS in $REGION: $(aws ec2 describe-images --owners "$OWNER" --filters "$FILTERS" "Name=state,Values=available" --region "$REGION" --query 'Images[*].[ImageId,CreationDate]' --output text 2>&1)"
+    return 1
+  fi
 }
 
 function get_latest_image_id() {

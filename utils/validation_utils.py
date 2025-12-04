@@ -1,70 +1,71 @@
 ```python
 import re
-from typing import Any
+import ipaddress
+from urllib.parse import urlparse
 
-def validate_string(input_string: str, min_length: int = 1, max_length: int = 255) -> bool:
-    """
-    Validate a string length.
-
-    Args:
-    input_string (str): The string to validate.
-    min_length (int): The minimum allowed length. Defaults to 1.
-    max_length (int): The maximum allowed length. Defaults to 255.
-
-    Returns:
-    bool: True if the string is valid, False otherwise.
-    """
-    return min_length <= len(input_string) <= max_length
-
-def validate_email(email: str) -> bool:
-    """
-    Validate an email address.
-
-    Args:
-    email (str): The email address to validate.
-
-    Returns:
-    bool: True if the email is valid, False otherwise.
-    """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
-
-def validate_aws_region(region: str) -> bool:
-    """
-    Validate an AWS region.
-
-    Args:
-    region (str): The region to validate.
-
-    Returns:
-    bool: True if the region is valid, False otherwise.
-    """
-    valid_regions = ["us-east-1", "us-west-2", "eu-west-1", "ap-northeast-1"]
-    return region in valid_regions
-
-def validate_input_type(input_value: Any, expected_type: Any) -> bool:
-    """
-    Validate the type of an input.
-
-    Args:
-    input_value (Any): The value to validate.
-    expected_type (Any): The expected type.
-
-    Returns:
-    bool: True if the input type is valid, False otherwise.
-    """
-    return isinstance(input_value, expected_type)
-
-def validate_ip_address(ip_address: str) -> bool:
+def is_valid_ip_address(ip_address):
     """
     Validate an IP address.
-
+    
     Args:
-    ip_address (str): The IP address to validate.
-
+        ip_address (str): The IP address to validate.
+    
     Returns:
-    bool: True if the IP address is valid, False otherwise.
+        bool: True if the IP address is valid, False otherwise.
     """
-    ip_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_regex, ip_address))
+    try:
+        ipaddress.ip_address(ip_address)
+        return True
+    except ValueError:
+        return False
+
+def is_valid_url(url):
+    """
+    Validate a URL.
+    
+    Args:
+        url (str): The URL to validate.
+    
+    Returns:
+        bool: True if the URL is valid, False otherwise.
+    """
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
+
+def is_valid_aws_resource_id(resource_id):
+    """
+    Validate an AWS resource ID.
+    
+    Args:
+        resource_id (str): The AWS resource ID to validate.
+    
+    Returns:
+        bool: True if the AWS resource ID is valid, False otherwise.
+    """
+    pattern = r'^[a-zA-Z0-9\-_]+$'
+    return bool(re.match(pattern, resource_id))
+
+def is_valid_aws_region(region):
+    """
+    Validate an AWS region.
+    
+    Args:
+        region (str): The AWS region to validate.
+    
+    Returns:
+        bool: True if the AWS region is valid, False otherwise.
+    """
+    # List of valid AWS regions
+    valid_regions = ['us-east-1', 'us-west-2', 'us-west-1', 'eu-west-1', 'eu-central-1', 'ap-northeast-1', 'ap-northeast-2', 'ap-southeast-1', 'ap-southeast-2', 'sa-east-1']
+    return region in valid_regions
+
+# Example usage:
+if __name__ == '__main__':
+    print(is_valid_ip_address('192.168.1.1'))  # True
+    print(is_valid_url('https://www.example.com'))  # True
+    print(is_valid_aws_resource_id('i-0123456789abcdef0'))  # True
+    print(is_valid_aws_region('us-east-1'))  # True
 ```

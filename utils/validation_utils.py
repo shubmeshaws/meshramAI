@@ -1,68 +1,70 @@
 ```python
 import re
-import ipaddress
+from typing import Any
 
-def validate_aws_credentials(access_key, secret_key):
+def validate_string(input_string: str, min_length: int = 1, max_length: int = 255) -> bool:
     """
-    Validate AWS access key and secret key.
+    Validate a string length.
 
     Args:
-    access_key (str): AWS access key.
-    secret_key (str): AWS secret key.
+    input_string (str): The string to validate.
+    min_length (int): The minimum allowed length. Defaults to 1.
+    max_length (int): The maximum allowed length. Defaults to 255.
 
     Returns:
-    bool: True if credentials are valid, False otherwise.
+    bool: True if the string is valid, False otherwise.
     """
-    if not isinstance(access_key, str) or not isinstance(secret_key, str):
-        return False
-    if not re.match(r"^(?=[a-zA-Z0-9#]{20}$)(?!.*(__|--|\.){2,}).*$", access_key):
-        return False
-    if not re.match(r"^(?=[a-zA-Z0-9\/+=]{40}$)(?!.*(__|--|\.){2,}).*$", secret_key):
-        return False
-    return True
+    return min_length <= len(input_string) <= max_length
 
-def validate_ip_address(ip):
+def validate_email(email: str) -> bool:
     """
-    Validate an IP address.
+    Validate an email address.
 
     Args:
-    ip (str): IP address to validate.
+    email (str): The email address to validate.
 
     Returns:
-    bool: True if IP address is valid, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    try:
-        ipaddress.ip_address(ip)
-        return True
-    except ValueError:
-        return False
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
+    return bool(re.match(email_regex, email))
 
-def validate_cidr_block(cidr_block):
-    """
-    Validate a CIDR block.
-
-    Args:
-    cidr_block (str): CIDR block to validate.
-
-    Returns:
-    bool: True if CIDR block is valid, False otherwise.
-    """
-    try:
-        ipaddress.ip_network(cidr_block, strict=False)
-        return True
-    except ValueError:
-        return False
-
-def validate_region(region):
+def validate_aws_region(region: str) -> bool:
     """
     Validate an AWS region.
 
     Args:
-    region (str): AWS region to validate.
+    region (str): The region to validate.
 
     Returns:
-    bool: True if region is valid, False otherwise.
+    bool: True if the region is valid, False otherwise.
     """
-    valid_regions = ["us-east-1", "us-west-2", "ap-northeast-1", "ap-southeast-1", "eu-west-1"]
+    valid_regions = ["us-east-1", "us-west-2", "eu-west-1", "ap-northeast-1"]
     return region in valid_regions
+
+def validate_input_type(input_value: Any, expected_type: Any) -> bool:
+    """
+    Validate the type of an input.
+
+    Args:
+    input_value (Any): The value to validate.
+    expected_type (Any): The expected type.
+
+    Returns:
+    bool: True if the input type is valid, False otherwise.
+    """
+    return isinstance(input_value, expected_type)
+
+def validate_ip_address(ip_address: str) -> bool:
+    """
+    Validate an IP address.
+
+    Args:
+    ip_address (str): The IP address to validate.
+
+    Returns:
+    bool: True if the IP address is valid, False otherwise.
+    """
+    ip_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_regex, ip_address))
 ```

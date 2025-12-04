@@ -1,8 +1,6 @@
 ```bash
 #!/bin/bash
 
-#bash "$SCRIPT_DIR/modules/ec2/create.sh"
-
 function show_ec2_help() {
   echo "EC2 service commands:"
   echo "  meshram ec2 create                 - Launch an EC2 instance"
@@ -43,6 +41,10 @@ function ec2_handler() {
 }
 
 function ec2_create() {
+  if [ ! -f "$SCRIPT_DIR/modules/ec2/create.sh" ]; then
+    echo "[ERROR] create.sh script not found" | tee -a "$LOG_FILE"
+    exit 1
+  fi
   if ! bash "$SCRIPT_DIR/modules/ec2/create.sh" | tee -a "$LOG_FILE"; then
     echo "[ERROR] Failed to launch EC2 instance" | tee -a "$LOG_FILE"
     exit 1
@@ -50,6 +52,10 @@ function ec2_create() {
 }
 
 function ec2_list() {
+  if [ ! -f "$SCRIPT_DIR/modules/ec2/list.sh" ]; then
+    echo "[ERROR] list.sh script not found" | tee -a "$LOG_FILE"
+    exit 1
+  fi
   if ! bash "$SCRIPT_DIR/modules/ec2/list.sh" | tee -a "$LOG_FILE"; then
     echo "[ERROR] Failed to list EC2 instances" | tee -a "$LOG_FILE"
     exit 1
@@ -60,6 +66,10 @@ function ec2_terminate() {
   local instance_id="$1"
   if [[ -z "$instance_id" ]]; then
     echo "[ERROR] Usage: meshram ec2 terminate <instance-id>"
+    exit 1
+  fi
+  if [ ! -f "$SCRIPT_DIR/modules/ec2/terminate.sh" ]; then
+    echo "[ERROR] terminate.sh script not found" | tee -a "$LOG_FILE"
     exit 1
   fi
   if ! bash "$SCRIPT_DIR/modules/ec2/terminate.sh" "$instance_id" | tee -a "$LOG_FILE"; then

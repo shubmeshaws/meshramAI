@@ -1,17 +1,35 @@
 ```python
+import re
 import ipaddress
-import json
-from urllib.parse import urlparse
 
-def is_valid_ip_address(ip):
+def validate_aws_credentials(access_key, secret_key):
     """
-    Validate if the given string is a valid IP address.
+    Validate AWS access key and secret key.
 
     Args:
-        ip (str): The IP address to validate.
+    access_key (str): AWS access key.
+    secret_key (str): AWS secret key.
 
     Returns:
-        bool: True if the IP address is valid, False otherwise.
+    bool: True if credentials are valid, False otherwise.
+    """
+    if not isinstance(access_key, str) or not isinstance(secret_key, str):
+        return False
+    if not re.match(r"^(?=[a-zA-Z0-9#]{20}$)(?!.*(__|--|\.){2,}).*$", access_key):
+        return False
+    if not re.match(r"^(?=[a-zA-Z0-9\/+=]{40}$)(?!.*(__|--|\.){2,}).*$", secret_key):
+        return False
+    return True
+
+def validate_ip_address(ip):
+    """
+    Validate an IP address.
+
+    Args:
+    ip (str): IP address to validate.
+
+    Returns:
+    bool: True if IP address is valid, False otherwise.
     """
     try:
         ipaddress.ip_address(ip)
@@ -19,57 +37,32 @@ def is_valid_ip_address(ip):
     except ValueError:
         return False
 
-def is_valid_url(url):
+def validate_cidr_block(cidr_block):
     """
-    Validate if the given string is a valid URL.
+    Validate a CIDR block.
 
     Args:
-        url (str): The URL to validate.
+    cidr_block (str): CIDR block to validate.
 
     Returns:
-        bool: True if the URL is valid, False otherwise.
+    bool: True if CIDR block is valid, False otherwise.
     """
     try:
-        result = urlparse(url)
-        return all([result.scheme, result.netloc])
+        ipaddress.ip_network(cidr_block, strict=False)
+        return True
     except ValueError:
         return False
 
-def is_valid_json(data):
+def validate_region(region):
     """
-    Validate if the given string is a valid JSON data.
+    Validate an AWS region.
 
     Args:
-        data (str): The JSON data to validate.
+    region (str): AWS region to validate.
 
     Returns:
-        bool: True if the JSON data is valid, False otherwise.
+    bool: True if region is valid, False otherwise.
     """
-    try:
-        json.loads(data)
-        return True
-    except json.JSONDecodeError:
-        return False
-
-def validate_aws_region(region):
-    """
-    Validate if the given string is a valid AWS region.
-
-    Args:
-        region (str): The AWS region to validate.
-
-    Returns:
-        bool: True if the AWS region is valid, False otherwise.
-    """
-    # Read valid regions from the regions.conf file
-    with open('regions.conf', 'r') as f:
-        valid_regions = [line.strip() for line in f.readlines()]
+    valid_regions = ["us-east-1", "us-west-2", "ap-northeast-1", "ap-southeast-1", "eu-west-1"]
     return region in valid_regions
-
-# Example usage:
-if __name__ == '__main__':
-    print(is_valid_ip_address('192.168.1.1'))  # Output: True
-    print(is_valid_url('https://www.example.com'))  # Output: True
-    print(is_valid_json('{"key": "value"}'))  # Output: True
-    print(validate_aws_region('us-west-2'))  # Output: True (if 'us-west-2' is in regions.conf)
 ```

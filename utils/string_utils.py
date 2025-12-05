@@ -2,70 +2,72 @@
 """
 String utility functions.
 
-This module provides useful string manipulation functions.
+This module provides functions for string manipulation and validation.
 """
 
-def camel_to_snake(camel_str: str) -> str:
+import re
+
+def is_empty(string: str) -> bool:
     """
-    Convert a camelCase string to snake_case.
+    Check if a string is empty or contains only whitespace characters.
 
     Args:
-    - camel_str (str): The input camelCase string.
+        string (str): The string to check.
 
     Returns:
-    - str: The input string converted to snake_case.
+        bool: True if the string is empty, False otherwise.
     """
-    snake_str = ""
-    for i, char in enumerate(camel_str):
-        if char.isupper() and i != 0:
-            snake_str += "_" + char.lower()
-        else:
-            snake_str += char.lower()
-    return snake_str
+    return not string.strip()
 
-
-def snake_to_camel(snake_str: str) -> str:
+def is_alphanumeric(string: str) -> bool:
     """
-    Convert a snake_case string to camelCase.
+    Check if a string contains only alphanumeric characters.
 
     Args:
-    - snake_str (str): The input snake_case string.
+        string (str): The string to check.
 
     Returns:
-    - str: The input string converted to camelCase.
+        bool: True if the string is alphanumeric, False otherwise.
     """
-    words = snake_str.split("_")
-    camel_str = words[0].lower()
-    for word in words[1:]:
-        camel_str += word.capitalize()
-    return camel_str
+    return re.match("^[a-zA-Z0-9]+$", string) is not None
 
-
-def remove_special_chars(input_str: str) -> str:
+def is_email(string: str) -> bool:
     """
-    Remove special characters from a string.
+    Check if a string is a valid email address.
 
     Args:
-    - input_str (str): The input string.
+        string (str): The string to check.
 
     Returns:
-    - str: The input string with special characters removed.
+        bool: True if the string is a valid email address, False otherwise.
     """
-    return "".join(char for char in input_str if char.isalnum() or char.isspace())
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
+    return re.match(email_regex, string) is not None
 
-
-def truncate_string(input_str: str, max_length: int) -> str:
+def truncate_string(string: str, max_length: int) -> str:
     """
     Truncate a string to a specified maximum length.
 
     Args:
-    - input_str (str): The input string.
-    - max_length (int): The maximum length of the output string.
+        string (str): The string to truncate.
+        max_length (int): The maximum length of the string.
 
     Returns:
-    - str: The input string truncated to the specified maximum length.
+        str: The truncated string.
     """
-    if len(input_str) > max_length:
-        return input_str[: max_length - 3] + "..."
-    return input_str
+    if len(string) > max_length:
+        return string[:max_length - 3] + "..."
+    return string
+
+def remove_special_chars(string: str) -> str:
+    """
+    Remove special characters from a string.
+
+    Args:
+        string (str): The string to remove special characters from.
+
+    Returns:
+        str: The string with special characters removed.
+    """
+    return re.sub(r"[^a-zA-Z0-9\s]", "", string)
 ```

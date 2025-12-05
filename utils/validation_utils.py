@@ -1,73 +1,84 @@
 ```python
 import re
-from typing import Any
+import ipaddress
 
-def validate_aws_region(region: str) -> bool:
-    """
-    Validate an AWS region.
-
-    Args:
-    region (str): The AWS region to validate.
-
-    Returns:
-    bool: True if the region is valid, False otherwise.
-    """
-    # List of valid AWS regions (not exhaustive, can be updated as needed)
-    valid_regions = ['us-east-1', 'us-west-2', 'eu-west-1', 'ap-northeast-1']
-    return region in valid_regions
-
-def validate_aws_resource_id(resource_id: str) -> bool:
-    """
-    Validate an AWS resource ID.
-
-    Args:
-    resource_id (str): The AWS resource ID to validate.
-
-    Returns:
-    bool: True if the resource ID is valid, False otherwise.
-    """
-    # AWS resource IDs typically start with a letter or number, followed by a series of letters, numbers, and hyphens
-    pattern = r'^[a-zA-Z0-9][a-zA-Z0-9-]+$'
-    return bool(re.match(pattern, resource_id))
-
-def validate_email(email: str) -> bool:
-    """
-    Validate an email address.
-
-    Args:
-    email (str): The email address to validate.
-
-    Returns:
-    bool: True if the email address is valid, False otherwise.
-    """
-    # Basic email validation using a regular expression
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return bool(re.match(pattern, email))
-
-def validate_ip_address(ip_address: str) -> bool:
+def validate_ip_address(ip):
     """
     Validate an IP address.
 
     Args:
-    ip_address (str): The IP address to validate.
+        ip (str): The IP address to validate.
 
     Returns:
-    bool: True if the IP address is valid, False otherwise.
+        bool: True if the IP address is valid, False otherwise.
     """
-    # Basic IP address validation using a regular expression
-    pattern = r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
-    return bool(re.match(pattern, ip_address))
+    try:
+        ipaddress.ip_address(ip)
+        return True
+    except ValueError:
+        return False
 
-def validate_value(value: Any, expected_type: type) -> bool:
+def validate_url(url):
     """
-    Validate the type of a value.
+    Validate a URL.
 
     Args:
-    value (Any): The value to validate.
-    expected_type (type): The expected type of the value.
+        url (str): The URL to validate.
 
     Returns:
-    bool: True if the value is of the expected type, False otherwise.
+        bool: True if the URL is valid, False otherwise.
     """
-    return isinstance(value, expected_type)
+    url_pattern = re.compile(
+        r'^(?:http|ftp)s?://'  # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+        r'localhost|'  # localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+        r'(?::\d+)?'  # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+    return bool(url_pattern.match(url))
+
+def validate_aws_resource_name(name):
+    """
+    Validate an AWS resource name.
+
+    Args:
+        name (str): The AWS resource name to validate.
+
+    Returns:
+        bool: True if the AWS resource name is valid, False otherwise.
+    """
+    # AWS resource names can contain letters (a-z, A-Z), numbers (0-9), and hyphens (-)
+    # They cannot start with a hyphen or contain consecutive hyphens
+    pattern = re.compile(r'^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$')
+    return bool(pattern.match(name))
+
+def validate_aws_tag_key(key):
+    """
+    Validate an AWS tag key.
+
+    Args:
+        key (str): The AWS tag key to validate.
+
+    Returns:
+        bool: True if the AWS tag key is valid, False otherwise.
+    """
+    # AWS tag keys can contain letters (a-z, A-Z), numbers (0-9), and underscores (_)
+    # They cannot be longer than 128 characters
+    pattern = re.compile(r'^[a-zA-Z0-9_]{1,128}$')
+    return bool(pattern.match(key))
+
+def validate_aws_tag_value(value):
+    """
+    Validate an AWS tag value.
+
+    Args:
+        value (str): The AWS tag value to validate.
+
+    Returns:
+        bool: True if the AWS tag value is valid, False otherwise.
+    """
+    # AWS tag values can contain letters (a-z, A-Z), numbers (0-9), and underscores (_)
+    # They cannot be longer than 256 characters
+    pattern = re.compile(r'^[a-zA-Z0-9_]{1,256}$')
+    return bool(pattern.match(value))
 ```

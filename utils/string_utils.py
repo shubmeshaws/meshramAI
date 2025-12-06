@@ -2,72 +2,91 @@
 """
 String utility functions.
 
-This module provides functions for string manipulation and validation.
+This module provides various functions for string manipulation and formatting.
 """
 
 import re
+from typing import List, Tuple
 
-def is_empty(string: str) -> bool:
+def camel_case_to_snake_case(input_string: str) -> str:
     """
-    Check if a string is empty or contains only whitespace characters.
+    Converts a camel case string to snake case.
 
     Args:
-        string (str): The string to check.
+        input_string (str): The input string in camel case.
 
     Returns:
-        bool: True if the string is empty, False otherwise.
+        str: The input string converted to snake case.
     """
-    return not string.strip()
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', input_string)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
-def is_alphanumeric(string: str) -> bool:
+
+def snake_case_to_camel_case(input_string: str) -> str:
     """
-    Check if a string contains only alphanumeric characters.
+    Converts a snake case string to camel case.
 
     Args:
-        string (str): The string to check.
+        input_string (str): The input string in snake case.
 
     Returns:
-        bool: True if the string is alphanumeric, False otherwise.
+        str: The input string converted to camel case.
     """
-    return re.match("^[a-zA-Z0-9]+$", string) is not None
+    words = input_string.split('_')
+    return words[0] + ''.join(word.capitalize() for word in words[1:])
 
-def is_email(string: str) -> bool:
+
+def split_string(input_string: str, delimiter: str, max_split: int = -1) -> List[str]:
     """
-    Check if a string is a valid email address.
+    Splits a string into a list of substrings based on a delimiter.
 
     Args:
-        string (str): The string to check.
+        input_string (str): The input string to be split.
+        delimiter (str): The delimiter used to split the string.
+        max_split (int): The maximum number of splits. Defaults to -1.
 
     Returns:
-        bool: True if the string is a valid email address, False otherwise.
+        List[str]: A list of substrings.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return re.match(email_regex, string) is not None
+    return input_string.split(delimiter, max_split)
 
-def truncate_string(string: str, max_length: int) -> str:
+
+def remove_whitespace(input_string: str) -> str:
     """
-    Truncate a string to a specified maximum length.
+    Removes leading and trailing whitespace from a string.
 
     Args:
-        string (str): The string to truncate.
-        max_length (int): The maximum length of the string.
+        input_string (str): The input string.
 
     Returns:
-        str: The truncated string.
+        str: The input string with leading and trailing whitespace removed.
     """
-    if len(string) > max_length:
-        return string[:max_length - 3] + "..."
-    return string
+    return input_string.strip()
 
-def remove_special_chars(string: str) -> str:
+
+def extract_numbers(input_string: str) -> List[int]:
     """
-    Remove special characters from a string.
+    Extracts numbers from a string.
 
     Args:
-        string (str): The string to remove special characters from.
+        input_string (str): The input string.
 
     Returns:
-        str: The string with special characters removed.
+        List[int]: A list of extracted numbers.
     """
-    return re.sub(r"[^a-zA-Z0-9\s]", "", string)
+    return [int(num) for num in re.findall(r'\d+', input_string)]
+
+
+def tuple_to_string(input_tuple: Tuple, delimiter: str = ', ') -> str:
+    """
+    Converts a tuple to a string.
+
+    Args:
+        input_tuple (Tuple): The input tuple.
+        delimiter (str): The delimiter used to join the elements. Defaults to ', '.
+
+    Returns:
+        str: A string representation of the tuple.
+    """
+    return delimiter.join(str(element) for element in input_tuple)
 ```

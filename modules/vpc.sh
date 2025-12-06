@@ -24,9 +24,19 @@ function vpc_handler() {
       show_vpc_help
       ;;
     create)
+      if [[ -n "$1" ]]; then
+        echo "[ERROR] Usage: meshram vpc create"
+        show_vpc_help
+        return 1
+      fi
       vpc_create
       ;;
     list)
+      if [[ -n "$1" ]]; then
+        echo "[ERROR] Usage: meshram vpc list"
+        show_vpc_help
+        return 1
+      fi
       vpc_list
       ;;
     delete)

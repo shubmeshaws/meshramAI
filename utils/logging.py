@@ -29,33 +29,25 @@ class Logger:
             logging.error(f"Error creating logger: {str(e)}")
             raise
 
-    def info(self, message):
+    def _log(self, level, message):
         try:
-            self.logger.info(message)
+            level_func = getattr(self.logger, level)
+            level_func(message)
         except Exception as e:
-            logging.error(f"Error logging info message: {str(e)}")
+            logging.error(f"Error logging {level} message: {str(e)}")
             raise
+
+    def info(self, message):
+        self._log('info', message)
 
     def error(self, message):
-        try:
-            self.logger.error(message)
-        except Exception as e:
-            logging.error(f"Error logging error message: {str(e)}")
-            raise
+        self._log('error', message)
 
     def debug(self, message):
-        try:
-            self.logger.debug(message)
-        except Exception as e:
-            logging.error(f"Error logging debug message: {str(e)}")
-            raise
+        self._log('debug', message)
 
     def warn(self, message):
-        try:
-            self.logger.warning(message)
-        except Exception as e:
-            logging.error(f"Error logging warning message: {str(e)}")
-            raise
+        self._log('warning', message)
 
 def get_logger(name):
     return Logger(name)

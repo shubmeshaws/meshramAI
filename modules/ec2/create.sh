@@ -35,7 +35,10 @@ function get_available_images() {
     if [ $RETURN_CODE -eq 0 ]; then
       break
     fi
-    ERROR_MSG=$(echo "$OUTPUT" | grep -v "ImageId")
+    ERROR_MSG=$(echo "$OUTPUT" | grep -v "ImageId" | sed 's/.*\(\(.*\)\).*/\1/')
+    if [ -z "$ERROR_MSG" ]; then
+      ERROR_MSG="Unknown error"
+    fi
     echo "[WARNING] Failed to describe images for $OS in $REGION (attempt $RETRY_COUNT/$MAX_RETRIES): $ERROR_MSG"
     RETRY_COUNT=$((RETRY_COUNT + 1))
     sleep $RETRY_DELAY

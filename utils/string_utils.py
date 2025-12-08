@@ -1,59 +1,77 @@
 ```python
 """
-String utility functions for general string operations.
+Utility functions for common string operations.
 """
 
 import re
 
-def is_empty_string(input_string):
+def is_valid_ip_address(ip_address: str) -> bool:
     """
-    Checks if the input string is empty or contains only whitespace characters.
+    Validate if the given string is a valid IP address.
 
     Args:
-        input_string (str): The input string to check.
+    ip_address (str): The IP address to validate.
 
     Returns:
-        bool: True if the string is empty or contains only whitespace characters, False otherwise.
+    bool: True if the IP address is valid, False otherwise.
+    """
+    ip_address_pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_address_pattern, ip_address))
+
+def is_valid_domain_name(domain_name: str) -> bool:
+    """
+    Validate if the given string is a valid domain name.
+
+    Args:
+    domain_name (str): The domain name to validate.
+
+    Returns:
+    bool: True if the domain name is valid, False otherwise.
+    """
+    domain_name_pattern = r"^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$"
+    return bool(re.match(domain_name_pattern, domain_name))
+
+def sanitize_string(input_string: str) -> str:
+    """
+    Remove leading and trailing whitespace from the input string.
+
+    Args:
+    input_string (str): The string to sanitize.
+
+    Returns:
+    str: The sanitized string.
+    """
+    return input_string.strip()
+
+def is_string_empty(input_string: str) -> bool:
+    """
+    Check if the input string is empty or contains only whitespace.
+
+    Args:
+    input_string (str): The string to check.
+
+    Returns:
+    bool: True if the string is empty, False otherwise.
     """
     return not input_string.strip()
 
-def validate_email(email):
+def extract_substring(input_string: str, start_pattern: str, end_pattern: str) -> str:
     """
-    Validates an email address using a regular expression.
+    Extract a substring from the input string based on the given start and end patterns.
 
     Args:
-        email (str): The email address to validate.
+    input_string (str): The string to extract from.
+    start_pattern (str): The pattern to match the start of the substring.
+    end_pattern (str): The pattern to match the end of the substring.
 
     Returns:
-        bool: True if the email address is valid, False otherwise.
+    str: The extracted substring.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
-
-def remove_special_chars(input_string):
-    """
-    Removes special characters from the input string.
-
-    Args:
-        input_string (str): The input string to remove special characters from.
-
-    Returns:
-        str: The input string with special characters removed.
-    """
-    return re.sub('[^A-Za-z0-9]+', '', input_string)
-
-def truncate_string(input_string, max_length):
-    """
-    Truncates the input string to the specified maximum length.
-
-    Args:
-        input_string (str): The input string to truncate.
-        max_length (int): The maximum length of the output string.
-
-    Returns:
-        str: The truncated input string.
-    """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
-    return input_string
+    start_index = input_string.find(start_pattern)
+    if start_index == -1:
+        return ""
+    end_index = input_string.find(end_pattern, start_index + len(start_pattern))
+    if end_index == -1:
+        return ""
+    return input_string[start_index + len(start_pattern):end_index]
 ```

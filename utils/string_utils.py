@@ -1,73 +1,71 @@
 ```python
-"""
-String utility functions for common string operations.
-
-Author: [Your Name]
-"""
+# utils/string_utils.py
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def is_valid_ipv4(ip_address: str) -> bool:
     """
-    Checks if the input string is empty.
+    Validate an IPv4 address.
 
     Args:
-    input_string (str): The input string to check.
+    ip_address (str): The IP address to validate.
 
     Returns:
-    bool: True if the input string is empty, False otherwise.
+    bool: True if the IP address is valid, False otherwise.
     """
-    return not input_string.strip()
+    pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(pattern, ip_address))
 
-def validate_email(email: str) -> bool:
+def is_valid_ipv6(ip_address: str) -> bool:
     """
-    Validates an email address using a regular expression.
+    Validate an IPv6 address.
 
     Args:
-    email (str): The email address to validate.
+    ip_address (str): The IP address to validate.
 
     Returns:
-    bool: True if the email address is valid, False otherwise.
+    bool: True if the IP address is valid, False otherwise.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
+    pattern = r"^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}$"
+    return bool(re.match(pattern, ip_address))
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def remove_empty_lines(text: str) -> str:
     """
-    Truncates a string to a specified maximum length.
+    Remove empty lines from a given text.
 
     Args:
-    input_string (str): The input string to truncate.
-    max_length (int): The maximum length of the output string.
+    text (str): The text to remove empty lines from.
 
     Returns:
-    str: The truncated string.
+    str: The text with empty lines removed.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length - 3] + "..."
-    return input_string
+    return "\n".join([line for line in text.split("\n") if line.strip()])
 
-def remove_special_chars(input_string: str) -> str:
+def truncate_string(text: str, max_length: int) -> str:
     """
-    Removes special characters from a string.
+    Truncate a string to a maximum length.
 
     Args:
-    input_string (str): The input string to process.
+    text (str): The text to truncate.
+    max_length (int): The maximum length of the text.
 
     Returns:
-    str: The string without special characters.
+    str: The truncated text.
     """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+    if len(text) > max_length:
+        return text[:max_length - 3] + "..."
+    return text
 
-def to_snake_case(input_string: str) -> str:
+def indent_text(text: str, indent: int) -> str:
     """
-    Converts a string to snake case.
+    Indent a given text by a specified number of spaces.
 
     Args:
-    input_string (str): The input string to convert.
+    text (str): The text to indent.
+    indent (int): The number of spaces to indent.
 
     Returns:
-    str: The input string in snake case.
+    str: The indented text.
     """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
+    return "\n".join([" " * indent + line for line in text.split("\n")])
 ```

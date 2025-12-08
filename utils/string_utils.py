@@ -1,77 +1,62 @@
 ```python
 """
-Utility functions for common string operations.
+String Utilities Module
+========================
+This module contains functions for common string operations.
 """
 
 import re
 
-def is_valid_ip_address(ip_address: str) -> bool:
+def camel_to_snake_case(input_string):
     """
-    Validate if the given string is a valid IP address.
+    Converts a camel case string to snake case.
 
     Args:
-    ip_address (str): The IP address to validate.
+        input_string (str): The input string in camel case.
 
     Returns:
-    bool: True if the IP address is valid, False otherwise.
+        str: The input string converted to snake case.
     """
-    ip_address_pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_address_pattern, ip_address))
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', input_string)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
-def is_valid_domain_name(domain_name: str) -> bool:
+def snake_to_camel_case(input_string):
     """
-    Validate if the given string is a valid domain name.
+    Converts a snake case string to camel case.
 
     Args:
-    domain_name (str): The domain name to validate.
+        input_string (str): The input string in snake case.
 
     Returns:
-    bool: True if the domain name is valid, False otherwise.
+        str: The input string converted to camel case.
     """
-    domain_name_pattern = r"^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$"
-    return bool(re.match(domain_name_pattern, domain_name))
+    components = input_string.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
 
-def sanitize_string(input_string: str) -> str:
+def truncate_string(input_string, max_length):
     """
-    Remove leading and trailing whitespace from the input string.
+    Truncates a string to a specified maximum length.
 
     Args:
-    input_string (str): The string to sanitize.
+        input_string (str): The input string.
+        max_length (int): The maximum length of the output string.
 
     Returns:
-    str: The sanitized string.
+        str: The input string truncated to the specified maximum length.
     """
-    return input_string.strip()
+    if len(input_string) > max_length:
+        return input_string[:max_length] + '...'
+    return input_string
 
-def is_string_empty(input_string: str) -> bool:
+def remove_special_characters(input_string):
     """
-    Check if the input string is empty or contains only whitespace.
+    Removes special characters from a string.
 
     Args:
-    input_string (str): The string to check.
+        input_string (str): The input string.
 
     Returns:
-    bool: True if the string is empty, False otherwise.
+        str: The input string with special characters removed.
     """
-    return not input_string.strip()
-
-def extract_substring(input_string: str, start_pattern: str, end_pattern: str) -> str:
-    """
-    Extract a substring from the input string based on the given start and end patterns.
-
-    Args:
-    input_string (str): The string to extract from.
-    start_pattern (str): The pattern to match the start of the substring.
-    end_pattern (str): The pattern to match the end of the substring.
-
-    Returns:
-    str: The extracted substring.
-    """
-    start_index = input_string.find(start_pattern)
-    if start_index == -1:
-        return ""
-    end_index = input_string.find(end_pattern, start_index + len(start_pattern))
-    if end_index == -1:
-        return ""
-    return input_string[start_index + len(start_pattern):end_index]
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 ```

@@ -1,6 +1,12 @@
 ```bash
 #!/bin/bash
 
+# Check if SCRIPT_DIR is set
+if [ -z "$SCRIPT_DIR" ]; then
+  echo "[ERROR] SCRIPT_DIR variable is not set"
+  exit 1
+fi
+
 function show_ec2_help() {
   echo "EC2 service commands:"
   echo "  meshram ec2 create                 - Launch an EC2 instance"

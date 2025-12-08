@@ -24,6 +24,18 @@ function s3_create() {
     return 1
   fi
 
+  # Check if AWS CLI is installed
+  if ! command -v aws &> /dev/null; then
+    echo "[ERROR] AWS CLI is not installed or not in the system's PATH."
+    return 1
+  fi
+
+  # Check if AWS CLI is configured
+  if ! aws sts get-caller-identity &> /dev/null; then
+    echo "[ERROR] AWS CLI is not configured. Please run 'aws configure' to set up your credentials."
+    return 1
+  fi
+
   REGION="$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf")"
   REGION="${REGION:-$INPUT_REGION}"
 
@@ -46,6 +58,6 @@ function s3_create() {
   echo "[SUCCESS] Bucket '$BUCKET_NAME' created in region '$REGION'."
 }
 
-# ✅ ACTUALLY CALL THE FUNCTION
+# ACTUALLY CALL THE FUNCTION
 s3_create "$@"
 ```

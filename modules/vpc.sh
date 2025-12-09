@@ -56,12 +56,18 @@ function vpc_handler() {
 
 function vpc_create() {
   echo "[INFO] Creating VPC..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/modules/vpc/create.sh" | tee -a "$LOG_FILE"
+  if ! bash "$SCRIPT_DIR/modules/vpc/create.sh" | tee -a "$LOG_FILE"; then
+    echo "[ERROR] Failed to create VPC. Please check the logs for more information." | tee -a "$LOG_FILE"
+    return 1
+  fi
 }
 
 function vpc_list() {
   echo "[INFO] Listing VPCs..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/modules/vpc/list.sh" | tee -a "$LOG_FILE"
+  if ! bash "$SCRIPT_DIR/modules/vpc/list.sh" | tee -a "$LOG_FILE"; then
+    echo "[ERROR] Failed to list VPCs. Please check the logs for more information." | tee -a "$LOG_FILE"
+    return 1
+  fi
 }
 
 function vpc_delete() {
@@ -72,6 +78,9 @@ function vpc_delete() {
     return 1
   fi
   echo "[INFO] Deleting VPC $vpc_id..." | tee -a "$LOG_FILE"
-  bash "$SCRIPT_DIR/modules/vpc/delete.sh" "$vpc_id" | tee -a "$LOG_FILE"
+  if ! bash "$SCRIPT_DIR/modules/vpc/delete.sh" "$vpc_id" | tee -a "$LOG_FILE"; then
+    echo "[ERROR] Failed to delete VPC $vpc_id. Please check the logs for more information." | tee -a "$LOG_FILE"
+    return 1
+  fi
 }
 ```

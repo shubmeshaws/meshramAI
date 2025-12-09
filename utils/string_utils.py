@@ -1,80 +1,60 @@
 ```python
-"""
-String Utilities Module
-========================
-This module contains functions for string manipulation and validation.
-"""
+# utils/string_utils.py
 
 import re
 
-def is_empty(string):
+def is_valid_ip_address(ip_address: str) -> bool:
     """
-    Checks if a string is empty.
+    Validate an IP address.
 
     Args:
-        string (str): The input string.
+    ip_address (str): The IP address to validate.
 
     Returns:
-        bool: True if the string is empty, False otherwise.
+    bool: True if the IP address is valid, False otherwise.
     """
-    return not string.strip()
+    ip_address_pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_address_pattern, ip_address))
 
-def validate_email(email):
+def is_valid_domain_name(domain_name: str) -> bool:
     """
-    Validates an email address.
+    Validate a domain name.
 
     Args:
-        email (str): The email address to validate.
+    domain_name (str): The domain name to validate.
 
     Returns:
-        bool: True if the email is valid, False otherwise.
+    bool: True if the domain name is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    return bool(re.match(email_regex, email))
+    domain_name_pattern = r"^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$"
+    return bool(re.match(domain_name_pattern, domain_name))
 
-def snake_case_to_camel_case(string):
+def convert_to_snake_case(input_string: str) -> str:
     """
-    Converts a snake_case string to camelCase.
+    Convert a string to snake case.
 
     Args:
-        string (str): The input string.
+    input_string (str): The string to convert.
 
     Returns:
-        str: The camelCase equivalent of the input string.
+    str: The input string in snake case.
     """
-    words = string.split("_")
-    return words[0] + "".join(word.capitalize() for word in words[1:])
+    input_string = input_string.replace(" ", "_")
+    input_string = re.sub(r"([A-Z])", r"_\1", input_string).lower()
+    return input_string.lstrip("_")
 
-def camel_case_to_snake_case(string):
+def truncate_string(input_string: str, max_length: int = 50) -> str:
     """
-    Converts a camelCase string to snake_case.
+    Truncate a string to a specified maximum length.
 
     Args:
-        string (str): The input string.
+    input_string (str): The string to truncate.
+    max_length (int): The maximum length of the string. Defaults to 50.
 
     Returns:
-        str: The snake_case equivalent of the input string.
+    str: The truncated string.
     """
-    snake_case = ""
-    for i, char in enumerate(string):
-        if char.isupper():
-            snake_case += "_" + char.lower()
-        else:
-            snake_case += char
-    return snake_case
-
-def truncate_string(string, length):
-    """
-    Truncates a string to a specified length.
-
-    Args:
-        string (str): The input string.
-        length (int): The desired length.
-
-    Returns:
-        str: The truncated string.
-    """
-    if len(string) > length:
-        return string[:length] + "..."
-    return string
+    if len(input_string) > max_length:
+        return input_string[: max_length - 3] + "..."
+    return input_string
 ```

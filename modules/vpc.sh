@@ -33,7 +33,7 @@ function vpc_handler() {
       show_vpc_help
       ;;
     create)
-      if [[ -n "$1" ]]; then
+      if [[ $# -ne 0 ]]; then
         echo "[ERROR] Usage: meshram vpc create"
         show_vpc_help
         return 1
@@ -41,7 +41,7 @@ function vpc_handler() {
       vpc_create
       ;;
     list)
-      if [[ -n "$1" ]]; then
+      if [[ $# -ne 0 ]]; then
         echo "[ERROR] Usage: meshram vpc list"
         show_vpc_help
         return 1
@@ -49,7 +49,7 @@ function vpc_handler() {
       vpc_list
       ;;
     delete)
-      if [[ -z "$1" ]]; then
+      if [[ $# -ne 1 ]]; then
         echo "[ERROR] Usage: meshram vpc delete <vpc-id>"
         show_vpc_help
         return 1

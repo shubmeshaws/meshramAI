@@ -10,6 +10,15 @@ function show_vpc_help() {
   echo "  meshram vpc delete <vpc-id>       - Delete a VPC"
 }
 
+function validate_vpc_id() {
+  local vpc_id="$1"
+  if ! [[ "$vpc_id" =~ ^vpc-[a-z0-9]{17}$ ]]; then
+    echo "[ERROR] Invalid VPC ID: $vpc_id. Please use a valid VPC ID."
+    show_vpc_help
+    return 1
+  fi
+}
+
 function vpc_handler() {
   if [[ -z "$1" ]]; then
     echo "[ERROR] No command provided. Please use one of the following commands: create, list, delete"
@@ -45,6 +54,9 @@ function vpc_handler() {
         show_vpc_help
         return 1
       fi
+      if ! validate_vpc_id "$1"; then
+        return 1
+      fi
       vpc_delete "$@"
       ;;
     *)
@@ -72,11 +84,6 @@ function vpc_list() {
 
 function vpc_delete() {
   local vpc_id="$1"
-  if ! [[ "$vpc_id" =~ ^vpc-[a-z0-9]{17}$ ]]; then
-    echo "[ERROR] Invalid VPC ID: $vpc_id. Please use a valid VPC ID."
-    show_vpc_help
-    return 1
-  fi
   echo "[INFO] Deleting VPC $vpc_id..." | tee -a "$LOG_FILE"
   if ! bash "$SCRIPT_DIR/modules/vpc/delete.sh" "$vpc_id" | tee -a "$LOG_FILE"; then
     echo "[ERROR] Failed to delete VPC $vpc_id. Please check the logs for more information." | tee -a "$LOG_FILE"

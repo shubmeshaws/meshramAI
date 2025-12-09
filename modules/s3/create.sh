@@ -9,6 +9,14 @@ while [ -L "$SOURCE" ]; do
 done
 SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")/../.." >/dev/null 2>&1 && pwd)"
 
+function is_aws_cli_installed() {
+  command -v aws &> /dev/null
+}
+
+function is_aws_cli_configured() {
+  aws sts get-caller-identity &> /dev/null
+}
+
 function s3_create() {
   BUCKET_NAME="$1"
   INPUT_REGION="$2"
@@ -24,14 +32,12 @@ function s3_create() {
     return 1
   fi
 
-  # Check if AWS CLI is installed
-  if ! command -v aws &> /dev/null; then
+  if ! is_aws_cli_installed; then
     echo "[ERROR] AWS CLI is not installed or not in the system's PATH."
     return 1
   fi
 
-  # Check if AWS CLI is configured
-  if ! aws sts get-caller-identity &> /dev/null; then
+  if ! is_aws_cli_configured; then
     echo "[ERROR] AWS CLI is not configured. Please run 'aws configure' to set up your credentials."
     return 1
   fi

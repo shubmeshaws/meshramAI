@@ -1,68 +1,59 @@
 ```python
 """
-String utility module.
-
-This module provides functions for string manipulation and formatting.
+This module provides utility functions for string manipulation and validation.
 """
 
 import re
 
-def camel_to_snake_case(camel_str: str) -> str:
+def is_empty_string(input_string: str) -> bool:
     """
-    Convert a camel case string to snake case.
+    Checks if a given string is empty or contains only whitespace characters.
 
     Args:
-    - camel_str (str): The camel case string to convert.
+        input_string (str): The input string to check.
 
     Returns:
-    - str: The snake case equivalent of the input string.
+        bool: True if the string is empty, False otherwise.
     """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', camel_str).lower()
+    return not input_string.strip()
 
-
-def snake_to_camel_case(snake_str: str) -> str:
+def validate_email(email: str) -> bool:
     """
-    Convert a snake case string to camel case.
+    Validates an email address using a regular expression.
 
     Args:
-    - snake_str (str): The snake case string to convert.
+        email (str): The email address to validate.
 
     Returns:
-    - str: The camel case equivalent of the input string.
+        bool: True if the email is valid, False otherwise.
     """
-    components = snake_str.split('_')
-    return components[0] + ''.join(x.title() for x in components[1:])
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email))
 
-
-def truncate_string(input_str: str, max_length: int) -> str:
+def remove_special_characters(input_string: str) -> str:
     """
-    Truncate a string to a specified maximum length.
+    Removes special characters from a given string.
 
     Args:
-    - input_str (str): The input string to truncate.
-    - max_length (int): The maximum length of the output string.
+        input_string (str): The input string to clean.
 
     Returns:
-    - str: The truncated string.
+        str: The cleaned string without special characters.
     """
-    if len(input_str) > max_length:
-        return input_str[:max_length - 3] + '...'
-    return input_str
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
 
-
-def pad_string(input_str: str, min_length: int, pad_char: str = ' ') -> str:
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Pad a string to a specified minimum length.
+    Truncates a given string to a specified maximum length.
 
     Args:
-    - input_str (str): The input string to pad.
-    - min_length (int): The minimum length of the output string.
-    - pad_char (str): The character to use for padding (default: space).
+        input_string (str): The input string to truncate.
+        max_length (int): The maximum length of the output string.
 
     Returns:
-    - str: The padded string.
+        str: The truncated string.
     """
-    if len(input_str) < min_length:
-        return input_str + pad_char * (min_length - len(input_str))
-    return input_str
+    if len(input_string) > max_length:
+        return input_string[:max_length] + "..."
+    return input_string
 ```

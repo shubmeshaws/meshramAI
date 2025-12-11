@@ -1,70 +1,68 @@
 ```python
 """
-This module provides utility functions for common string operations.
+String utility module.
+
+This module provides functions for string manipulation and formatting.
 """
 
 import re
 
-def remove_special_chars(input_str):
+def camel_to_snake_case(camel_str: str) -> str:
     """
-    Removes special characters from the input string.
+    Convert a camel case string to snake case.
 
     Args:
-        input_str (str): The input string.
+    - camel_str (str): The camel case string to convert.
 
     Returns:
-        str: The input string without special characters.
+    - str: The snake case equivalent of the input string.
     """
-    return re.sub('[^A-Za-z0-9]+', '', input_str)
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', camel_str).lower()
 
-def convert_to_lowercase(input_str):
+
+def snake_to_camel_case(snake_str: str) -> str:
     """
-    Converts the input string to lowercase.
+    Convert a snake case string to camel case.
 
     Args:
-        input_str (str): The input string.
+    - snake_str (str): The snake case string to convert.
 
     Returns:
-        str: The input string in lowercase.
+    - str: The camel case equivalent of the input string.
     """
-    return input_str.lower()
+    components = snake_str.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
 
-def remove_whitespace(input_str):
+
+def truncate_string(input_str: str, max_length: int) -> str:
     """
-    Removes leading and trailing whitespace from the input string.
+    Truncate a string to a specified maximum length.
 
     Args:
-        input_str (str): The input string.
+    - input_str (str): The input string to truncate.
+    - max_length (int): The maximum length of the output string.
 
     Returns:
-        str: The input string without leading and trailing whitespace.
-    """
-    return input_str.strip()
-
-def truncate_string(input_str, max_length):
-    """
-    Truncates the input string to the specified maximum length.
-
-    Args:
-        input_str (str): The input string.
-        max_length (int): The maximum length of the output string.
-
-    Returns:
-        str: The truncated input string.
+    - str: The truncated string.
     """
     if len(input_str) > max_length:
-        return input_str[:max_length]
+        return input_str[:max_length - 3] + '...'
     return input_str
 
-def is_empty_string(input_str):
+
+def pad_string(input_str: str, min_length: int, pad_char: str = ' ') -> str:
     """
-    Checks if the input string is empty or contains only whitespace.
+    Pad a string to a specified minimum length.
 
     Args:
-        input_str (str): The input string.
+    - input_str (str): The input string to pad.
+    - min_length (int): The minimum length of the output string.
+    - pad_char (str): The character to use for padding (default: space).
 
     Returns:
-        bool: True if the input string is empty or contains only whitespace, False otherwise.
+    - str: The padded string.
     """
-    return not input_str.strip()
+    if len(input_str) < min_length:
+        return input_str + pad_char * (min_length - len(input_str))
+    return input_str
 ```

@@ -1,11 +1,27 @@
 ```bash
 #!/bin/bash
 
+function is_valid_region() {
+  local REGION="$1"
+  local VALID_REGIONS=$(aws ec2 describe-regions --query 'Regions[*].RegionName' --output text)
+  for region in $VALID_REGIONS; do
+    if [ "$region" = "$REGION" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
 function get_available_images() {
   local OS="$1"
   local REGION="$2"
   local MAX_RETRIES=3
   local RETRY_DELAY=5
+
+  if ! is_valid_region "$REGION"; then
+    echo "[ERROR] Invalid AWS region: $REGION"
+    return 1
+  fi
 
   case "$OS" in
     ubuntu24)
@@ -35,7 +51,7 @@ function get_available_images() {
     if [ $RETURN_CODE -eq 0 ]; then
       break
     fi
-    ERROR_MSG=$(echo "$OUTPUT" | grep -v "ImageId" | sed 's/.*\(\(.*\)\).*/\1/')
+    ERROR_MSG=$(echo "$OUTPUT" | grep -v "ImageId" | sed 's/.*\(\(.*\)\).*//')
     if [ -z "$ERROR_MSG" ]; then
       ERROR_MSG="Unknown error"
     fi

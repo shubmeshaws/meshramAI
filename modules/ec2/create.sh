@@ -55,7 +55,7 @@ function get_available_images() {
     elif [ $RETURN_CODE -eq 254 ]; then
       ERROR_MSG="AWS CLI command timed out"
     else
-      ERROR_MSG=$(echo "$OUTPUT" | grep -v "ImageId" | sed 's/.*\(\(.*\)\).*/\1/')
+      ERROR_MSG=$(echo "$OUTPUT" | grep -vE '(ImageId|CreationDate)')
       if [ -z "$ERROR_MSG" ]; then
         ERROR_MSG="Unknown error"
       fi

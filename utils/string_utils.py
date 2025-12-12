@@ -1,58 +1,57 @@
 ```python
-"""
-Utility functions for string manipulation.
-"""
+# utils/string_utils.py
 
 import re
 
-def to_title_case(input_string: str) -> str:
+def is_valid_ipv4_address(ip_address: str) -> bool:
     """
-    Converts a string to title case.
+    Validate if a given string is a valid IPv4 address.
     
     Args:
-    input_string (str): The string to convert.
+    ip_address (str): The IP address to validate.
     
     Returns:
-    str: The input string in title case.
+    bool: True if the IP address is valid, False otherwise.
     """
-    return input_string.title()
+    ipv4_pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ipv4_pattern, ip_address))
 
-def remove_special_chars(input_string: str) -> str:
+def is_valid_ipv6_address(ip_address: str) -> bool:
     """
-    Removes special characters from a string.
+    Validate if a given string is a valid IPv6 address.
     
     Args:
-    input_string (str): The string to clean.
+    ip_address (str): The IP address to validate.
+    
+    Returns:
+    bool: True if the IP address is valid, False otherwise.
+    """
+    ipv6_pattern = r"^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}$"
+    return bool(re.match(ipv6_pattern, ip_address))
+
+def validate_string_length(input_string: str, min_length: int, max_length: int) -> bool:
+    """
+    Validate if a given string length is within a specified range.
+    
+    Args:
+    input_string (str): The input string to validate.
+    min_length (int): The minimum allowed length.
+    max_length (int): The maximum allowed length.
+    
+    Returns:
+    bool: True if the string length is within the specified range, False otherwise.
+    """
+    return min_length <= len(input_string) <= max_length
+
+def remove_special_characters(input_string: str) -> str:
+    """
+    Remove special characters from a given string.
+    
+    Args:
+    input_string (str): The input string to process.
     
     Returns:
     str: The input string with special characters removed.
     """
-    return re.sub('[^A-Za-z0-9\s]+', '', input_string)
-
-def remove_extra_spaces(input_string: str) -> str:
-    """
-    Removes extra spaces from a string.
-    
-    Args:
-    input_string (str): The string to clean.
-    
-    Returns:
-    str: The input string with extra spaces removed.
-    """
-    return re.sub(' +', ' ', input_string)
-
-def truncate_string(input_string: str, max_length: int) -> str:
-    """
-    Truncates a string to a specified length.
-    
-    Args:
-    input_string (str): The string to truncate.
-    max_length (int): The maximum length of the string.
-    
-    Returns:
-    str: The input string truncated to the specified length.
-    """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + '...'
-    return input_string
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 ```

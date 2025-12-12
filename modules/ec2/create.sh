@@ -50,10 +50,15 @@ function get_available_images() {
     local RETURN_CODE=$?
     if [ $RETURN_CODE -eq 0 ]; then
       break
-    fi
-    ERROR_MSG=$(echo "$OUTPUT" | grep -v "ImageId" | sed 's/.*\(\(.*\)\).*//')
-    if [ -z "$ERROR_MSG" ]; then
-      ERROR_MSG="Unknown error"
+    elif [ $RETURN_CODE -eq 255 ]; then
+      ERROR_MSG="AWS CLI command failed"
+    elif [ $RETURN_CODE -eq 254 ]; then
+      ERROR_MSG="AWS CLI command timed out"
+    else
+      ERROR_MSG=$(echo "$OUTPUT" | grep -v "ImageId" | sed 's/.*\(\(.*\)\).*/\1/')
+      if [ -z "$ERROR_MSG" ]; then
+        ERROR_MSG="Unknown error"
+      fi
     fi
     echo "[WARNING] Failed to describe images for $OS in $REGION (attempt $RETRY_COUNT/$MAX_RETRIES): $ERROR_MSG"
     RETRY_COUNT=$((RETRY_COUNT + 1))

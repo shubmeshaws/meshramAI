@@ -16,6 +16,12 @@ function s3_delete() {
     return 1
   fi
 
+  # Validate region
+  if ! aws s3 ls "s3://$INPUT_REGION" &> /dev/null; then
+    echo "[ERROR] Invalid region '$INPUT_REGION'. Please check the region name."
+    return 1
+  fi
+
   REGION="$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf")"
   REGION="${REGION:-$INPUT_REGION}"
 

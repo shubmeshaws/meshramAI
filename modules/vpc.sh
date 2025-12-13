@@ -1,7 +1,16 @@
 ```bash
 #!/bin/bash
 
-#bash "$SCRIPT_DIR/modules/vpc/create.sh"
+# Check if required variables are set
+if [ -z "$LOG_FILE" ]; then
+  echo "[ERROR] LOG_FILE variable is not set."
+  exit 1
+fi
+
+if [ -z "$SCRIPT_DIR" ]; then
+  echo "[ERROR] SCRIPT_DIR variable is not set."
+  exit 1
+fi
 
 function show_vpc_help() {
   echo "VPC service commands:"

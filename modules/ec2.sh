@@ -52,26 +52,26 @@ function ec2_handler() {
   esac
 }
 
-function ec2_create() {
-  if [ ! -f "$SCRIPT_DIR/modules/ec2/create.sh" ]; then
-    echo "[ERROR] create.sh script not found" | tee -a "$LOG_FILE"
+function execute_script() {
+  local script_name="$1"
+  shift
+  local args=("$@")
+  if [ ! -f "$SCRIPT_DIR/modules/ec2/$script_name.sh" ]; then
+    echo "[ERROR] $script_name.sh script not found" | tee -a "$LOG_FILE"
     exit 1
   fi
-  if ! bash "$SCRIPT_DIR/modules/ec2/create.sh" | tee -a "$LOG_FILE"; then
-    echo "[ERROR] Failed to launch EC2 instance" | tee -a "$LOG_FILE"
+  if ! bash "$SCRIPT_DIR/modules/ec2/$script_name.sh" "${args[@]}" | tee -a "$LOG_FILE"; then
+    echo "[ERROR] Failed to execute $script_name.sh" | tee -a "$LOG_FILE"
     exit 1
   fi
 }
 
+function ec2_create() {
+  execute_script "create"
+}
+
 function ec2_list() {
-  if [ ! -f "$SCRIPT_DIR/modules/ec2/list.sh" ]; then
-    echo "[ERROR] list.sh script not found" | tee -a "$LOG_FILE"
-    exit 1
-  fi
-  if ! bash "$SCRIPT_DIR/modules/ec2/list.sh" | tee -a "$LOG_FILE"; then
-    echo "[ERROR] Failed to list EC2 instances" | tee -a "$LOG_FILE"
-    exit 1
-  fi
+  execute_script "list"
 }
 
 function ec2_terminate() {
@@ -80,13 +80,6 @@ function ec2_terminate() {
     echo "[ERROR] Usage: meshram ec2 terminate <instance-id>"
     exit 1
   fi
-  if [ ! -f "$SCRIPT_DIR/modules/ec2/terminate.sh" ]; then
-    echo "[ERROR] terminate.sh script not found" | tee -a "$LOG_FILE"
-    exit 1
-  fi
-  if ! bash "$SCRIPT_DIR/modules/ec2/terminate.sh" "$instance_id" | tee -a "$LOG_FILE"; then
-    echo "[ERROR] Failed to terminate EC2 instance $instance_id" | tee -a "$LOG_FILE"
-    exit 1
-  fi
+  execute_script "terminate" "$instance_id"
 }
 ```

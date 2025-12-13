@@ -1,57 +1,74 @@
 ```python
-# utils/string_utils.py
+"""
+String utility functions.
+
+This module provides various functions for working with strings, including validation, formatting, and manipulation.
+"""
 
 import re
 
-def is_valid_ipv4_address(ip_address: str) -> bool:
+def is_empty_string(input_string: str) -> bool:
     """
-    Validate if a given string is a valid IPv4 address.
-    
-    Args:
-    ip_address (str): The IP address to validate.
-    
-    Returns:
-    bool: True if the IP address is valid, False otherwise.
-    """
-    ipv4_pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ipv4_pattern, ip_address))
+    Check if a string is empty or contains only whitespace characters.
 
-def is_valid_ipv6_address(ip_address: str) -> bool:
-    """
-    Validate if a given string is a valid IPv6 address.
-    
     Args:
-    ip_address (str): The IP address to validate.
-    
-    Returns:
-    bool: True if the IP address is valid, False otherwise.
-    """
-    ipv6_pattern = r"^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}$"
-    return bool(re.match(ipv6_pattern, ip_address))
+        input_string (str): The input string to check.
 
-def validate_string_length(input_string: str, min_length: int, max_length: int) -> bool:
-    """
-    Validate if a given string length is within a specified range.
-    
-    Args:
-    input_string (str): The input string to validate.
-    min_length (int): The minimum allowed length.
-    max_length (int): The maximum allowed length.
-    
     Returns:
-    bool: True if the string length is within the specified range, False otherwise.
+        bool: True if the string is empty or contains only whitespace characters, False otherwise.
     """
-    return min_length <= len(input_string) <= max_length
+    return not input_string.strip()
+
+def validate_email(email: str) -> bool:
+    """
+    Validate an email address.
+
+    Args:
+        email (str): The email address to validate.
+
+    Returns:
+        bool: True if the email address is valid, False otherwise.
+    """
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email))
+
+def format_string(input_string: str, **kwargs) -> str:
+    """
+    Format a string using keyword arguments.
+
+    Args:
+        input_string (str): The input string to format.
+        **kwargs: Keyword arguments to use for formatting.
+
+    Returns:
+        str: The formatted string.
+    """
+    return input_string.format(**kwargs)
+
+def truncate_string(input_string: str, max_length: int) -> str:
+    """
+    Truncate a string to a specified maximum length.
+
+    Args:
+        input_string (str): The input string to truncate.
+        max_length (int): The maximum length of the truncated string.
+
+    Returns:
+        str: The truncated string.
+    """
+    if len(input_string) > max_length:
+        return input_string[:max_length - 3] + "..."
+    return input_string
 
 def remove_special_characters(input_string: str) -> str:
     """
-    Remove special characters from a given string.
-    
+    Remove special characters from a string.
+
     Args:
-    input_string (str): The input string to process.
-    
+        input_string (str): The input string to clean.
+
     Returns:
-    str: The input string with special characters removed.
+        str: The cleaned string.
     """
-    return re.sub('[^A-Za-z0-9]+', '', input_string)
+    return re.sub(r"[^a-zA-Z0-9\s]", "", input_string)
 ```

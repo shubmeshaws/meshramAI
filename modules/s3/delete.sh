@@ -43,7 +43,15 @@ function s3_delete() {
   fi
 
   echo "[WARNING] Deleting S3 bucket '$BUCKET_NAME' in region '$REGION'..."
-  
+
+  # Empty the bucket before deletion
+  echo "[INFO] Emptying bucket '$BUCKET_NAME'..."
+  if ! aws s3 rm s3://"$BUCKET_NAME" --recursive --region "$REGION"; then
+    echo "[ERROR] Failed to empty bucket '$BUCKET_NAME' in region '$REGION'"
+    return 1
+  fi
+
+  # Delete the bucket
   if ! output=$(aws s3api delete-bucket --bucket "$BUCKET_NAME" --region "$REGION" 2>&1); then
     case $? in
       254) # Bucket is not empty

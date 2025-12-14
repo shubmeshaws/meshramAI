@@ -1,6 +1,8 @@
 ```bash
 #!/bin/bash
 
+set -eu
+
 function s3_delete() {
   BUCKET_NAME="$1"
   INPUT_REGION="$2"

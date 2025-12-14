@@ -1,13 +1,11 @@
 ```python
-# utils/string_utils.py
-
 """
-Utility functions for common string operations.
+String utility functions.
 """
 
 import re
 
-def validate_email(email: str) -> bool:
+def is_valid_email(email: str) -> bool:
     """
     Validate an email address.
 
@@ -17,10 +15,10 @@ def validate_email(email: str) -> bool:
     Returns:
     bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     return bool(re.match(email_regex, email))
 
-def validate_ip_address(ip_address: str) -> bool:
+def is_valid_ip_address(ip_address: str) -> bool:
     """
     Validate an IP address.
 
@@ -30,25 +28,24 @@ def validate_ip_address(ip_address: str) -> bool:
     Returns:
     bool: True if the IP address is valid, False otherwise.
     """
-    ip_address_regex = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
+    ip_address_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
     return bool(re.match(ip_address_regex, ip_address))
 
-def format_string(input_string: str, **kwargs) -> str:
+def remove_special_chars(input_string: str) -> str:
     """
-    Format a string using keyword arguments.
+    Remove special characters from a string.
 
     Args:
-    input_string (str): The string to format.
-    **kwargs: Keyword arguments to replace placeholders in the string.
+    input_string (str): The string to remove special characters from.
 
     Returns:
-    str: The formatted string.
+    str: The input string with special characters removed.
     """
-    return input_string.format(**kwargs)
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 
 def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncate a string to a maximum length.
+    Truncate a string to a specified length.
 
     Args:
     input_string (str): The string to truncate.
@@ -58,13 +55,6 @@ def truncate_string(input_string: str, max_length: int) -> str:
     str: The truncated string.
     """
     if len(input_string) > max_length:
-        return input_string[:max_length - 3] + "..."
+        return input_string[:max_length] + "..."
     return input_string
-
-# Example usage
-if __name__ == "__main__":
-    print(validate_email("example@example.com"))  # True
-    print(validate_ip_address("192.168.1.1"))  # True
-    print(format_string("Hello, {name}!", name="John"))  # Hello, John!
-    print(truncate_string("This is a very long string", 10))  # This is a...
 ```

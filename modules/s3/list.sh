@@ -19,7 +19,14 @@ function s3_list() {
     echo "$output"
     echo "[INFO] S3 buckets listed successfully."
   else
-    echo "[ERROR] Failed to list S3 buckets. Error: $output"
+    case $? in
+      255)
+        echo "[ERROR] AWS CLI command failed with an unknown error."
+        ;;
+      *)
+        echo "[ERROR] Failed to list S3 buckets. Error: $output"
+        ;;
+    esac
   fi
 }
 ```

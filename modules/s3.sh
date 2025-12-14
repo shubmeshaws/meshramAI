@@ -5,6 +5,13 @@ function log() {
   echo "[$level] $message" | tee -a "$LOG_FILE"
 }
 
+function handle_error() {
+  local exit_code=$1
+  local command="$2"
+  log "ERROR" "Failed to execute command '$command' (exit code: $exit_code)"
+  exit $exit_code
+}
+
 function validate_input() {
   if [[ -z "$1" || -z "$2" ]]; then
     log "ERROR" "Usage: meshram s3 create <bucket-name> <region> [public|private]"
@@ -24,18 +31,14 @@ function s3_create() {
   local region=$(map_region_name "$input_region")
   log "INFO" "Creating bucket '$bucket_name' in region '$region' with ACL '$acl'..."
   if ! bash "$SCRIPT_DIR/modules/s3/create.sh" "$bucket_name" "$region" "$acl" | tee -a "$LOG_FILE"; then
-    local exit_code=$?
-    log "ERROR" "Failed to create bucket '$bucket_name' (exit code: $exit_code)"
-    exit $exit_code
+    handle_error $? "s3 create"
   fi
 }
 
 function s3_list() {
   log "INFO" "Listing S3 buckets..."
   if ! bash "$SCRIPT_DIR/modules/s3/list.sh" | tee -a "$LOG_FILE"; then
-    local exit_code=$?
-    log "ERROR" "Failed to list S3 buckets (exit code: $exit_code)"
-    exit $exit_code
+    handle_error $? "s3 list"
   fi
 }
 
@@ -46,9 +49,7 @@ function s3_delete() {
   fi
   log "INFO" "Deleting bucket '$1'..."
   if ! bash "$SCRIPT_DIR/modules/s3/delete.sh" "$1" | tee -a "$LOG_FILE"; then
-    local exit_code=$?
-    log "ERROR" "Failed to delete bucket '$1' (exit code: $exit_code)"
-    exit $exit_code
+    handle_error $? "s3 delete"
   fi
 }
 ```

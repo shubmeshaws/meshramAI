@@ -13,6 +13,27 @@ if [ -z "$LOG_FILE" ]; then
   exit 1
 fi
 
+# Check if SCRIPT_DIR and LOG_FILE directories exist and are writable
+if [ ! -d "$SCRIPT_DIR" ]; then
+  echo "[ERROR] SCRIPT_DIR directory does not exist: $SCRIPT_DIR"
+  exit 1
+fi
+
+if [ ! -d "$(dirname "$LOG_FILE")" ]; then
+  echo "[ERROR] LOG_FILE directory does not exist: $(dirname "$LOG_FILE")"
+  exit 1
+fi
+
+if [ ! -w "$SCRIPT_DIR" ]; then
+  echo "[ERROR] SCRIPT_DIR directory is not writable: $SCRIPT_DIR"
+  exit 1
+fi
+
+if [ ! -w "$(dirname "$LOG_FILE")" ]; then
+  echo "[ERROR] LOG_FILE directory is not writable: $(dirname "$LOG_FILE")"
+  exit 1
+fi
+
 function show_ec2_help() {
   echo "EC2 service commands:"
   echo "  meshram ec2 create                 - Launch an EC2 instance"

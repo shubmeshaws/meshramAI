@@ -1,60 +1,57 @@
 ```python
 """
-Utility functions for string manipulation and formatting.
+String utility functions for the project.
 """
 
 import re
 
-def camel_case_to_snake_case(input_string):
+def validate_email(email: str) -> bool:
     """
-    Convert a camel case string to snake case.
+    Validate an email address.
 
     Args:
-        input_string (str): The input string in camel case.
+    email (str): The email address to validate.
 
     Returns:
-        str: The input string converted to snake case.
+    bool: True if the email is valid, False otherwise.
     """
-    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', input_string)
-    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
+    return bool(re.match(email_regex, email))
 
-def snake_case_to_camel_case(input_string):
+def validate_ip_address(ip_address: str) -> bool:
     """
-    Convert a snake case string to camel case.
+    Validate an IP address.
 
     Args:
-        input_string (str): The input string in snake case.
+    ip_address (str): The IP address to validate.
 
     Returns:
-        str: The input string converted to camel case.
+    bool: True if the IP address is valid, False otherwise.
     """
-    words = input_string.split('_')
-    return words[0] + ''.join(word.capitalize() for word in words[1:])
+    ip_address_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_address_regex, ip_address))
 
-def truncate_string(input_string, max_length):
+def remove_special_characters(input_string: str) -> str:
     """
-    Truncate a string to a specified maximum length.
+    Remove special characters from a string.
 
     Args:
-        input_string (str): The input string.
-        max_length (int): The maximum length of the output string.
+    input_string (str): The string to remove special characters from.
 
     Returns:
-        str: The input string truncated to the specified maximum length.
+    str: The input string without special characters.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + '...'
-    return input_string
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 
-def remove_whitespace(input_string):
+def convert_to_snake_case(input_string: str) -> str:
     """
-    Remove all whitespace characters from a string.
+    Convert a string to snake case.
 
     Args:
-        input_string (str): The input string.
+    input_string (str): The string to convert to snake case.
 
     Returns:
-        str: The input string with all whitespace characters removed.
+    str: The input string in snake case.
     """
-    return input_string.replace(' ', '')
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
 ```

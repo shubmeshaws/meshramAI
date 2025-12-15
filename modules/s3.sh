@@ -52,4 +52,27 @@ function s3_delete() {
     handle_error $? "s3 delete"
   fi
 }
+
+function main() {
+  case $1 in
+    create)
+      shift
+      s3_create "$@"
+      ;;
+    list)
+      shift
+      s3_list
+      ;;
+    delete)
+      shift
+      s3_delete "$@"
+      ;;
+    *)
+      log "ERROR" "Unknown command: $1"
+      exit 1
+      ;;
+  esac
+}
+
+main "$@"
 ```

@@ -42,7 +42,11 @@ function s3_create() {
     return 1
   fi
 
-  REGION="$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf")"
+  if ! REGION=$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf" 2>/dev/null); then
+    echo "[ERROR] Failed to read regions.conf or region '$INPUT_REGION' not found."
+    return 1
+  fi
+
   REGION="${REGION:-$INPUT_REGION}"
 
   echo "[INFO] Creating bucket '$BUCKET_NAME' in region '$REGION' with ACL '$ACL'..."

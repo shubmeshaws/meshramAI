@@ -24,6 +24,17 @@ function s3_delete() {
     return 1
   fi
 
+  # Validate AWS CLI installation and configuration
+  if ! command -v aws &> /dev/null; then
+    echo "[ERROR] AWS CLI is not installed or not in the system's PATH."
+    return 1
+  fi
+
+  if ! aws sts get-caller-identity &> /dev/null; then
+    echo "[ERROR] AWS CLI is not configured properly. Please run 'aws configure' to set up your AWS credentials."
+    return 1
+  fi
+
   REGION="$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf")"
   REGION="${REGION:-$INPUT_REGION}"
 

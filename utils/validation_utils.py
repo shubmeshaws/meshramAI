@@ -37,48 +37,32 @@ def validate_url(url):
         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
     return bool(url_pattern.match(url))
 
-def validate_aws_resource_name(name):
+def validate_aws_region(region):
     """
-    Validate an AWS resource name.
+    Validate an AWS region.
 
     Args:
-        name (str): The AWS resource name to validate.
+        region (str): The AWS region to validate.
 
     Returns:
-        bool: True if the AWS resource name is valid, False otherwise.
+        bool: True if the AWS region is valid, False otherwise.
     """
-    # AWS resource names can contain letters (a-z, A-Z), numbers (0-9), and hyphens (-)
-    # They cannot start with a hyphen or contain consecutive hyphens
-    pattern = re.compile(r'^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$')
-    return bool(pattern.match(name))
+    # Load valid regions from regions.conf
+    with open('regions.conf', 'r') as f:
+        valid_regions = [line.strip() for line in f.readlines()]
+    return region in valid_regions
 
-def validate_aws_tag_key(key):
+def validate_string_length(s, min_length=1, max_length=255):
     """
-    Validate an AWS tag key.
+    Validate the length of a string.
 
     Args:
-        key (str): The AWS tag key to validate.
+        s (str): The string to validate.
+        min_length (int): The minimum allowed length. Defaults to 1.
+        max_length (int): The maximum allowed length. Defaults to 255.
 
     Returns:
-        bool: True if the AWS tag key is valid, False otherwise.
+        bool: True if the string length is valid, False otherwise.
     """
-    # AWS tag keys can contain letters (a-z, A-Z), numbers (0-9), and underscores (_)
-    # They cannot be longer than 128 characters
-    pattern = re.compile(r'^[a-zA-Z0-9_]{1,128}$')
-    return bool(pattern.match(key))
-
-def validate_aws_tag_value(value):
-    """
-    Validate an AWS tag value.
-
-    Args:
-        value (str): The AWS tag value to validate.
-
-    Returns:
-        bool: True if the AWS tag value is valid, False otherwise.
-    """
-    # AWS tag values can contain letters (a-z, A-Z), numbers (0-9), and underscores (_)
-    # They cannot be longer than 256 characters
-    pattern = re.compile(r'^[a-zA-Z0-9_]{1,256}$')
-    return bool(pattern.match(value))
+    return min_length <= len(s) <= max_length
 ```

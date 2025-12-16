@@ -1,59 +1,66 @@
 ```python
 """
-String utility functions for various string operations.
+This module provides various string utility functions for general string operations.
 """
 
 import re
 
 def is_empty_string(input_string: str) -> bool:
     """
-    Checks if the input string is empty or None.
+    Checks if a given string is empty.
 
     Args:
     input_string (str): The input string to check.
 
     Returns:
-    bool: True if the input string is empty or None, False otherwise.
+    bool: True if the string is empty, False otherwise.
     """
-    return input_string is None or input_string.strip() == ""
+    return not input_string.strip()
 
-def validate_email(input_string: str) -> bool:
+def validate_email(email: str) -> bool:
     """
-    Validates if the input string is a valid email address.
+    Checks if a given email address is valid.
 
     Args:
-    input_string (str): The input string to validate.
+    email (str): The email address to validate.
 
     Returns:
-    bool: True if the input string is a valid email address, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
     email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, input_string))
+    return bool(re.match(email_regex, email))
 
-def remove_special_characters(input_string: str) -> str:
+def remove_special_chars(input_string: str) -> str:
     """
-    Removes special characters from the input string.
+    Removes special characters from a given string.
 
     Args:
     input_string (str): The input string to clean.
 
     Returns:
-    str: The input string without special characters.
+    str: The cleaned string without special characters.
     """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 
-def truncate_string(input_string: str, length: int) -> str:
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncates the input string to the specified length.
+    Truncates a given string to a specified maximum length.
 
     Args:
     input_string (str): The input string to truncate.
-    length (int): The desired length of the output string.
+    max_length (int): The maximum length of the output string.
 
     Returns:
-    str: The truncated input string.
+    str: The truncated string.
     """
-    if len(input_string) > length:
-        return input_string[:length] + "..."
+    if len(input_string) > max_length:
+        return input_string[:max_length] + '...'
     return input_string
+
+# Example usage:
+if __name__ == "__main__":
+    print(is_empty_string(""))  # Output: True
+    print(validate_email("test@example.com"))  # Output: True
+    print(remove_special_chars("Hello, World!"))  # Output: "HelloWorld"
+    print(truncate_string("This is a very long string", 10))  # Output: "This is a..."
 ```

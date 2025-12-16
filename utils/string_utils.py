@@ -1,57 +1,59 @@
 ```python
 """
-String utility functions for the project.
+String utility functions for various string operations.
 """
 
 import re
 
-def validate_email(email: str) -> bool:
+def is_empty_string(input_string: str) -> bool:
     """
-    Validate an email address.
+    Checks if the input string is empty or None.
 
     Args:
-    email (str): The email address to validate.
+    input_string (str): The input string to check.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+    bool: True if the input string is empty or None, False otherwise.
+    """
+    return input_string is None or input_string.strip() == ""
+
+def validate_email(input_string: str) -> bool:
+    """
+    Validates if the input string is a valid email address.
+
+    Args:
+    input_string (str): The input string to validate.
+
+    Returns:
+    bool: True if the input string is a valid email address, False otherwise.
     """
     email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
-
-def validate_ip_address(ip_address: str) -> bool:
-    """
-    Validate an IP address.
-
-    Args:
-    ip_address (str): The IP address to validate.
-
-    Returns:
-    bool: True if the IP address is valid, False otherwise.
-    """
-    ip_address_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_address_regex, ip_address))
+    return bool(re.match(email_regex, input_string))
 
 def remove_special_characters(input_string: str) -> str:
     """
-    Remove special characters from a string.
+    Removes special characters from the input string.
 
     Args:
-    input_string (str): The string to remove special characters from.
+    input_string (str): The input string to clean.
 
     Returns:
     str: The input string without special characters.
     """
-    return re.sub('[^A-Za-z0-9]+', '', input_string)
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
 
-def convert_to_snake_case(input_string: str) -> str:
+def truncate_string(input_string: str, length: int) -> str:
     """
-    Convert a string to snake case.
+    Truncates the input string to the specified length.
 
     Args:
-    input_string (str): The string to convert to snake case.
+    input_string (str): The input string to truncate.
+    length (int): The desired length of the output string.
 
     Returns:
-    str: The input string in snake case.
+    str: The truncated input string.
     """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
+    if len(input_string) > length:
+        return input_string[:length] + "..."
+    return input_string
 ```

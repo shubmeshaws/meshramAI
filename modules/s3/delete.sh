@@ -55,9 +55,13 @@ function s3_delete() {
     esac
   fi
 
-  echo "[WARNING] Deleting S3 bucket '$BUCKET_NAME' in region '$REGION'..."
+  echo "[WARNING] Deleting S3 bucket '$BUCKET_NAME' in region '$REGION' will PERMANENTLY DELETE all its contents. Are you sure? (y/n)"
+  read -r confirmation
+  if [[ "$confirmation" != "y" ]]; then
+    echo "[INFO] Deletion cancelled."
+    return 0
+  fi
 
-  # Empty the bucket before deletion
   echo "[INFO] Emptying bucket '$BUCKET_NAME'..."
   if ! aws s3 rm s3://"$BUCKET_NAME" --recursive --region "$REGION"; then
     echo "[ERROR] Failed to empty bucket '$BUCKET_NAME' in region '$REGION'"

@@ -23,31 +23,27 @@ except Exception as e:
 
 class Logger:
     def __init__(self, name):
-        try:
-            self.logger = logging.getLogger(name)
-        except Exception as e:
-            logging.error(f"Error creating logger: {str(e)}")
-            raise
+        self.logger = logging.getLogger(name)
 
-    def _log(self, level, message):
+    def log(self, level, message):
         try:
-            level_func = getattr(self.logger, level)
+            level_func = getattr(self.logger, level.lower())
             level_func(message)
         except Exception as e:
             logging.error(f"Error logging {level} message: {str(e)}")
             raise
 
     def info(self, message):
-        self._log('info', message)
+        self.log('INFO', message)
 
     def error(self, message):
-        self._log('error', message)
+        self.log('ERROR', message)
 
     def debug(self, message):
-        self._log('debug', message)
+        self.log('DEBUG', message)
 
     def warn(self, message):
-        self._log('warning', message)
+        self.log('WARNING', message)
 
 def get_logger(name):
     return Logger(name)

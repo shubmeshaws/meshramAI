@@ -49,6 +49,12 @@ function s3_create() {
 
   REGION="${REGION:-$INPUT_REGION}"
 
+  echo "[INFO] Checking if bucket '$BUCKET_NAME' already exists..."
+  if aws s3api head-bucket --bucket "$BUCKET_NAME" &> /dev/null; then
+    echo "[INFO] Bucket '$BUCKET_NAME' already exists."
+    return 0
+  fi
+
   echo "[INFO] Creating bucket '$BUCKET_NAME' in region '$REGION' with ACL '$ACL'..."
 
   if [[ "$REGION" == "us-east-1" ]]; then

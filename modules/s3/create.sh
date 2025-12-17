@@ -59,14 +59,26 @@ function s3_create() {
 
   if [[ "$REGION" == "us-east-1" ]]; then
     if ! output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --acl "$ACL" 2>&1); then
-      echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION':"
-      echo "$output"
+      if echo "$output" | grep -q "BucketAlreadyOwnedByYou"; then
+        echo "[ERROR] Bucket '$BUCKET_NAME' already exists and is owned by you in region '$REGION'."
+      elif echo "$output" | grep -q "BucketAlreadyExists"; then
+        echo "[ERROR] Bucket '$BUCKET_NAME' already exists and is owned by another account."
+      else
+        echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION':"
+        echo "$output"
+      fi
       return 1
     fi
   else
     if ! output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --create-bucket-configuration LocationConstraint="$REGION" --acl "$ACL" 2>&1); then
-      echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION':"
-      echo "$output"
+      if echo "$output" | grep -q "BucketAlreadyOwnedByYou"; then
+        echo "[ERROR] Bucket '$BUCKET_NAME' already exists and is owned by you in region '$REGION'."
+      elif echo "$output" | grep -q "BucketAlreadyExists"; then
+        echo "[ERROR] Bucket '$BUCKET_NAME' already exists and is owned by another account."
+      else
+        echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION':"
+        echo "$output"
+      fi
       return 1
     fi
   fi

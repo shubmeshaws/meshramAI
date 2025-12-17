@@ -14,6 +14,7 @@ if [ -z "$LOG_FILE" ]; then
 fi
 
 function check_directory() {
+  # Check if directory exists and is writable
   local dir="$1"
   if [ ! -d "$dir" ]; then
     echo "[ERROR] Directory does not exist: $dir"
@@ -30,6 +31,7 @@ check_directory "$SCRIPT_DIR"
 check_directory "$(dirname "$LOG_FILE")"
 
 function show_ec2_help() {
+  # Display available EC2 service commands
   echo "EC2 service commands:"
   echo "  meshram ec2 create                 - Launch an EC2 instance"
   echo "  meshram ec2 list                   - List EC2 instances"
@@ -37,6 +39,7 @@ function show_ec2_help() {
 }
 
 function ec2_handler() {
+  # Input validation for ec2_handler function
   if [ $# -eq 0 ]; then
     show_ec2_help
     return
@@ -55,6 +58,7 @@ function ec2_handler() {
       ec2_list
       ;;
     terminate)
+      # Check if instance-id is provided
       if [ $# -ne 1 ]; then
         echo "[ERROR] Usage: meshram ec2 terminate <instance-id>"
         exit 1
@@ -69,6 +73,7 @@ function ec2_handler() {
 }
 
 function execute_script() {
+  # Execute a script with the given name and arguments
   local script_name="$1"
   shift
   local args=("$@")
@@ -91,6 +96,7 @@ function ec2_list() {
 }
 
 function ec2_terminate() {
+  # Input validation for instance-id
   local instance_id="$1"
   if [[ -z "$instance_id" ]]; then
     echo "[ERROR] Usage: meshram ec2 terminate <instance-id>"

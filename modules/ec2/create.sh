@@ -12,6 +12,18 @@ function is_valid_region() {
   return 1
 }
 
+function check_aws_cli() {
+  if ! command -v aws &> /dev/null; then
+    echo "[ERROR] AWS CLI is not installed or not in the system's PATH"
+    return 1
+  fi
+
+  if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
+    echo "[ERROR] AWS credentials are not set"
+    return 1
+  fi
+}
+
 function get_available_images() {
   local OS="$1"
   local REGION="$2"
@@ -20,6 +32,10 @@ function get_available_images() {
 
   if ! is_valid_region "$REGION"; then
     echo "[ERROR] Invalid AWS region: $REGION"
+    return 1
+  fi
+
+  if ! check_aws_cli; then
     return 1
   fi
 

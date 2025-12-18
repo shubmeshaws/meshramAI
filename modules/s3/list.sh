@@ -14,6 +14,12 @@ function s3_list() {
     return
   fi
 
+  # Validate AWS CLI configuration by checking access to S3
+  if ! aws s3 ls &> /dev/null; then
+    echo "[ERROR] Invalid AWS CLI configuration. Please verify your AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY."
+    return
+  fi
+
   echo "[INFO] Listing S3 buckets..."
   if output=$(aws s3api list-buckets --query "Buckets[].Name" --output table 2>&1); then
     echo "$output"

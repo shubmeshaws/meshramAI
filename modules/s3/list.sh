@@ -8,15 +8,9 @@ function s3_list() {
     return
   fi
 
-  # Check if AWS CLI is configured
-  if [ -z "${AWS_ACCESS_KEY_ID}" ] || [ -z "${AWS_SECRET_ACCESS_KEY}" ]; then
-    echo "[ERROR] AWS CLI is not configured. Please set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables."
-    return
-  fi
-
-  # Validate AWS CLI configuration by checking access to S3
-  if ! aws s3 ls &> /dev/null; then
-    echo "[ERROR] Invalid AWS CLI configuration. Please verify your AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY."
+  # Validate AWS CLI configuration by checking access to STS
+  if ! aws sts get-caller-identity &> /dev/null; then
+    echo "[ERROR] Invalid AWS CLI configuration. Please verify your AWS credentials."
     return
   fi
 

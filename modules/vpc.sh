@@ -99,4 +99,10 @@ function vpc_delete() {
     return 1
   fi
 }
+
+function main() {
+  vpc_handler "$@"
+}
+
+main "$@"
 ```

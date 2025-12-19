@@ -1,66 +1,64 @@
 ```python
 """
-String utility functions for validation and manipulation.
+This module provides common string utility functions.
 """
 
 import re
+import ipaddress
 
-def validate_email(email: str) -> bool:
+def to_title_case(input_string):
     """
-    Validate an email address.
-    
+    Converts a string to title case.
+
     Args:
-    email (str): The email address to be validated.
-    
-    Returns:
-    bool: True if the email is valid, False otherwise.
-    """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    return bool(re.match(email_regex, email))
+        input_string (str): The string to convert.
 
-def validate_ip_address(ip_address: str) -> bool:
+    Returns:
+        str: The input string in title case.
     """
-    Validate an IP address.
-    
+    return input_string.title()
+
+def is_valid_ip_address(ip_address):
+    """
+    Checks if a string is a valid IP address.
+
     Args:
-    ip_address (str): The IP address to be validated.
-    
-    Returns:
-    bool: True if the IP address is valid, False otherwise.
-    """
-    ip_address_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_address_regex, ip_address))
+        ip_address (str): The string to check.
 
-def camel_case_to_snake_case(camel_case_string: str) -> str:
+    Returns:
+        bool: True if the string is a valid IP address, False otherwise.
     """
-    Convert a camel case string to snake case.
-    
+    try:
+        ipaddress.ip_address(ip_address)
+        return True
+    except ValueError:
+        return False
+
+def is_valid_domain_name(domain_name):
+    """
+    Checks if a string is a valid domain name.
+
     Args:
-    camel_case_string (str): The camel case string to be converted.
-    
-    Returns:
-    str: The snake case equivalent of the input string.
-    """
-    snake_case_string = re.sub(r'(?<!^)(?=[A-Z])', '_', camel_case_string).lower()
-    return snake_case_string
+        domain_name (str): The string to check.
 
-def snake_case_to_camel_case(snake_case_string: str) -> str:
+    Returns:
+        bool: True if the string is a valid domain name, False otherwise.
     """
-    Convert a snake case string to camel case.
-    
+    pattern = r"^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+$"
+    return bool(re.match(pattern, domain_name))
+
+def truncate_string(input_string, max_length):
+    """
+    Truncates a string to a maximum length.
+
     Args:
-    snake_case_string (str): The snake case string to be converted.
-    
-    Returns:
-    str: The camel case equivalent of the input string.
-    """
-    components = snake_case_string.split('_')
-    return components[0] + ''.join(x.title() for x in components[1:])
+        input_string (str): The string to truncate.
+        max_length (int): The maximum length of the string.
 
-# Example usage
-if __name__ == "__main__":
-    print(validate_email("test@example.com"))  # True
-    print(validate_ip_address("192.168.1.1"))  # True
-    print(camel_case_to_snake_case("HelloWorld"))  # hello_world
-    print(snake_case_to_camel_case("hello_world"))  # helloWorld
+    Returns:
+        str: The input string truncated to the maximum length.
+    """
+    if len(input_string) > max_length:
+        return input_string[:max_length] + "..."
+    return input_string
 ```

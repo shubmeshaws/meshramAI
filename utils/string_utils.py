@@ -1,64 +1,63 @@
 ```python
 """
-This module provides common string utility functions.
+String utility functions.
+
+This module provides a set of functions for common string operations, including
+validation, sanitization, and formatting.
 """
 
 import re
-import ipaddress
 
-def to_title_case(input_string):
+def is_valid_ip_address(ip_address: str) -> bool:
     """
-    Converts a string to title case.
+    Validate an IP address.
 
     Args:
-        input_string (str): The string to convert.
+        ip_address (str): The IP address to validate.
 
     Returns:
-        str: The input string in title case.
+        bool: True if the IP address is valid, False otherwise.
     """
-    return input_string.title()
+    ip_address_pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_address_pattern, ip_address))
 
-def is_valid_ip_address(ip_address):
+def sanitize_string(input_string: str) -> str:
     """
-    Checks if a string is a valid IP address.
+    Sanitize a string by removing special characters and whitespace.
 
     Args:
-        ip_address (str): The string to check.
+        input_string (str): The string to sanitize.
 
     Returns:
-        bool: True if the string is a valid IP address, False otherwise.
+        str: The sanitized string.
     """
-    try:
-        ipaddress.ip_address(ip_address)
-        return True
-    except ValueError:
-        return False
+    return re.sub(r"[^a-zA-Z0-9]", "", input_string)
 
-def is_valid_domain_name(domain_name):
+def format_string(input_string: str, **kwargs) -> str:
     """
-    Checks if a string is a valid domain name.
+    Format a string using keyword arguments.
 
     Args:
-        domain_name (str): The string to check.
+        input_string (str): The string to format.
+        **kwargs: Keyword arguments to use for formatting.
 
     Returns:
-        bool: True if the string is a valid domain name, False otherwise.
+        str: The formatted string.
     """
-    pattern = r"^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+$"
-    return bool(re.match(pattern, domain_name))
+    return input_string.format(**kwargs)
 
-def truncate_string(input_string, max_length):
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncates a string to a maximum length.
+    Truncate a string to a specified maximum length.
 
     Args:
         input_string (str): The string to truncate.
         max_length (int): The maximum length of the string.
 
     Returns:
-        str: The input string truncated to the maximum length.
+        str: The truncated string.
     """
     if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
+        return input_string[:max_length - 3] + "..."
     return input_string
 ```

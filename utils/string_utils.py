@@ -1,63 +1,70 @@
 ```python
 """
-String utility functions.
-
-This module provides a set of functions for common string operations, including
-validation, sanitization, and formatting.
+String utility module for handling string operations.
 """
 
 import re
 
-def is_valid_ip_address(ip_address: str) -> bool:
+def is_empty_string(input_string: str) -> bool:
     """
-    Validate an IP address.
-
+    Checks if the input string is empty or contains only whitespace characters.
+    
     Args:
-        ip_address (str): The IP address to validate.
-
+    input_string (str): The input string to check.
+    
     Returns:
-        bool: True if the IP address is valid, False otherwise.
+    bool: True if the string is empty, False otherwise.
     """
-    ip_address_pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_address_pattern, ip_address))
+    return not input_string.strip()
 
-def sanitize_string(input_string: str) -> str:
+def validate_email(email: str) -> bool:
     """
-    Sanitize a string by removing special characters and whitespace.
-
+    Validates an email address using a regular expression.
+    
     Args:
-        input_string (str): The string to sanitize.
-
+    email (str): The email address to validate.
+    
     Returns:
-        str: The sanitized string.
+    bool: True if the email is valid, False otherwise.
     """
-    return re.sub(r"[^a-zA-Z0-9]", "", input_string)
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email))
 
-def format_string(input_string: str, **kwargs) -> str:
+def extract_substring(input_string: str, start: int, end: int) -> str:
     """
-    Format a string using keyword arguments.
-
+    Extracts a substring from the input string.
+    
     Args:
-        input_string (str): The string to format.
-        **kwargs: Keyword arguments to use for formatting.
-
+    input_string (str): The input string.
+    start (int): The start index of the substring.
+    end (int): The end index of the substring.
+    
     Returns:
-        str: The formatted string.
+    str: The extracted substring.
     """
-    return input_string.format(**kwargs)
+    return input_string[start:end]
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def replace_special_chars(input_string: str, replacement: str = "") -> str:
     """
-    Truncate a string to a specified maximum length.
-
+    Replaces special characters in the input string with the specified replacement.
+    
     Args:
-        input_string (str): The string to truncate.
-        max_length (int): The maximum length of the string.
-
+    input_string (str): The input string.
+    replacement (str): The replacement string. Defaults to an empty string.
+    
     Returns:
-        str: The truncated string.
+    str: The input string with special characters replaced.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length - 3] + "..."
-    return input_string
+    return re.sub(r"[^a-zA-Z0-9\s]", replacement, input_string)
+
+def main():
+    # Example usage
+    email = "example@example.com"
+    print(validate_email(email))  # Output: True
+    
+    input_string = "Hello, World!"
+    print(replace_special_chars(input_string))  # Output: "Hello World"
+
+if __name__ == "__main__":
+    main()
 ```

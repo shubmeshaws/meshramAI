@@ -15,11 +15,17 @@ function s3_list() {
   fi
 
   echo "[INFO] Listing S3 buckets..."
-  if output=$(aws s3api list-buckets --query "Buckets[].Name" --output table 2>&1); then
+  if output=$(timeout 30s aws s3api list-buckets --query "Buckets[].Name" --output table 2>&1); then
     echo "$output"
     echo "[INFO] S3 buckets listed successfully."
   else
     case $? in
+      124)
+        echo "[ERROR] AWS CLI command timed out after 30 seconds."
+        ;;
+      130)
+        echo "[ERROR] AWS CLI command was interrupted. Please try again."
+        ;;
       255)
         echo "[ERROR] AWS CLI command failed with an unknown error."
         ;;

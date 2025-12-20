@@ -1,66 +1,59 @@
 ```python
+"""
+This module provides common string utility functions for validation, formatting, and manipulation.
+"""
+
 import re
 
-def validate_string(input_str, min_length=1, max_length=255):
+def is_valid_email(email: str) -> bool:
     """
-    Validate a string based on its length.
-
+    Validate if the provided string is a valid email address.
+    
     Args:
-        input_str (str): The input string to validate.
-        min_length (int): The minimum allowed length. Defaults to 1.
-        max_length (int): The maximum allowed length. Defaults to 255.
-
+        email (str): The email address to validate.
+    
     Returns:
-        bool: True if the string is valid, False otherwise.
+        bool: True if the email is valid, False otherwise.
     """
-    return min_length <= len(input_str) <= max_length
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(email_regex, email))
 
-def sanitize_string(input_str):
+def is_valid_ip(ip: str) -> bool:
     """
-    Sanitize a string by removing leading/trailing whitespaces and replacing special characters with underscores.
-
+    Validate if the provided string is a valid IP address.
+    
     Args:
-        input_str (str): The input string to sanitize.
-
+        ip (str): The IP address to validate.
+    
     Returns:
-        str: The sanitized string.
+        bool: True if the IP is valid, False otherwise.
     """
-    sanitized_str = input_str.strip()
-    sanitized_str = re.sub(r'[^a-zA-Z0-9_]', '_', sanitized_str)
-    return sanitized_str
+    ip_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_regex, ip))
 
-def format_string(input_str, prefix='', suffix=''):
+def snake_to_camel(snake_str: str) -> str:
     """
-    Format a string by adding a prefix and/or suffix.
-
+    Convert a snake_case string to camelCase.
+    
     Args:
-        input_str (str): The input string to format.
-        prefix (str): The prefix to add. Defaults to ''.
-        suffix (str): The suffix to add. Defaults to ''.
-
+        snake_str (str): The snake_case string to convert.
+    
     Returns:
-        str: The formatted string.
+        str: The converted camelCase string.
     """
-    return f"{prefix}{input_str}{suffix}"
+    components = snake_str.split("_")
+    return components[0] + "".join(x.title() for x in components[1:])
 
-def snake_case_to_camel_case(input_str):
+def camel_to_snake(camel_str: str) -> str:
     """
-    Convert a snake case string to camel case.
-
+    Convert a camelCase string to snake_case.
+    
     Args:
-        input_str (str): The input string to convert.
-
+        camel_str (str): The camelCase string to convert.
+    
     Returns:
-        str: The converted string.
+        str: The converted snake_case string.
     """
-    components = input_str.split('_')
-    return components[0] + ''.join(x.title() for x in components[1:])
-
-# Example usage
-if __name__ == "__main__":
-    input_str = "   hello world   "
-    print(validate_string(input_str))  # Output: True
-    print(sanitize_string(input_str))  # Output: hello_world
-    print(format_string(input_str, 'prefix_', '_suffix'))  # Output: prefix_hello_world_suffix
-    print(snake_case_to_camel_case('hello_world'))  # Output: helloWorld
+    snake_str = "".join(["_" + i.lower() if i.isupper() else i for i in camel_str]).lstrip("_")
+    return snake_str
 ```

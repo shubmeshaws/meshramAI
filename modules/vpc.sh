@@ -12,6 +12,16 @@ if [ -z "$SCRIPT_DIR" ]; then
   exit 1
 fi
 
+function log_info() {
+  local message="$1"
+  echo "[INFO] $message" | tee -a "$LOG_FILE"
+}
+
+function log_error() {
+  local message="$1"
+  echo "[ERROR] $message" | tee -a "$LOG_FILE"
+}
+
 function show_vpc_help() {
   echo "VPC service commands:"
   echo "  meshram vpc create                 - Create a VPC with subnets and NAT"
@@ -22,7 +32,7 @@ function show_vpc_help() {
 function validate_vpc_id() {
   local vpc_id="$1"
   if ! [[ "$vpc_id" =~ ^vpc-[a-z0-9]{17}$ ]]; then
-    echo "[ERROR] Invalid VPC ID: $vpc_id. Please use a valid VPC ID."
+    log_error "Invalid VPC ID: $vpc_id. Please use a valid VPC ID."
     show_vpc_help
     return 1
   fi
@@ -30,7 +40,7 @@ function validate_vpc_id() {
 
 function vpc_handler() {
   if [[ -z "$1" ]]; then
-    echo "[ERROR] No command provided. Please use one of the following commands: create, list, delete"
+    log_error "No command provided. Please use one of the following commands: create, list, delete"
     show_vpc_help
     return 1
   fi
@@ -43,7 +53,7 @@ function vpc_handler() {
       ;;
     create)
       if [[ $# -ne 0 ]]; then
-        echo "[ERROR] Usage: meshram vpc create"
+        log_error "Usage: meshram vpc create"
         show_vpc_help
         return 1
       fi
@@ -51,7 +61,7 @@ function vpc_handler() {
       ;;
     list)
       if [[ $# -ne 0 ]]; then
-        echo "[ERROR] Usage: meshram vpc list"
+        log_error "Usage: meshram vpc list"
         show_vpc_help
         return 1
       fi
@@ -59,7 +69,7 @@ function vpc_handler() {
       ;;
     delete)
       if [[ $# -ne 1 ]]; then
-        echo "[ERROR] Usage: meshram vpc delete <vpc-id>"
+        log_error "Usage: meshram vpc delete <vpc-id>"
         show_vpc_help
         return 1
       fi
@@ -69,33 +79,33 @@ function vpc_handler() {
       vpc_delete "$@"
       ;;
     *)
-      echo "[ERROR] Unknown vpc command: $cmd. Please use one of the following commands: create, list, delete"
+      log_error "Unknown vpc command: $cmd. Please use one of the following commands: create, list, delete"
       show_vpc_help
       ;;
   esac
 }
 
 function vpc_create() {
-  echo "[INFO] Creating VPC..." | tee -a "$LOG_FILE"
+  log_info "Creating VPC..."
   if ! bash "$SCRIPT_DIR/modules/vpc/create.sh" | tee -a "$LOG_FILE"; then
-    echo "[ERROR] Failed to create VPC. Please check the logs for more information." | tee -a "$LOG_FILE"
+    log_error "Failed to create VPC. Please check the logs for more information."
     return 1
   fi
 }
 
 function vpc_list() {
-  echo "[INFO] Listing VPCs..." | tee -a "$LOG_FILE"
+  log_info "Listing VPCs..."
   if ! bash "$SCRIPT_DIR/modules/vpc/list.sh" | tee -a "$LOG_FILE"; then
-    echo "[ERROR] Failed to list VPCs. Please check the logs for more information." | tee -a "$LOG_FILE"
+    log_error "Failed to list VPCs. Please check the logs for more information."
     return 1
   fi
 }
 
 function vpc_delete() {
   local vpc_id="$1"
-  echo "[INFO] Deleting VPC $vpc_id..." | tee -a "$LOG_FILE"
+  log_info "Deleting VPC $vpc_id..."
   if ! bash "$SCRIPT_DIR/modules/vpc/delete.sh" "$vpc_id" | tee -a "$LOG_FILE"; then
-    echo "[ERROR] Failed to delete VPC $vpc_id. Please check the logs for more information." | tee -a "$LOG_FILE"
+    log_error "Failed to delete VPC $vpc_id. Please check the logs for more information."
     return 1
   fi
 }

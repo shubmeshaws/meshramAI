@@ -6,32 +6,31 @@ import os
 LOGGING_LEVEL = os.environ.get('LOGGING_LEVEL', 'INFO')
 
 # Validate the LOGGING_LEVEL environment variable
-valid_levels = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
+valid_levels = {
+    'DEBUG': logging.DEBUG,
+    'INFO': logging.INFO,
+    'WARNING': logging.WARNING,
+    'ERROR': logging.ERROR,
+    'CRITICAL': logging.CRITICAL
+}
+
 if LOGGING_LEVEL.upper() not in valid_levels:
     logging.warning(f"Invalid LOGGING_LEVEL: {LOGGING_LEVEL}. Defaulting to INFO.")
     LOGGING_LEVEL = 'INFO'
 
-try:
-    logging.basicConfig(
-        format='%(asctime)s [%(levelname)s] %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
-        level=getattr(logging, LOGGING_LEVEL.upper())
-    )
-except Exception as e:
-    logging.error(f"Error setting up logging: {str(e)}")
-    raise
+logging.basicConfig(
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+    level=valid_levels[LOGGING_LEVEL.upper()]
+)
 
 class Logger:
     def __init__(self, name):
         self.logger = logging.getLogger(name)
 
     def log(self, level, message):
-        try:
-            level_func = getattr(self.logger, level.lower())
-            level_func(message)
-        except Exception as e:
-            logging.error(f"Error logging {level} message: {str(e)}")
-            raise
+        level_func = getattr(self.logger, level.lower())
+        level_func(message)
 
     def info(self, message):
         self.log('INFO', message)

@@ -1,61 +1,66 @@
 ```python
 """
 String utility functions.
-
-This module provides a set of functions for string manipulation and validation.
 """
 
 import re
 
-def is_empty_string(input_str):
+def is_empty_string(input_string: str) -> bool:
     """
-    Check if a string is empty or contains only whitespace.
+    Checks if the input string is empty or contains only whitespace characters.
 
     Args:
-        input_str (str): The input string to check.
+    input_string (str): The input string to check.
 
     Returns:
-        bool: True if the string is empty or contains only whitespace, False otherwise.
+    bool: True if the string is empty, False otherwise.
     """
-    return input_str.strip() == ""
+    return not input_string.strip()
 
-def validate_email(email):
+def validate_email(input_string: str) -> bool:
     """
-    Validate an email address.
+    Validates if the input string is a valid email address.
 
     Args:
-        email (str): The email address to validate.
+    input_string (str): The input string to validate.
 
     Returns:
-        bool: True if the email address is valid, False otherwise.
+    bool: True if the string is a valid email address, False otherwise.
     """
     email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
+    return bool(re.match(email_regex, input_string))
 
-def truncate_string(input_str, max_length):
+def remove_special_chars(input_string: str) -> str:
     """
-    Truncate a string to a specified maximum length.
+    Removes all special characters from the input string.
 
     Args:
-        input_str (str): The input string to truncate.
-        max_length (int): The maximum length of the output string.
+    input_string (str): The input string to process.
 
     Returns:
-        str: The truncated string.
+    str: The input string without special characters.
     """
-    if len(input_str) > max_length:
-        return input_str[:max_length] + "..."
-    return input_str
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 
-def convert_to_snake_case(input_str):
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Convert a string to snake case.
+    Truncates the input string to the specified maximum length.
 
     Args:
-        input_str (str): The input string to convert.
+    input_string (str): The input string to truncate.
+    max_length (int): The maximum length of the output string.
 
     Returns:
-        str: The input string in snake case.
+    str: The truncated input string.
     """
-    return re.sub(r"([A-Z])", r"_\1", input_str).lower().lstrip("_")
+    if len(input_string) > max_length:
+        return input_string[:max_length] + "..."
+    return input_string
+
+# Example usage:
+if __name__ == "__main__":
+    print(is_empty_string(""))  # Output: True
+    print(validate_email("example@example.com"))  # Output: True
+    print(remove_special_chars("Hello, World!"))  # Output: "HelloWorld"
+    print(truncate_string("This is a very long string", 10))  # Output: "This is a..."
 ```

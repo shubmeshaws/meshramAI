@@ -2,70 +2,60 @@
 # utils/string_utils.py
 
 """
-Utility functions for common string operations.
+Utility module for string manipulation and formatting.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
-    """
-    Check if a string is empty or contains only whitespace characters.
-    
-    Args:
-        input_string (str): The string to check.
-    
-    Returns:
-        bool: True if the string is empty, False otherwise.
-    """
-    return not input_string.strip()
-
-def validate_email(email: str) -> bool:
-    """
-    Validate an email address using a regular expression.
-    
-    Args:
-        email (str): The email address to validate.
-    
-    Returns:
-        bool: True if the email is valid, False otherwise.
-    """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, email))
-
-def format_string(input_string: str, **kwargs) -> str:
-    """
-    Format a string using keyword arguments.
-    
-    Args:
-        input_string (str): The string to format.
-        **kwargs: Keyword arguments to replace in the string.
-    
-    Returns:
-        str: The formatted string.
-    """
-    return input_string.format(**kwargs)
-
-def remove_special_characters(input_string: str) -> str:
-    """
-    Remove special characters from a string.
-    
-    Args:
-        input_string (str): The string to clean.
-    
-    Returns:
-        str: The cleaned string.
-    """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
-
-def camel_case_to_snake_case(input_string: str) -> str:
+def camel_to_snake_case(input_str):
     """
     Convert a camel case string to snake case.
-    
+
     Args:
-        input_string (str): The string to convert.
-    
+        input_str (str): The input string in camel case.
+
     Returns:
-        str: The converted string.
+        str: The input string converted to snake case.
     """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_str).lower()
+
+def snake_to_camel_case(input_str):
+    """
+    Convert a snake case string to camel case.
+
+    Args:
+        input_str (str): The input string in snake case.
+
+    Returns:
+        str: The input string converted to camel case.
+    """
+    components = input_str.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
+
+def truncate_string(input_str, max_length):
+    """
+    Truncate a string to a specified maximum length.
+
+    Args:
+        input_str (str): The input string.
+        max_length (int): The maximum length of the output string.
+
+    Returns:
+        str: The input string truncated to the specified maximum length.
+    """
+    if len(input_str) > max_length:
+        return input_str[:max_length - 3] + '...'
+    return input_str
+
+def remove_special_chars(input_str):
+    """
+    Remove special characters from a string.
+
+    Args:
+        input_str (str): The input string.
+
+    Returns:
+        str: The input string with special characters removed.
+    """
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_str)
 ```

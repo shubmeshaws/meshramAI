@@ -1,59 +1,62 @@
 ```python
 """
-This module provides common string utility functions for validation, formatting, and manipulation.
+String utility module.
+
+This module provides functions for string manipulation and validation.
 """
 
 import re
 
-def is_valid_email(email: str) -> bool:
+def is_valid_ip(ip_address: str) -> bool:
     """
-    Validate if the provided string is a valid email address.
-    
-    Args:
-        email (str): The email address to validate.
-    
-    Returns:
-        bool: True if the email is valid, False otherwise.
-    """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, email))
+    Validate an IP address.
 
-def is_valid_ip(ip: str) -> bool:
-    """
-    Validate if the provided string is a valid IP address.
-    
     Args:
-        ip (str): The IP address to validate.
-    
-    Returns:
-        bool: True if the IP is valid, False otherwise.
-    """
-    ip_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_regex, ip))
+    ip_address (str): The IP address to validate.
 
-def snake_to_camel(snake_str: str) -> str:
-    """
-    Convert a snake_case string to camelCase.
-    
-    Args:
-        snake_str (str): The snake_case string to convert.
-    
     Returns:
-        str: The converted camelCase string.
+    bool: True if the IP address is valid, False otherwise.
     """
-    components = snake_str.split("_")
-    return components[0] + "".join(x.title() for x in components[1:])
+    ip_pattern = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_pattern, ip_address))
 
-def camel_to_snake(camel_str: str) -> str:
+def is_valid_uuid(uuid_to_test: str) -> bool:
     """
-    Convert a camelCase string to snake_case.
-    
+    Validate a UUID.
+
     Args:
-        camel_str (str): The camelCase string to convert.
-    
+    uuid_to_test (str): The UUID to validate.
+
     Returns:
-        str: The converted snake_case string.
+    bool: True if the UUID is valid, False otherwise.
     """
-    snake_str = "".join(["_" + i.lower() if i.isupper() else i for i in camel_str]).lstrip("_")
-    return snake_str
+    regex = re.compile(r'^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}$', re.I)
+    match = regex.match(uuid_to_test)
+    return bool(match)
+
+def camel_case_to_snake_case(name: str) -> str:
+    """
+    Convert a camel case string to snake case.
+
+    Args:
+    name (str): The string to convert.
+
+    Returns:
+    str: The snake case string.
+    """
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
+def snake_case_to_camel_case(name: str) -> str:
+    """
+    Convert a snake case string to camel case.
+
+    Args:
+    name (str): The string to convert.
+
+    Returns:
+    str: The camel case string.
+    """
+    components = name.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
 ```

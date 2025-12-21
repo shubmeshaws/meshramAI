@@ -1,62 +1,73 @@
 ```python
 """
-String utility module.
+Utility module for string operations.
 
-This module provides functions for string manipulation and validation.
+This module provides functions for string validation, manipulation, and formatting.
 """
 
 import re
 
-def is_valid_ip(ip_address: str) -> bool:
+def is_empty_string(input_string: str) -> bool:
     """
-    Validate an IP address.
+    Checks if the input string is empty or contains only whitespace characters.
 
     Args:
-    ip_address (str): The IP address to validate.
+    input_string (str): The input string to check.
 
     Returns:
-    bool: True if the IP address is valid, False otherwise.
+    bool: True if the string is empty, False otherwise.
     """
-    ip_pattern = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_pattern, ip_address))
+    return not input_string.strip()
 
-def is_valid_uuid(uuid_to_test: str) -> bool:
+def validate_email(email: str) -> bool:
     """
-    Validate a UUID.
+    Validates an email address using a regular expression.
 
     Args:
-    uuid_to_test (str): The UUID to validate.
+    email (str): The email address to validate.
 
     Returns:
-    bool: True if the UUID is valid, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    regex = re.compile(r'^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}$', re.I)
-    match = regex.match(uuid_to_test)
-    return bool(match)
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(email_regex, email))
 
-def camel_case_to_snake_case(name: str) -> str:
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Convert a camel case string to snake case.
+    Truncates a string to a specified maximum length.
 
     Args:
-    name (str): The string to convert.
+    input_string (str): The input string to truncate.
+    max_length (int): The maximum length of the output string.
 
     Returns:
-    str: The snake case string.
+    str: The truncated string.
     """
-    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+    if len(input_string) > max_length:
+        return input_string[:max_length - 3] + "..."
+    return input_string
 
-def snake_case_to_camel_case(name: str) -> str:
+def remove_special_chars(input_string: str) -> str:
     """
-    Convert a snake case string to camel case.
+    Removes special characters from a string.
 
     Args:
-    name (str): The string to convert.
+    input_string (str): The input string to clean.
 
     Returns:
-    str: The camel case string.
+    str: The cleaned string.
     """
-    components = name.split('_')
-    return components[0] + ''.join(x.title() for x in components[1:])
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+
+def to_snake_case(input_string: str) -> str:
+    """
+    Converts a string to snake case.
+
+    Args:
+    input_string (str): The input string to convert.
+
+    Returns:
+    str: The converted string.
+    """
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
 ```

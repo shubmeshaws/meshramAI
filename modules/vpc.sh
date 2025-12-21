@@ -12,6 +12,16 @@ if [ -z "$SCRIPT_DIR" ]; then
   exit 1
 fi
 
+# Check if script directory and log file exist
+if [ ! -d "$SCRIPT_DIR" ]; then
+  echo "[ERROR] Script directory '$SCRIPT_DIR' does not exist."
+  exit 1
+fi
+
+if [ ! -f "$LOG_FILE" ]; then
+  touch "$LOG_FILE" || { echo "[ERROR] Unable to create log file '$LOG_FILE'."; exit 1; }
+fi
+
 function log_info() {
   local message="$1"
   echo "[INFO] $message" | tee -a "$LOG_FILE"

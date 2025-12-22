@@ -62,7 +62,7 @@ function get_available_images() {
   local ERROR_MSG
   local RETRY_COUNT=0
   while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    OUTPUT=$(aws ec2 describe-images --owners "$OWNER" --filters "$FILTERS" "Name=state,Values=available" --region "$REGION" --query 'Images[*].[ImageId,CreationDate]' --output text 2>&1)
+    OUTPUT=$(describe_images "$OWNER" "$FILTERS" "$REGION")
     local RETURN_CODE=$?
     if [ $RETURN_CODE -eq 0 ]; then
       break
@@ -86,6 +86,13 @@ function get_available_images() {
     return 1
   fi
   echo "$OUTPUT"
+}
+
+function describe_images() {
+  local OWNER="$1"
+  local FILTERS="$2"
+  local REGION="$3"
+  aws ec2 describe-images --owners "$OWNER" --filters "$FILTERS" "Name=state,Values=available" --region "$REGION" --query 'Images[*].[ImageId,CreationDate]' --output text 2>&1
 }
 
 function get_latest_image_id() {

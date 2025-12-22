@@ -27,28 +27,25 @@ logging.basicConfig(
 class Logger:
     def __init__(self, name):
         self.logger = logging.getLogger(name)
+        self.log_levels = {
+            'INFO': self.logger.info,
+            'ERROR': self.logger.error,
+            'DEBUG': self.logger.debug,
+            'WARNING': self.logger.warning
+        }
 
     def log(self, level, message):
-        level_func = getattr(self.logger, level.lower())
-        level_func(message)
-
-    def info(self, message):
-        self.log('INFO', message)
-
-    def error(self, message):
-        self.log('ERROR', message)
-
-    def debug(self, message):
-        self.log('DEBUG', message)
-
-    def warn(self, message):
-        self.log('WARNING', message)
+        level_func = self.log_levels.get(level.upper())
+        if level_func:
+            level_func(message)
+        else:
+            logging.warning(f"Invalid log level: {level}")
 
 def get_logger(name):
     return Logger(name)
 
 # Example usage:
 # logger = get_logger(__name__)
-# logger.info('This is an info message')
-# logger.error('This is an error message')
+# logger.log('INFO', 'This is an info message')
+# logger.log('ERROR', 'This is an error message')
 ```

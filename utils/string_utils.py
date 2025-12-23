@@ -1,57 +1,61 @@
 ```python
 """
-Utility functions for string manipulation and validation.
+String Utilities Module
+========================
+This module provides a set of functions for string manipulation, including text formatting and validation.
 """
 
 import re
 
-def validate_email(email: str) -> bool:
+def truncate_string(input_str, max_length):
     """
-    Validate an email address.
-    
+    Truncates a string to a specified maximum length.
+
     Args:
-    email (str): The email address to validate.
-    
+        input_str (str): The input string to be truncated.
+        max_length (int): The maximum length of the output string.
+
     Returns:
-    bool: True if the email is valid, False otherwise.
+        str: The truncated string.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
+    if len(input_str) > max_length:
+        return input_str[:max_length] + "..."
+    return input_str
+
+def validate_email(email):
+    """
+    Validates an email address using a regular expression.
+
+    Args:
+        email (str): The email address to be validated.
+
+    Returns:
+        bool: True if the email is valid, False otherwise.
+    """
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
     return bool(re.match(email_regex, email))
 
-def validate_ip(ip: str) -> bool:
+def remove_special_chars(input_str):
     """
-    Validate an IP address.
-    
-    Args:
-    ip (str): The IP address to validate.
-    
-    Returns:
-    bool: True if the IP is valid, False otherwise.
-    """
-    ip_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_regex, ip))
+    Removes special characters from a string.
 
-def remove_special_chars(input_str: str) -> str:
-    """
-    Remove special characters from a string.
-    
     Args:
-    input_str (str): The string to remove special characters from.
-    
-    Returns:
-    str: The string without special characters.
-    """
-    return re.sub('[^A-Za-z0-9]+', '', input_str)
+        input_str (str): The input string.
 
-def convert_to_snake_case(input_str: str) -> str:
-    """
-    Convert a string to snake case.
-    
-    Args:
-    input_str (str): The string to convert to snake case.
-    
     Returns:
-    str: The string in snake case.
+        str: The string with special characters removed.
     """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_str).lower()
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_str)
+
+def capitalize_first_letter(input_str):
+    """
+    Capitalizes the first letter of a string.
+
+    Args:
+        input_str (str): The input string.
+
+    Returns:
+        str: The string with the first letter capitalized.
+    """
+    return input_str.capitalize()
 ```

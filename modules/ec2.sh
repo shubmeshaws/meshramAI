@@ -3,7 +3,7 @@
 
 # Check if SCRIPT_DIR is set
 if [ -z "$SCRIPT_DIR" ]; then
-  echo "[ERROR] SCRIPT_DIR variable is not set"
+  log_error "SCRIPT_DIR variable is not set"
   exit 1
 fi
 
@@ -13,16 +13,25 @@ if [ -z "$LOG_FILE" ]; then
   exit 1
 fi
 
+function log_error() {
+  # Log error message and exit
+  echo "[ERROR] $1" | tee -a "$LOG_FILE"
+  exit 1
+}
+
+function log_info() {
+  # Log info message
+  echo "[INFO] $1" | tee -a "$LOG_FILE"
+}
+
 function check_directory() {
   # Check if directory exists and is writable
   local dir="$1"
   if [ ! -d "$dir" ]; then
-    echo "[ERROR] Directory does not exist: $dir"
-    exit 1
+    log_error "Directory does not exist: $dir"
   fi
   if [ ! -w "$dir" ]; then
-    echo "[ERROR] Directory is not writable: $dir"
-    exit 1
+    log_error "Directory is not writable: $dir"
   fi
 }
 
@@ -60,13 +69,12 @@ function ec2_handler() {
     terminate)
       # Check if instance-id is provided
       if [ $# -ne 1 ]; then
-        echo "[ERROR] Usage: meshram ec2 terminate <instance-id>"
-        exit 1
+        log_error "Usage: meshram ec2 terminate <instance-id>"
       fi
       ec2_terminate "$1"
       ;;
     *)
-      echo "[ERROR] Unknown ec2 command: $cmd"
+      log_error "Unknown ec2 command: $cmd"
       show_ec2_help
       ;;
   esac
@@ -78,12 +86,10 @@ function execute_script() {
   shift
   local args=("$@")
   if [ ! -f "$SCRIPT_DIR/modules/ec2/$script_name.sh" ]; then
-    echo "[ERROR] $script_name.sh script not found" | tee -a "$LOG_FILE"
-    exit 1
+    log_error "$script_name.sh script not found"
   fi
   if ! bash "$SCRIPT_DIR/modules/ec2/$script_name.sh" "${args[@]}" | tee -a "$LOG_FILE"; then
-    echo "[ERROR] Failed to execute $script_name.sh" | tee -a "$LOG_FILE"
-    exit 1
+    log_error "Failed to execute $script_name.sh"
   fi
 }
 
@@ -99,8 +105,7 @@ function ec2_terminate() {
   # Input validation for instance-id
   local instance_id="$1"
   if [[ -z "$instance_id" ]]; then
-    echo "[ERROR] Usage: meshram ec2 terminate <instance-id>"
-    exit 1
+    log_error "Usage: meshram ec2 terminate <instance-id>"
   fi
   execute_script "terminate" "$instance_id"
 }

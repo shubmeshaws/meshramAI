@@ -2,6 +2,10 @@
 function log() {
   local level="$1"
   local message="$2"
+  if [ -z "$LOG_FILE" ]; then
+    echo "ERROR: LOG_FILE variable is not set" >&2
+    exit 1
+  fi
   echo "[$level] $message" | tee -a "$LOG_FILE"
 }
 

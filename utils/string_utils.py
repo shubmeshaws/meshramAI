@@ -1,61 +1,59 @@
 ```python
 """
-String Utilities Module
-========================
-This module provides a set of functions for string manipulation, including text formatting and validation.
+String utility functions.
 """
 
 import re
 
-def truncate_string(input_str, max_length):
+def is_empty_string(input_string: str) -> bool:
     """
-    Truncates a string to a specified maximum length.
+    Checks if a string is empty or contains only whitespace characters.
 
     Args:
-        input_str (str): The input string to be truncated.
-        max_length (int): The maximum length of the output string.
+    input_string (str): The input string to check.
 
     Returns:
-        str: The truncated string.
+    bool: True if the string is empty, False otherwise.
     """
-    if len(input_str) > max_length:
-        return input_str[:max_length] + "..."
-    return input_str
+    return not input_string.strip()
 
-def validate_email(email):
+def validate_email(email: str) -> bool:
     """
     Validates an email address using a regular expression.
 
     Args:
-        email (str): The email address to be validated.
+    email (str): The email address to validate.
 
     Returns:
-        bool: True if the email is valid, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
     return bool(re.match(email_regex, email))
 
-def remove_special_chars(input_str):
+def remove_special_characters(input_string: str) -> str:
     """
     Removes special characters from a string.
 
     Args:
-        input_str (str): The input string.
+    input_string (str): The input string to clean.
 
     Returns:
-        str: The string with special characters removed.
+    str: The input string with special characters removed.
     """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_str)
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
 
-def capitalize_first_letter(input_str):
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Capitalizes the first letter of a string.
+    Truncates a string to a specified maximum length.
 
     Args:
-        input_str (str): The input string.
+    input_string (str): The input string to truncate.
+    max_length (int): The maximum length of the output string.
 
     Returns:
-        str: The string with the first letter capitalized.
+    str: The truncated string.
     """
-    return input_str.capitalize()
+    if len(input_string) > max_length:
+        return input_string[:max_length] + "..."
+    return input_string
 ```

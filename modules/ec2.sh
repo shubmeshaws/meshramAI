@@ -86,19 +86,25 @@ function execute_script() {
   shift
   local args=("$@")
   if [ ! -f "$SCRIPT_DIR/modules/ec2/$script_name.sh" ]; then
-    log_error "$script_name.sh script not found"
+    echo "[ERROR] $script_name.sh script not found" | tee -a "$LOG_FILE"
+    return 1
   fi
   if ! bash "$SCRIPT_DIR/modules/ec2/$script_name.sh" "${args[@]}" | tee -a "$LOG_FILE"; then
-    log_error "Failed to execute $script_name.sh"
+    echo "[ERROR] Failed to execute $script_name.sh" | tee -a "$LOG_FILE"
+    return 1
   fi
 }
 
 function ec2_create() {
-  execute_script "create"
+  if ! execute_script "create"; then
+    log_error "Failed to create EC2 instance"
+  fi
 }
 
 function ec2_list() {
-  execute_script "list"
+  if ! execute_script "list"; then
+    log_error "Failed to list EC2 instances"
+  fi
 }
 
 function ec2_terminate() {
@@ -107,6 +113,8 @@ function ec2_terminate() {
   if [[ -z "$instance_id" ]]; then
     log_error "Usage: meshram ec2 terminate <instance-id>"
   fi
-  execute_script "terminate" "$instance_id"
+  if ! execute_script "terminate" "$instance_id"; then
+    log_error "Failed to terminate EC2 instance $instance_id"
+  fi
 }
 ```

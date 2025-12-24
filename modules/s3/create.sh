@@ -63,29 +63,33 @@ function s3_create() {
   echo "[INFO] Creating bucket '$BUCKET_NAME' in region '$REGION' with ACL '$ACL'..."
 
   if [[ "$REGION" == "us-east-1" ]]; then
-    if ! output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --acl "$ACL" 2>&1); then
-      if echo "$output" | grep -q "BucketAlreadyOwnedByYou"; then
-        echo "[ERROR] Bucket '$BUCKET_NAME' already exists and is owned by you in region '$REGION'."
-      elif echo "$output" | grep -q "BucketAlreadyExists"; then
-        echo "[ERROR] Bucket '$BUCKET_NAME' already exists and is owned by another account."
-      else
-        echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION':"
-        echo "$output"
-      fi
-      return 1
-    fi
+    output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --acl "$ACL" 2>&1)
+    status=$?
   else
-    if ! output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --create-bucket-configuration LocationConstraint="$REGION" --acl "$ACL" 2>&1); then
-      if echo "$output" | grep -q "BucketAlreadyOwnedByYou"; then
+    output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --create-bucket-configuration LocationConstraint="$REGION" --acl "$ACL" 2>&1)
+    status=$?
+  fi
+
+  if [ $status -ne 0 ]; then
+    case $output in
+      *"BucketAlreadyOwnedByYou"*)
         echo "[ERROR] Bucket '$BUCKET_NAME' already exists and is owned by you in region '$REGION'."
-      elif echo "$output" | grep -q "BucketAlreadyExists"; then
+        ;;
+      *"BucketAlreadyExists"*)
         echo "[ERROR] Bucket '$BUCKET_NAME' already exists and is owned by another account."
-      else
+        ;;
+      *"InvalidAccessKeyId"*)
+        echo "[ERROR] Invalid access key ID. Please check your AWS credentials."
+        ;;
+      *"SignatureDoesNotMatch"*)
+        echo "[ERROR] Signature does not match. Please check your AWS credentials."
+        ;;
+      *)
         echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION':"
         echo "$output"
-      fi
-      return 1
-    fi
+        ;;
+    esac
+    return 1
   fi
 
   echo "[SUCCESS] Bucket '$BUCKET_NAME' created in region '$REGION'."

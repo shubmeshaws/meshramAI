@@ -38,6 +38,21 @@ function validate_aws_cli() {
   fi
 }
 
+function handle_aws_error() {
+  local output="$1"
+  local command="$2"
+  if echo "$output" | grep -q "Not Found"; then
+    echo "[WARNING] $command failed: Not Found"
+  elif echo "$output" | grep -q "Timeout"; then
+    echo "[ERROR] $command failed: timed out"
+  elif echo "$output" | grep -q "The bucket is not empty"; then
+    echo "[ERROR] $command failed: Bucket is not empty"
+  else
+    echo "[ERROR] $command failed: $output"
+  fi
+  return 1
+}
+
 function s3_delete() {
   BUCKET_NAME="$1"
   INPUT_REGION="$2"
@@ -50,16 +65,8 @@ function s3_delete() {
   REGION="${REGION:-$INPUT_REGION}"
 
   if ! output=$(timeout 30s aws s3api head-bucket --bucket "$BUCKET_NAME" --region "$REGION" 2>&1); then
-    if echo "$output" | grep -q "Not Found"; then
-      echo "[WARNING] Bucket '$BUCKET_NAME' does not exist in region '$REGION'."
-      return 0
-    elif echo "$output" | grep -q "Timeout"; then
-      echo "[ERROR] Failed to check bucket '$BUCKET_NAME' in region '$REGION': timed out"
-      return 1
-    else
-      echo "[ERROR] Failed to check bucket '$BUCKET_NAME' in region '$REGION': $output"
-      return 1
-    fi
+    handle_aws_error "$output" "head-bucket"
+    return $?
   fi
 
   echo "[WARNING] Deleting S3 bucket '$BUCKET_NAME' in region '$REGION' will PERMANENTLY DELETE all its contents. Are you sure? (y/n)"
@@ -71,24 +78,14 @@ function s3_delete() {
 
   echo "[INFO] Emptying bucket '$BUCKET_NAME'..."
   if ! output=$(timeout 300s aws s3 rm s3://"$BUCKET_NAME" --recursive --region "$REGION" 2>&1); then
-    if echo "$output" | grep -q "Timeout"; then
-      echo "[ERROR] Failed to empty bucket '$BUCKET_NAME' in region '$REGION': timed out"
-    else
-      echo "[ERROR] Failed to empty bucket '$BUCKET_NAME' in region '$REGION': $output"
-    fi
-    return 1
+    handle_aws_error "$output" "empty-bucket"
+    return $?
   fi
 
   # Delete the bucket
   if ! output=$(timeout 30s aws s3api delete-bucket --bucket "$BUCKET_NAME" --region "$REGION" 2>&1); then
-    if echo "$output" | grep -q "The bucket is not empty"; then
-      echo "[ERROR] Failed to delete bucket '$BUCKET_NAME' in region '$REGION': Bucket is not empty"
-    elif echo "$output" | grep -q "Timeout"; then
-      echo "[ERROR] Failed to delete bucket '$BUCKET_NAME' in region '$REGION': timed out"
-    else
-      echo "[ERROR] Failed to delete bucket '$BUCKET_NAME' in region '$REGION': $output"
-    fi
-    return 1
+    handle_aws_error "$output" "delete-bucket"
+    return $?
   fi
 
   echo "[SUCCESS] Bucket '$BUCKET_NAME' deleted from region '$REGION'."

@@ -1,64 +1,61 @@
 ```python
 """
-String utility functions for general string manipulation.
+String utility functions.
 
-This module provides functions for string validation, formatting, and manipulation.
-It can be used throughout the project to handle various string inputs and outputs.
+This module contains functions for string manipulation and validation.
 """
 
 import re
 
-def is_valid_ip_address(ip_address: str) -> bool:
+def is_empty_string(input_string: str) -> bool:
     """
-    Validate if the given string is a valid IP address.
+    Checks if a string is empty or contains only whitespace.
 
     Args:
-        ip_address (str): The IP address to validate.
+    input_string (str): The string to check.
 
     Returns:
-        bool: True if the IP address is valid, False otherwise.
+    bool: True if the string is empty or contains only whitespace, False otherwise.
     """
-    ip_address_pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_address_pattern, ip_address))
+    return not input_string.strip()
 
-def is_valid_hostname(hostname: str) -> bool:
+def validate_email(email: str) -> bool:
     """
-    Validate if the given string is a valid hostname.
+    Validates an email address.
 
     Args:
-        hostname (str): The hostname to validate.
+    email (str): The email address to validate.
 
     Returns:
-        bool: True if the hostname is valid, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    hostname_pattern = r"^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$"
-    return bool(re.match(hostname_pattern, hostname))
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email))
 
-def camel_case_to_snake_case(input_string: str) -> str:
+def truncate_string(long_string: str, max_length: int) -> str:
     """
-    Convert a camel case string to snake case.
+    Truncates a string to a specified length.
 
     Args:
-        input_string (str): The string to convert.
+    long_string (str): The string to truncate.
+    max_length (int): The maximum length of the truncated string.
 
     Returns:
-        str: The input string in snake case.
+    str: The truncated string.
     """
-    snake_case_string = re.sub(r"([A-Z])", r"_\1", input_string).lower()
-    return snake_case_string.lstrip("_")
+    if len(long_string) > max_length:
+        return long_string[:max_length - 3] + "..."
+    return long_string
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def remove_special_chars(input_string: str) -> str:
     """
-    Truncate a string to a specified maximum length.
+    Removes special characters from a string.
 
     Args:
-        input_string (str): The string to truncate.
-        max_length (int): The maximum length of the output string.
+    input_string (str): The string to clean.
 
     Returns:
-        str: The input string truncated to the specified maximum length.
+    str: The string without special characters.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length - 3] + "..."
-    return input_string
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 ```

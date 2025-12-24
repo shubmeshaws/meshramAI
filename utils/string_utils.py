@@ -1,61 +1,43 @@
 ```python
-"""
-String utility functions.
-
-This module contains functions for string manipulation and validation.
-"""
-
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def validate_ip_address(ip_address: str) -> bool:
     """
-    Checks if a string is empty or contains only whitespace.
+    Validate an IP address.
 
     Args:
-    input_string (str): The string to check.
+    ip_address (str): The IP address to be validated.
 
     Returns:
-    bool: True if the string is empty or contains only whitespace, False otherwise.
+    bool: True if the IP address is valid, False otherwise.
     """
-    return not input_string.strip()
+    ip_address_pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_address_pattern, ip_address))
 
-def validate_email(email: str) -> bool:
+def validate_region(region: str) -> bool:
     """
-    Validates an email address.
+    Validate an AWS region.
 
     Args:
-    email (str): The email address to validate.
+    region (str): The region to be validated.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+    bool: True if the region is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    return bool(re.match(email_regex, email))
+    # For simplicity, we assume regions are in the format 'us-east-1', 'eu-west-1', etc.
+    region_pattern = r"^[a-z]{2}-[a-z]{4,9}-[0-9]$"
+    return bool(re.match(region_pattern, region))
 
-def truncate_string(long_string: str, max_length: int) -> str:
+def camel_case_to_snake_case(camel_case_string: str) -> str:
     """
-    Truncates a string to a specified length.
+    Convert a camel case string to snake case.
 
     Args:
-    long_string (str): The string to truncate.
-    max_length (int): The maximum length of the truncated string.
+    camel_case_string (str): The camel case string to be converted.
 
     Returns:
-    str: The truncated string.
+    str: The snake case equivalent of the input string.
     """
-    if len(long_string) > max_length:
-        return long_string[:max_length - 3] + "..."
-    return long_string
-
-def remove_special_chars(input_string: str) -> str:
-    """
-    Removes special characters from a string.
-
-    Args:
-    input_string (str): The string to clean.
-
-    Returns:
-    str: The string without special characters.
-    """
-    return re.sub('[^A-Za-z0-9]+', '', input_string)
+    snake_case_string = re.sub(r'([A-Z])', r'_\1', camel_case_string).lower()
+    return snake_case_string.lstrip('_')
 ```

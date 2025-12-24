@@ -95,16 +95,22 @@ function execute_script() {
   fi
 }
 
-function ec2_create() {
-  if ! execute_script "create"; then
-    log_error "Failed to create EC2 instance"
+function run_ec2_script() {
+  # Common function to handle script execution and error logging
+  local script_name="$1"
+  shift
+  local args=("$@")
+  if ! execute_script "$script_name" "${args[@]}"; then
+    log_error "Failed to $script_name EC2 instance"
   fi
 }
 
+function ec2_create() {
+  run_ec2_script "create"
+}
+
 function ec2_list() {
-  if ! execute_script "list"; then
-    log_error "Failed to list EC2 instances"
-  fi
+  run_ec2_script "list"
 }
 
 function ec2_terminate() {
@@ -113,8 +119,6 @@ function ec2_terminate() {
   if [[ -z "$instance_id" ]]; then
     log_error "Usage: meshram ec2 terminate <instance-id>"
   fi
-  if ! execute_script "terminate" "$instance_id"; then
-    log_error "Failed to terminate EC2 instance $instance_id"
-  fi
+  run_ec2_script "terminate" "$instance_id"
 }
 ```

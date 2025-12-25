@@ -1,67 +1,68 @@
 ```python
 """
-String Utilities Module
-=======================
-
-This module provides various utility functions for string operations.
+String utility functions for string manipulation and validation.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def validate_email(email: str) -> bool:
     """
-    Checks if the input string is empty or contains only whitespace characters.
+    Validate if the provided email address is valid.
 
     Args:
-        input_string (str): The input string to check.
+    email (str): The email address to be validated.
 
     Returns:
-        bool: True if the input string is empty or contains only whitespace characters, False otherwise.
+    bool: True if the email is valid, False otherwise.
+    """
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
+    return bool(re.match(email_regex, email))
+
+def remove_special_chars(input_string: str) -> str:
+    """
+    Remove special characters from the input string.
+
+    Args:
+    input_string (str): The input string to remove special characters from.
+
+    Returns:
+    str: The input string with special characters removed.
+    """
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
+
+def truncate_string(input_string: str, length: int) -> str:
+    """
+    Truncate the input string to the specified length.
+
+    Args:
+    input_string (str): The input string to be truncated.
+    length (int): The maximum length of the output string.
+
+    Returns:
+    str: The truncated input string.
+    """
+    if len(input_string) > length:
+        return input_string[:length] + "..."
+    return input_string
+
+def is_empty_or_whitespace(input_string: str) -> bool:
+    """
+    Check if the input string is empty or contains only whitespace characters.
+
+    Args:
+    input_string (str): The input string to be checked.
+
+    Returns:
+    bool: True if the input string is empty or contains only whitespace characters, False otherwise.
     """
     return not input_string.strip()
 
-def validate_email(email: str) -> bool:
-    """
-    Validates an email address using a regular expression.
-
-    Args:
-        email (str): The email address to validate.
-
-    Returns:
-        bool: True if the email address is valid, False otherwise.
-    """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, email))
-
-def remove_special_characters(input_string: str) -> str:
-    """
-    Removes special characters from the input string.
-
-    Args:
-        input_string (str): The input string to clean.
-
-    Returns:
-        str: The input string with special characters removed.
-    """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
-
-def format_string(input_string: str, **kwargs) -> str:
-    """
-    Formats the input string using the provided keyword arguments.
-
-    Args:
-        input_string (str): The input string to format.
-        **kwargs: Keyword arguments to use for formatting.
-
-    Returns:
-        str: The formatted input string.
-    """
-    return input_string.format(**kwargs)
-
-# Example usage:
+# Example usage
 if __name__ == "__main__":
-    print(is_empty_string(""))  # Output: True
-    print(validate_email("test@example.com"))  # Output: True
-    print(remove_special_characters("Hello, World!"))  # Output: "Hello World"
-    print(format_string("Hello, {name}!", name="John"))  # Output: "Hello, John!"
+    print(validate_email("example@example.com"))  # True
+    print(validate_email("invalid_email"))  # False
+    print(remove_special_chars("Hello, World!"))  # "HelloWorld"
+    print(truncate_string("This is a very long string", 10))  # "This is a..."
+    print(is_empty_or_whitespace("   "))  # True
+    print(is_empty_or_whitespace("not empty"))  # False
 ```

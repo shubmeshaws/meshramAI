@@ -1,60 +1,67 @@
 ```python
 """
-Utility module for string manipulation and validation.
+String Utilities Module
+=======================
+
+This module provides various utility functions for string operations.
 """
 
 import re
 
+def is_empty_string(input_string: str) -> bool:
+    """
+    Checks if the input string is empty or contains only whitespace characters.
+
+    Args:
+        input_string (str): The input string to check.
+
+    Returns:
+        bool: True if the input string is empty or contains only whitespace characters, False otherwise.
+    """
+    return not input_string.strip()
+
 def validate_email(email: str) -> bool:
     """
-    Validate an email address.
+    Validates an email address using a regular expression.
 
     Args:
-    email (str): The email address to validate.
+        email (str): The email address to validate.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+        bool: True if the email address is valid, False otherwise.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     return bool(re.match(email_regex, email))
-
-def validate_ip_address(ip_address: str) -> bool:
-    """
-    Validate an IP address.
-
-    Args:
-    ip_address (str): The IP address to validate.
-
-    Returns:
-    bool: True if the IP address is valid, False otherwise.
-    """
-    ip_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_regex, ip_address))
 
 def remove_special_characters(input_string: str) -> str:
     """
-    Remove special characters from a string.
+    Removes special characters from the input string.
 
     Args:
-    input_string (str): The string to remove special characters from.
+        input_string (str): The input string to clean.
 
     Returns:
-    str: The input string without special characters.
+        str: The input string with special characters removed.
     """
-    return re.sub('[^A-Za-z0-9]+', '', input_string)
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def format_string(input_string: str, **kwargs) -> str:
     """
-    Truncate a string to a specified maximum length.
+    Formats the input string using the provided keyword arguments.
 
     Args:
-    input_string (str): The string to truncate.
-    max_length (int): The maximum length of the string.
+        input_string (str): The input string to format.
+        **kwargs: Keyword arguments to use for formatting.
 
     Returns:
-    str: The truncated string.
+        str: The formatted input string.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
-    return input_string
+    return input_string.format(**kwargs)
+
+# Example usage:
+if __name__ == "__main__":
+    print(is_empty_string(""))  # Output: True
+    print(validate_email("test@example.com"))  # Output: True
+    print(remove_special_characters("Hello, World!"))  # Output: "Hello World"
+    print(format_string("Hello, {name}!", name="John"))  # Output: "Hello, John!"
 ```

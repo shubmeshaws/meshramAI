@@ -32,6 +32,15 @@ function log_error() {
   echo "[ERROR] $message" | tee -a "$LOG_FILE"
 }
 
+function execute_script() {
+  local script_path="$1"
+  local args="$2"
+  if ! bash "$script_path" "$args" | tee -a "$LOG_FILE"; then
+    log_error "Failed to execute script '$script_path'. Please check the logs for more information."
+    return 1
+  fi
+}
+
 function show_vpc_help() {
   echo "VPC service commands:"
   echo "  meshram vpc create                 - Create a VPC with subnets and NAT"
@@ -97,27 +106,18 @@ function vpc_handler() {
 
 function vpc_create() {
   log_info "Creating VPC..."
-  if ! bash "$SCRIPT_DIR/modules/vpc/create.sh" | tee -a "$LOG_FILE"; then
-    log_error "Failed to create VPC. Please check the logs for more information."
-    return 1
-  fi
+  execute_script "$SCRIPT_DIR/modules/vpc/create.sh"
 }
 
 function vpc_list() {
   log_info "Listing VPCs..."
-  if ! bash "$SCRIPT_DIR/modules/vpc/list.sh" | tee -a "$LOG_FILE"; then
-    log_error "Failed to list VPCs. Please check the logs for more information."
-    return 1
-  fi
+  execute_script "$SCRIPT_DIR/modules/vpc/list.sh"
 }
 
 function vpc_delete() {
   local vpc_id="$1"
   log_info "Deleting VPC $vpc_id..."
-  if ! bash "$SCRIPT_DIR/modules/vpc/delete.sh" "$vpc_id" | tee -a "$LOG_FILE"; then
-    log_error "Failed to delete VPC $vpc_id. Please check the logs for more information."
-    return 1
-  fi
+  execute_script "$SCRIPT_DIR/modules/vpc/delete.sh" "$vpc_id"
 }
 
 function main() {

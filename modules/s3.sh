@@ -36,6 +36,21 @@ function validate_region() {
   fi
 }
 
+function check_script_dir() {
+  if [ ! -d "$SCRIPT_DIR" ]; then
+    log "ERROR" "Script directory '$SCRIPT_DIR' does not exist"
+    exit 1
+  fi
+  if [ ! -d "$SCRIPT_DIR/modules/s3" ]; then
+    log "ERROR" "S3 script directory '$SCRIPT_DIR/modules/s3' does not exist"
+    exit 1
+  fi
+  if [ ! -f "$SCRIPT_DIR/modules/s3/create.sh" ] || [ ! -f "$SCRIPT_DIR/modules/s3/list.sh" ] || [ ! -f "$SCRIPT_DIR/modules/s3/delete.sh" ]; then
+    log "ERROR" "One or more required S3 scripts are missing in '$SCRIPT_DIR/modules/s3'"
+    exit 1
+  fi
+}
+
 function s3_create() {
   validate_input "$1" "$2" "$3"
   local bucket_name="$1"
@@ -68,6 +83,7 @@ function s3_delete() {
 }
 
 function main() {
+  check_script_dir
   case $1 in
     create)
       shift

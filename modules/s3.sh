@@ -27,12 +27,22 @@ function validate_input() {
   fi
 }
 
+function validate_region() {
+  local region="$1"
+  local valid_regions=("us-east-1" "us-west-2" "eu-west-1" "ap-northeast-1" "ap-southeast-1")
+  if [[ ! " ${valid_regions[@]} " =~ " $region " ]]; then
+    log "ERROR" "Invalid region: $region. Supported regions: ${valid_regions[@]}"
+    exit 1
+  fi
+}
+
 function s3_create() {
   validate_input "$1" "$2" "$3"
   local bucket_name="$1"
   local input_region="$2"
   local acl="${3:-private}" # default to private
   local region=$(map_region_name "$input_region")
+  validate_region "$region"
   log "INFO" "Creating bucket '$bucket_name' in region '$region' with ACL '$acl'..."
   if ! bash "$SCRIPT_DIR/modules/s3/create.sh" "$bucket_name" "$region" "$acl" | tee -a "$LOG_FILE"; then
     handle_error $? "s3 create"

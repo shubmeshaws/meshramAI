@@ -19,18 +19,19 @@ function s3_list() {
     echo "$output"
     echo "[INFO] S3 buckets listed successfully."
   else
+    error_output="$output"
     case $? in
       124)
-        echo "[ERROR] AWS CLI command timed out after 30 seconds. Check your network connection or AWS service status."
+        echo "[ERROR] AWS CLI command timed out after 30 seconds. Check your network connection or AWS service status. Error: $error_output"
         ;;
       130)
-        echo "[ERROR] AWS CLI command was interrupted. Please try again."
+        echo "[ERROR] AWS CLI command was interrupted. Please try again. Error: $error_output"
         ;;
       255)
-        echo "[ERROR] AWS CLI command failed with an unknown error. Check the AWS CLI version and configuration."
+        echo "[ERROR] AWS CLI command failed with an unknown error. Check the AWS CLI version and configuration. Error: $error_output"
         ;;
       *)
-        echo "[ERROR] Failed to list S3 buckets with exit code $?. Error: $output"
+        echo "[ERROR] Failed to list S3 buckets with exit code $?. Error: $error_output"
         ;;
     esac
   fi

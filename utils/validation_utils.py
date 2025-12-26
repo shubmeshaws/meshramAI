@@ -1,68 +1,41 @@
 ```python
 import re
-import ipaddress
+import logging
 
-def validate_ip_address(ip):
-    """
-    Validate an IP address.
+from utils.error_handling import handle_error
 
-    Args:
-        ip (str): The IP address to validate.
-
-    Returns:
-        bool: True if the IP address is valid, False otherwise.
-    """
-    try:
-        ipaddress.ip_address(ip)
-        return True
-    except ValueError:
-        return False
-
-def validate_url(url):
-    """
-    Validate a URL.
-
-    Args:
-        url (str): The URL to validate.
-
-    Returns:
-        bool: True if the URL is valid, False otherwise.
-    """
-    url_pattern = re.compile(
-        r'^(?:http|ftp)s?://'  # http:// or https://
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
-        r'localhost|'  # localhost...
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
-        r'(?::\d+)?'  # optional port
-        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-    return bool(url_pattern.match(url))
+logger = logging.getLogger(__name__)
 
 def validate_aws_region(region):
     """
-    Validate an AWS region.
-
-    Args:
-        region (str): The AWS region to validate.
-
-    Returns:
-        bool: True if the AWS region is valid, False otherwise.
+    Validate if the given AWS region is valid.
     """
-    # Load valid regions from regions.conf
-    with open('regions.conf', 'r') as f:
-        valid_regions = [line.strip() for line in f.readlines()]
-    return region in valid_regions
+    try:
+        with open('regions.conf', 'r') as f:
+            valid_regions = [line.strip() for line in f.readlines()]
+            if region not in valid_regions:
+                handle_error(f"Invalid AWS region: {region}")
+    except FileNotFoundError:
+        handle_error("regions.conf file not found")
 
-def validate_string_length(s, min_length=1, max_length=255):
+def validate_s3_bucket_name(bucket_name):
     """
-    Validate the length of a string.
-
-    Args:
-        s (str): The string to validate.
-        min_length (int): The minimum allowed length. Defaults to 1.
-        max_length (int): The maximum allowed length. Defaults to 255.
-
-    Returns:
-        bool: True if the string length is valid, False otherwise.
+    Validate if the given S3 bucket name is valid.
     """
-    return min_length <= len(s) <= max_length
+    if not re.match('^[a-z0-9.-]{3,63}$', bucket_name):
+        handle_error(f"Invalid S3 bucket name: {bucket_name}")
+
+def validate_ec2_instance_id(instance_id):
+    """
+    Validate if the given EC2 instance ID is valid.
+    """
+    if not re.match('^(i-[0-9a-f]{8,18})$', instance_id):
+        handle_error(f"Invalid EC2 instance ID: {instance_id}")
+
+def validate_vpc_id(vpc_id):
+    """
+    Validate if the given VPC ID is valid.
+    """
+    if not re.match('^(vpc-[0-9a-f]{8,17})$', vpc_id):
+        handle_error(f"Invalid VPC ID: {vpc_id}")
 ```

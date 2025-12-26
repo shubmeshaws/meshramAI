@@ -1,75 +1,57 @@
 ```python
 """
-String utility functions.
-
-This module provides functions to validate, format, and parse strings.
+Utility functions for string manipulation.
 """
 
-import re
-
-def validate_email(email: str) -> bool:
+def is_valid_string(input_string):
     """
-    Validate an email address.
+    Checks if the input is a non-empty string.
 
     Args:
-    email (str): The email address to validate.
+        input_string (str): The input string to check.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+        bool: True if the input is a non-empty string, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, email))
+    return isinstance(input_string, str) and len(input_string.strip()) > 0
 
-def format_string(input_str: str, **kwargs) -> str:
+
+def trim_string(input_string):
     """
-    Format a string with keyword arguments.
+    Trims leading and trailing whitespace from the input string.
 
     Args:
-    input_str (str): The string to format.
-    **kwargs: Keyword arguments to replace in the string.
+        input_string (str): The input string to trim.
 
     Returns:
-    str: The formatted string.
+        str: The trimmed input string.
     """
-    return input_str.format(**kwargs)
+    return input_string.strip()
 
-def parse_url(url: str) -> dict:
+
+def split_string(input_string, delimiter):
     """
-    Parse a URL into its components.
+    Splits the input string into a list of substrings based on the delimiter.
 
     Args:
-    url (str): The URL to parse.
+        input_string (str): The input string to split.
+        delimiter (str): The delimiter to split the string by.
 
     Returns:
-    dict: A dictionary containing the URL's components (scheme, netloc, path, params, query, fragment).
+        list: A list of substrings.
     """
-    from urllib.parse import urlparse
-    return urlparse(url)._asdict()
+    return input_string.split(delimiter)
 
-def remove_special_chars(input_str: str) -> str:
+
+def remove_special_chars(input_string):
     """
-    Remove special characters from a string.
+    Removes special characters from the input string.
 
     Args:
-    input_str (str): The string to remove special characters from.
+        input_string (str): The input string to remove special characters from.
 
     Returns:
-    str: The string without special characters.
+        str: The input string with special characters removed.
     """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_str)
-
-def truncate_string(input_str: str, max_length: int) -> str:
-    """
-    Truncate a string to a maximum length.
-
-    Args:
-    input_str (str): The string to truncate.
-    max_length (int): The maximum length of the string.
-
-    Returns:
-    str: The truncated string.
-    """
-    if len(input_str) > max_length:
-        return input_str[:max_length] + '...'
-    return input_str
+    return ''.join(e for e in input_string if e.isalnum() or e.isspace())
 ```

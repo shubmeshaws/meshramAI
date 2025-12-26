@@ -85,11 +85,13 @@ function execute_script() {
   local script_name="$1"
   shift
   local args=("$@")
-  if [ ! -f "$SCRIPT_DIR/modules/ec2/$script_name.sh" ]; then
+  local script_dir="$SCRIPT_DIR/modules/ec2"
+  check_directory "$script_dir"
+  if [ ! -f "$script_dir/$script_name.sh" ]; then
     echo "[ERROR] $script_name.sh script not found" | tee -a "$LOG_FILE"
     return 1
   fi
-  if ! bash "$SCRIPT_DIR/modules/ec2/$script_name.sh" "${args[@]}" | tee -a "$LOG_FILE"; then
+  if ! bash "$script_dir/$script_name.sh" "${args[@]}" | tee -a "$LOG_FILE"; then
     echo "[ERROR] Failed to execute $script_name.sh" | tee -a "$LOG_FILE"
     return 1
   fi

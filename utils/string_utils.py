@@ -1,68 +1,75 @@
 ```python
 """
-String utility functions for string manipulation and validation.
+String utility functions.
+
+This module provides functions to validate, format, and parse strings.
 """
 
 import re
 
 def validate_email(email: str) -> bool:
     """
-    Validate if the provided email address is valid.
+    Validate an email address.
 
     Args:
-    email (str): The email address to be validated.
+    email (str): The email address to validate.
 
     Returns:
     bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     return bool(re.match(email_regex, email))
 
-def remove_special_chars(input_string: str) -> str:
+def format_string(input_str: str, **kwargs) -> str:
     """
-    Remove special characters from the input string.
+    Format a string with keyword arguments.
 
     Args:
-    input_string (str): The input string to remove special characters from.
+    input_str (str): The string to format.
+    **kwargs: Keyword arguments to replace in the string.
 
     Returns:
-    str: The input string with special characters removed.
+    str: The formatted string.
     """
-    return re.sub('[^A-Za-z0-9]+', '', input_string)
+    return input_str.format(**kwargs)
 
-def truncate_string(input_string: str, length: int) -> str:
+def parse_url(url: str) -> dict:
     """
-    Truncate the input string to the specified length.
+    Parse a URL into its components.
 
     Args:
-    input_string (str): The input string to be truncated.
-    length (int): The maximum length of the output string.
+    url (str): The URL to parse.
 
     Returns:
-    str: The truncated input string.
+    dict: A dictionary containing the URL's components (scheme, netloc, path, params, query, fragment).
     """
-    if len(input_string) > length:
-        return input_string[:length] + "..."
-    return input_string
+    from urllib.parse import urlparse
+    return urlparse(url)._asdict()
 
-def is_empty_or_whitespace(input_string: str) -> bool:
+def remove_special_chars(input_str: str) -> str:
     """
-    Check if the input string is empty or contains only whitespace characters.
+    Remove special characters from a string.
 
     Args:
-    input_string (str): The input string to be checked.
+    input_str (str): The string to remove special characters from.
 
     Returns:
-    bool: True if the input string is empty or contains only whitespace characters, False otherwise.
+    str: The string without special characters.
     """
-    return not input_string.strip()
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_str)
 
-# Example usage
-if __name__ == "__main__":
-    print(validate_email("example@example.com"))  # True
-    print(validate_email("invalid_email"))  # False
-    print(remove_special_chars("Hello, World!"))  # "HelloWorld"
-    print(truncate_string("This is a very long string", 10))  # "This is a..."
-    print(is_empty_or_whitespace("   "))  # True
-    print(is_empty_or_whitespace("not empty"))  # False
+def truncate_string(input_str: str, max_length: int) -> str:
+    """
+    Truncate a string to a maximum length.
+
+    Args:
+    input_str (str): The string to truncate.
+    max_length (int): The maximum length of the string.
+
+    Returns:
+    str: The truncated string.
+    """
+    if len(input_str) > max_length:
+        return input_str[:max_length] + '...'
+    return input_str
 ```

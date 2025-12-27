@@ -36,7 +36,8 @@ function execute_script() {
   local script_path="$1"
   local args="$2"
   if ! bash "$script_path" "$args" | tee -a "$LOG_FILE"; then
-    log_error "Failed to execute script '$script_path'. Please check the logs for more information."
+    local exit_status=$?
+    log_error "Failed to execute script '$script_path' with args '$args'. Exit status: $exit_status. Error: $(tail -1 "$LOG_FILE")"
     return 1
   fi
 }

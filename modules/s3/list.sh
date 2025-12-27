@@ -41,4 +41,6 @@ function s3_list() {
     handle_error $? "$output"
   fi
 }
+
+s3_list
 ```

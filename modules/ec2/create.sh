@@ -92,7 +92,17 @@ function describe_images() {
   local OWNER="$1"
   local FILTERS="$2"
   local REGION="$3"
-  aws ec2 describe-images --owners "$OWNER" --filters "$FILTERS" "Name=state,Values=available" --region "$REGION" --query 'Images[*].[ImageId,CreationDate]' --output text 2>&1
+  aws ec2 describe-images --owners "$OWNER" --filters "$FILTERS" "Name=state,Values=available" --region "$REGION" --query 'Images[*].[ImageId,CreationDate]' --output text 2>&1 || {
+    local RETURN_CODE=$?
+    if [ $RETURN_CODE -eq 255 ]; then
+      echo "Error: AWS CLI command failed"
+    elif [ $RETURN_CODE -eq 254 ]; then
+      echo "Error: AWS CLI command timed out"
+    else
+      echo "Error: Unknown error"
+    fi
+    return $RETURN_CODE
+  }
 }
 
 function get_latest_image_id() {

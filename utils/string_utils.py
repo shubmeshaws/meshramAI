@@ -1,57 +1,68 @@
 ```python
-"""
-Utility functions for string manipulation.
-"""
+import re
 
-def is_valid_string(input_string):
+def camel_to_snake_case(s):
     """
-    Checks if the input is a non-empty string.
+    Convert a camel case string to snake case.
 
     Args:
-        input_string (str): The input string to check.
+        s (str): The input string.
 
     Returns:
-        bool: True if the input is a non-empty string, False otherwise.
+        str: The converted string.
     """
-    return isinstance(input_string, str) and len(input_string.strip()) > 0
+    return re.sub('([A-Z])', r'_\1', s).lower().lstrip('_')
 
-
-def trim_string(input_string):
+def snake_to_camel_case(s):
     """
-    Trims leading and trailing whitespace from the input string.
+    Convert a snake case string to camel case.
 
     Args:
-        input_string (str): The input string to trim.
+        s (str): The input string.
 
     Returns:
-        str: The trimmed input string.
+        str: The converted string.
     """
-    return input_string.strip()
+    components = s.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
 
-
-def split_string(input_string, delimiter):
+def truncate_string(s, length):
     """
-    Splits the input string into a list of substrings based on the delimiter.
+    Truncate a string to a specified length.
 
     Args:
-        input_string (str): The input string to split.
-        delimiter (str): The delimiter to split the string by.
+        s (str): The input string.
+        length (int): The desired length.
 
     Returns:
-        list: A list of substrings.
+        str: The truncated string.
     """
-    return input_string.split(delimiter)
+    if len(s) > length:
+        return s[:length - 3] + '...'
+    return s
 
-
-def remove_special_chars(input_string):
+def remove_special_chars(s):
     """
-    Removes special characters from the input string.
+    Remove special characters from a string.
 
     Args:
-        input_string (str): The input string to remove special characters from.
+        s (str): The input string.
 
     Returns:
-        str: The input string with special characters removed.
+        str: The cleaned string.
     """
-    return ''.join(e for e in input_string if e.isalnum() or e.isspace())
+    return re.sub('[^A-Za-z0-9]+', '', s)
+
+def is_valid_email(email):
+    """
+    Check if a string is a valid email address.
+
+    Args:
+        email (str): The input string.
+
+    Returns:
+        bool: True if the string is a valid email address, False otherwise.
+    """
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    return bool(re.match(email_regex, email))
 ```

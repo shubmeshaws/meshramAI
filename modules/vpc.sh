@@ -120,6 +120,13 @@ function vpc_delete() {
   execute_script "$SCRIPT_DIR/modules/vpc/delete.sh" "$vpc_id"
 }
 
+function trap_handler() {
+  local exit_status=$?
+  log_error "Unexpected error occurred. Exit status: $exit_status"
+}
+
+trap trap_handler EXIT
+
 function main() {
   vpc_handler "$@"
 }

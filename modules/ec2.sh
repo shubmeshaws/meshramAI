@@ -29,15 +29,19 @@ function check_directory() {
   local dir="$1"
   if [ ! -d "$dir" ]; then
     log_error "Directory does not exist: $dir" 1
-  fi
-  if [ ! -w "$dir" ]; then
+  elif [ ! -w "$dir" ]; then
     log_error "Directory is not writable: $dir" 1
   fi
+  return 0
 }
 
 # Check if SCRIPT_DIR and LOG_FILE directories exist and are writable
-check_directory "$SCRIPT_DIR"
-check_directory "$(dirname "$LOG_FILE")"
+if ! check_directory "$SCRIPT_DIR"; then
+  exit 1
+fi
+if ! check_directory "$(dirname "$LOG_FILE")"; then
+  exit 1
+fi
 
 function show_ec2_help() {
   # Display available EC2 service commands
@@ -86,7 +90,9 @@ function execute_script() {
   shift
   local args=("$@")
   local script_dir="$SCRIPT_DIR/modules/ec2"
-  check_directory "$script_dir"
+  if ! check_directory "$script_dir"; then
+    exit 1
+  fi
   if [ ! -f "$script_dir/$script_name.sh" ]; then
     log_error "$script_name.sh script not found" 1
   fi

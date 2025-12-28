@@ -51,6 +51,31 @@ function check_script_dir() {
   fi
 }
 
+function map_region_name() {
+  local input_region="$1"
+  case $input_region in
+    us-east)
+      echo "us-east-1"
+      ;;
+    us-west)
+      echo "us-west-2"
+      ;;
+    eu-west)
+      echo "eu-west-1"
+      ;;
+    ap-northeast)
+      echo "ap-northeast-1"
+      ;;
+    ap-southeast)
+      echo "ap-southeast-1"
+      ;;
+    *)
+      log "ERROR" "Invalid region name: $input_region. Supported region names: us-east, us-west, eu-west, ap-northeast, ap-southeast"
+      exit 1
+      ;;
+  esac
+}
+
 function s3_create() {
   validate_input "$1" "$2" "$3"
   local bucket_name="$1"

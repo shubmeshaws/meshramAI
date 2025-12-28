@@ -3,20 +3,20 @@
 
 # Check if SCRIPT_DIR is set
 if [ -z "$SCRIPT_DIR" ]; then
-  log_error "SCRIPT_DIR variable is not set"
-  exit 1
+  log_error "SCRIPT_DIR variable is not set" 1
 fi
 
 # Check if LOG_FILE is set
 if [ -z "$LOG_FILE" ]; then
-  echo "[ERROR] LOG_FILE variable is not set"
-  exit 1
+  log_error "LOG_FILE variable is not set" 1
 fi
 
 function log_error() {
-  # Log error message and exit
-  echo "[ERROR] $1" | tee -a "$LOG_FILE"
-  exit 1
+  # Log error message and exit with code
+  local message="$1"
+  local exit_code="$2"
+  echo "[ERROR] $message" | tee -a "$LOG_FILE"
+  exit "$exit_code"
 }
 
 function log_info() {
@@ -28,10 +28,10 @@ function check_directory() {
   # Check if directory exists and is writable
   local dir="$1"
   if [ ! -d "$dir" ]; then
-    log_error "Directory does not exist: $dir"
+    log_error "Directory does not exist: $dir" 1
   fi
   if [ ! -w "$dir" ]; then
-    log_error "Directory is not writable: $dir"
+    log_error "Directory is not writable: $dir" 1
   fi
 }
 
@@ -69,12 +69,12 @@ function ec2_handler() {
     terminate)
       # Check if instance-id is provided
       if [ $# -ne 1 ]; then
-        log_error "Usage: meshram ec2 terminate <instance-id>"
+        log_error "Usage: meshram ec2 terminate <instance-id>" 1
       fi
       ec2_terminate "$1"
       ;;
     *)
-      log_error "Unknown ec2 command: $cmd"
+      log_error "Unknown ec2 command: $cmd" 1
       show_ec2_help
       ;;
   esac
@@ -88,12 +88,10 @@ function execute_script() {
   local script_dir="$SCRIPT_DIR/modules/ec2"
   check_directory "$script_dir"
   if [ ! -f "$script_dir/$script_name.sh" ]; then
-    echo "[ERROR] $script_name.sh script not found" | tee -a "$LOG_FILE"
-    return 1
+    log_error "$script_name.sh script not found" 1
   fi
   if ! bash "$script_dir/$script_name.sh" "${args[@]}" | tee -a "$LOG_FILE"; then
-    echo "[ERROR] Failed to execute $script_name.sh" | tee -a "$LOG_FILE"
-    return 1
+    log_error "Failed to execute $script_name.sh" 1
   fi
 }
 
@@ -102,9 +100,7 @@ function run_ec2_script() {
   local script_name="$1"
   shift
   local args=("$@")
-  if ! execute_script "$script_name" "${args[@]}"; then
-    log_error "Failed to $script_name EC2 instance"
-  fi
+  execute_script "$script_name" "${args[@]}"
 }
 
 function ec2_create() {
@@ -119,7 +115,7 @@ function ec2_terminate() {
   # Input validation for instance-id
   local instance_id="$1"
   if [[ -z "$instance_id" ]]; then
-    log_error "Usage: meshram ec2 terminate <instance-id>"
+    log_error "Usage: meshram ec2 terminate <instance-id>" 1
   fi
   run_ec2_script "terminate" "$instance_id"
 }

@@ -35,6 +35,10 @@ function log_error() {
 function execute_script() {
   local script_path="$1"
   local args="$2"
+  if [ ! -f "$script_path" ]; then
+    log_error "Script file '$script_path' does not exist."
+    return 1
+  fi
   if ! bash "$script_path" "$args" | tee -a "$LOG_FILE"; then
     local exit_status=$?
     log_error "Failed to execute script '$script_path' with args '$args'. Exit status: $exit_status. Error: $(tail -1 "$LOG_FILE")"

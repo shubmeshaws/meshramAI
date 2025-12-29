@@ -1,80 +1,69 @@
 ```python
+"""
+String utility module for common string operations.
+
+This module provides functions for validating, formatting, and manipulating strings.
+"""
+
 import re
 
-def is_empty(string):
+def is_empty(string: str) -> bool:
     """
-    Checks if a string is empty.
+    Check if a string is empty or contains only whitespace characters.
 
     Args:
-        string (str): The input string.
+        string (str): The input string to check.
 
     Returns:
         bool: True if the string is empty, False otherwise.
     """
     return not string.strip()
 
-def validate_string(string, regex_pattern):
+def validate_email(email: str) -> bool:
     """
-    Validates a string against a regular expression pattern.
+    Validate an email address using a regular expression.
 
     Args:
-        string (str): The input string.
-        regex_pattern (str): The regular expression pattern.
+        email (str): The email address to validate.
 
     Returns:
-        bool: True if the string matches the pattern, False otherwise.
+        bool: True if the email address is valid, False otherwise.
     """
-    return bool(re.match(regex_pattern, string))
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(email_regex, email))
 
-def sanitize_string(string, allowed_chars):
+def truncate_string(string: str, max_length: int) -> str:
     """
-    Sanitizes a string by removing all characters not in the allowed set.
+    Truncate a string to a specified maximum length.
 
     Args:
-        string (str): The input string.
-        allowed_chars (str): The set of allowed characters.
+        string (str): The input string to truncate.
+        max_length (int): The maximum length of the output string.
 
     Returns:
-        str: The sanitized string.
+        str: The truncated string.
     """
-    return ''.join(char for char in string if char in allowed_chars)
+    if len(string) > max_length:
+        return string[:max_length] + "..."
+    return string
 
-def format_string(string, **kwargs):
+def snake_case_to_camel_case(string: str) -> str:
     """
-    Formats a string using keyword arguments.
+    Convert a snake_case string to camelCase.
 
     Args:
-        string (str): The input string.
-        **kwargs: Keyword arguments for formatting.
+        string (str): The input string to convert.
 
     Returns:
-        str: The formatted string.
+        str: The converted string.
     """
-    return string.format(**kwargs)
+    components = string.split("_")
+    return components[0] + "".join(x.title() for x in components[1:])
 
-def split_string(string, delimiter):
-    """
-    Splits a string into a list of substrings using a delimiter.
-
-    Args:
-        string (str): The input string.
-        delimiter (str): The delimiter.
-
-    Returns:
-        list: A list of substrings.
-    """
-    return string.split(delimiter)
-
-def join_strings(strings, delimiter):
-    """
-    Joins a list of strings into a single string using a delimiter.
-
-    Args:
-        strings (list): A list of strings.
-        delimiter (str): The delimiter.
-
-    Returns:
-        str: The joined string.
-    """
-    return delimiter.join(strings)
+# Example usage
+if __name__ == "__main__":
+    print(is_empty("   "))  # True
+    print(validate_email("example@example.com"))  # True
+    print(truncate_string("This is a very long string", 10))  # "This is a..."
+    print(snake_case_to_camel_case("hello_world"))  # "helloWorld"
 ```

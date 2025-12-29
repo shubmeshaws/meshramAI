@@ -1,62 +1,124 @@
 ```python
+import os
 import re
-from typing import Any
+from typing import Dict
 
-def validate_string(input_str: str, min_length: int = 1, max_length: int = 255) -> bool:
+import boto3
+from botocore.exceptions import ClientError, NoCredentialsError
+
+def validate_aws_credentials(aws_access_key_id: str, aws_secret_access_key: str) -> bool:
     """
-    Validate a string input.
+    Validate AWS credentials by attempting to list S3 buckets.
 
     Args:
-    input_str (str): The input string to validate.
-    min_length (int): The minimum allowed length of the string. Defaults to 1.
-    max_length (int): The maximum allowed length of the string. Defaults to 255.
+    aws_access_key_id (str): AWS access key ID.
+    aws_secret_access_key (str): AWS secret access key.
 
     Returns:
-    bool: True if the string is valid, False otherwise.
+    bool: True if credentials are valid, False otherwise.
     """
-    return isinstance(input_str, str) and min_length <= len(input_str) <= max_length
+    try:
+        s3 = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+        s3.list_buckets()
+        return True
+    except NoCredentialsError:
+        return False
+    except ClientError:
+        return False
 
-
-def validate_integer(input_int: Any, min_value: int = 0, max_value: int = 100) -> bool:
+def validate_region_name(region_name: str) -> bool:
     """
-    Validate an integer input.
+    Validate an AWS region name.
 
     Args:
-    input_int (Any): The input integer to validate.
-    min_value (int): The minimum allowed value of the integer. Defaults to 0.
-    max_value (int): The maximum allowed value of the integer. Defaults to 100.
+    region_name (str): AWS region name.
 
     Returns:
-    bool: True if the integer is valid, False otherwise.
+    bool: True if region name is valid, False otherwise.
     """
-    return isinstance(input_int, int) and min_value <= input_int <= max_value
+    valid_regions = ['us-east-1', 'us-east-2', 'us-west-1', 'us-west-2', 'ca-central-1', 'eu-central-1', 'eu-west-1', 'eu-west-2', 'eu-west-3', 'ap-northeast-1', 'ap-northeast-2', 'ap-northeast-3', 'ap-southeast-1', 'ap-southeast-2', 'ap-south-1', 'sa-east-1']
+    return region_name in valid_regions
 
-
-def validate_email(email: str) -> bool:
+def validate_file_path(file_path: str) -> bool:
     """
-    Validate an email address.
+    Validate a file path by checking if the file exists.
 
     Args:
-    email (str): The email address to validate.
+    file_path (str): File path.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+    bool: True if file path is valid, False otherwise.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
+    return os.path.isfile(file_path)
 
-
-def validate_aws_resource_id(resource_id: str) -> bool:
+def validate_ec2_instance_id(instance_id: str) -> bool:
     """
-    Validate an AWS resource ID.
+    Validate an EC2 instance ID.
 
     Args:
-    resource_id (str): The AWS resource ID to validate.
+    instance_id (str): EC2 instance ID.
 
     Returns:
-    bool: True if the resource ID is valid, False otherwise.
+    bool: True if instance ID is valid, False otherwise.
     """
-    # AWS resource IDs are typically in the format of "arn:aws:service:region:account-id:resource"
-    arn_regex = r"^arn:aws:[a-z0-9-]+:[a-z0-9-]+:\d{12}:[a-zA-Z0-9-/_]+$"
-    return bool(re.match(arn_regex, resource_id))
+    ec2 = boto3.client('ec2')
+    try:
+        ec2.describe_instances(InstanceIds=[instance_id])
+        return True
+    except ClientError:
+        return False
+
+def validate_s3_bucket_name(bucket_name: str) -> bool:
+    """
+    Validate an S3 bucket name.
+
+    Args:
+    bucket_name (str): S3 bucket name.
+
+    Returns:
+    bool: True if bucket name is valid, False otherwise.
+    """
+    s3 = boto3.client('s3')
+    try:
+        s3.head_bucket(Bucket=bucket_name)
+        return True
+    except ClientError:
+        return False
+
+def validate_vpc_id(vpc_id: str) -> bool:
+    """
+    Validate a VPC ID.
+
+    Args:
+    vpc_id (str): VPC ID.
+
+    Returns:
+    bool: True if VPC ID is valid, False otherwise.
+    """
+    ec2 = boto3.client('ec2')
+    try:
+        ec2.describe_vpcs(VpcIds=[vpc_id])
+        return True
+    except ClientError:
+        return False
+
+def validate_input_data(input_data: Dict) -> bool:
+    """
+    Validate input data by checking if all required fields are present and valid.
+
+    Args:
+    input_data (Dict): Input data.
+
+    Returns:
+    bool: True if input data is valid, False otherwise.
+    """
+    required_fields = ['aws_access_key_id', 'aws_secret_access_key', 'region_name']
+    for field in required_fields:
+        if field not in input_data:
+            return False
+    if not validate_aws_credentials(input_data['aws_access_key_id'], input_data['aws_secret_access_key']):
+        return False
+    if not validate_region_name(input_data['region_name']):
+        return False
+    return True
 ```

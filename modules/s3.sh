@@ -107,7 +107,19 @@ function s3_delete() {
   fi
 }
 
+function check_environment() {
+  if [ -z "$LOG_FILE" ]; then
+    echo "ERROR: LOG_FILE environment variable is not set" >&2
+    exit 1
+  fi
+  if [ -z "$SCRIPT_DIR" ]; then
+    echo "ERROR: SCRIPT_DIR environment variable is not set" >&2
+    exit 1
+  fi
+}
+
 function main() {
+  check_environment
   check_script_dir
   case $1 in
     create)

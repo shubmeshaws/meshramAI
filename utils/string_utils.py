@@ -1,64 +1,80 @@
 ```python
-"""
-String utility functions for the project.
-"""
-
 import re
 
-def is_valid_ip_address(ip_address: str) -> bool:
+def is_empty(string):
     """
-    Validate an IP address.
+    Checks if a string is empty.
 
     Args:
-    ip_address (str): The IP address to validate.
+        string (str): The input string.
 
     Returns:
-    bool: True if the IP address is valid, False otherwise.
+        bool: True if the string is empty, False otherwise.
     """
-    pattern = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
-    if re.match(pattern, ip_address):
-        return all(0 <= int(part) <= 255 for part in ip_address.split("."))
-    return False
+    return not string.strip()
 
-
-def is_valid_domain_name(domain_name: str) -> bool:
+def validate_string(string, regex_pattern):
     """
-    Validate a domain name.
+    Validates a string against a regular expression pattern.
 
     Args:
-    domain_name (str): The domain name to validate.
+        string (str): The input string.
+        regex_pattern (str): The regular expression pattern.
 
     Returns:
-    bool: True if the domain name is valid, False otherwise.
+        bool: True if the string matches the pattern, False otherwise.
     """
-    pattern = r"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$"
-    return bool(re.match(pattern, domain_name, re.IGNORECASE))
+    return bool(re.match(regex_pattern, string))
 
-
-def snake_to_camel_case(snake_str: str) -> str:
+def sanitize_string(string, allowed_chars):
     """
-    Convert a snake_case string to camelCase.
+    Sanitizes a string by removing all characters not in the allowed set.
 
     Args:
-    snake_str (str): The snake_case string to convert.
+        string (str): The input string.
+        allowed_chars (str): The set of allowed characters.
 
     Returns:
-    str: The camelCase version of the input string.
+        str: The sanitized string.
     """
-    components = snake_str.split("_")
-    return components[0] + "".join(x.title() for x in components[1:])
+    return ''.join(char for char in string if char in allowed_chars)
 
-
-def camel_to_snake_case(camel_str: str) -> str:
+def format_string(string, **kwargs):
     """
-    Convert a camelCase string to snake_case.
+    Formats a string using keyword arguments.
 
     Args:
-    camel_str (str): The camelCase string to convert.
+        string (str): The input string.
+        **kwargs: Keyword arguments for formatting.
 
     Returns:
-    str: The snake_case version of the input string.
+        str: The formatted string.
     """
-    snake_str = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", camel_str)
-    return re.sub("([a-z0-9])([A-Z])", r"\1_\2", snake_str).lower()
+    return string.format(**kwargs)
+
+def split_string(string, delimiter):
+    """
+    Splits a string into a list of substrings using a delimiter.
+
+    Args:
+        string (str): The input string.
+        delimiter (str): The delimiter.
+
+    Returns:
+        list: A list of substrings.
+    """
+    return string.split(delimiter)
+
+def join_strings(strings, delimiter):
+    """
+    Joins a list of strings into a single string using a delimiter.
+
+    Args:
+        strings (list): A list of strings.
+        delimiter (str): The delimiter.
+
+    Returns:
+        str: The joined string.
+    """
+    return delimiter.join(strings)
 ```

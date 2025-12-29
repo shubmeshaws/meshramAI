@@ -25,10 +25,10 @@ function log_info() {
 }
 
 function check_directory() {
-  # Check if directory exists and is writable
+  # Check if directory exists and is writable, create if it does not exist
   local dir="$1"
   if [ ! -d "$dir" ]; then
-    log_error "Directory does not exist: $dir" 1
+    mkdir -p "$dir" || log_error "Failed to create directory: $dir" 1
   elif [ ! -w "$dir" ]; then
     log_error "Directory is not writable: $dir" 1
   fi

@@ -54,8 +54,7 @@ function show_ec2_help() {
 function ec2_handler() {
   # Input validation for ec2_handler function
   if [ $# -eq 0 ]; then
-    show_ec2_help
-    return
+    log_error "No command provided" 1
   fi
 
   local cmd="$1"

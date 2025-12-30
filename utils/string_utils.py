@@ -1,69 +1,58 @@
 ```python
 """
-String utility module for common string operations.
-
-This module provides functions for validating, formatting, and manipulating strings.
+This module provides utility functions for handling string operations.
 """
 
 import re
 
-def is_empty(string: str) -> bool:
+def is_empty_string(input_string: str) -> bool:
     """
-    Check if a string is empty or contains only whitespace characters.
+    Checks if a given string is empty.
 
     Args:
-        string (str): The input string to check.
+    input_string (str): The string to check.
 
     Returns:
-        bool: True if the string is empty, False otherwise.
+    bool: True if the string is empty, False otherwise.
     """
-    return not string.strip()
+    return not input_string.strip()
 
 def validate_email(email: str) -> bool:
     """
-    Validate an email address using a regular expression.
+    Validates an email address using a regular expression.
 
     Args:
-        email (str): The email address to validate.
+    email (str): The email address to validate.
 
     Returns:
-        bool: True if the email address is valid, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
     return bool(re.match(email_regex, email))
 
-def truncate_string(string: str, max_length: int) -> str:
+def compare_strings(str1: str, str2: str) -> bool:
     """
-    Truncate a string to a specified maximum length.
+    Compares two strings ignoring case and leading/trailing whitespace.
 
     Args:
-        string (str): The input string to truncate.
-        max_length (int): The maximum length of the output string.
+    str1 (str): The first string to compare.
+    str2 (str): The second string to compare.
 
     Returns:
-        str: The truncated string.
+    bool: True if the strings are equal, False otherwise.
     """
-    if len(string) > max_length:
-        return string[:max_length] + "..."
-    return string
+    return str1.strip().casefold() == str2.strip().casefold()
 
-def snake_case_to_camel_case(string: str) -> str:
+def format_string(input_string: str, **kwargs) -> str:
     """
-    Convert a snake_case string to camelCase.
+    Formats a string using keyword arguments.
 
     Args:
-        string (str): The input string to convert.
+    input_string (str): The string to format.
+    **kwargs: Keyword arguments to replace in the string.
 
     Returns:
-        str: The converted string.
+    str: The formatted string.
     """
-    components = string.split("_")
-    return components[0] + "".join(x.title() for x in components[1:])
-
-# Example usage
-if __name__ == "__main__":
-    print(is_empty("   "))  # True
-    print(validate_email("example@example.com"))  # True
-    print(truncate_string("This is a very long string", 10))  # "This is a..."
-    print(snake_case_to_camel_case("hello_world"))  # "helloWorld"
+    return input_string.format(**kwargs)
 ```

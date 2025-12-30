@@ -76,6 +76,16 @@ function map_region_name() {
   esac
 }
 
+function exit_code_1() {
+  log "ERROR" "Usage: meshram s3 <command> [options]"
+  exit 1
+}
+
+function exit_code_127() {
+  log "ERROR" "Command not found"
+  exit 127
+}
+
 function s3_create() {
   validate_input "$1" "$2" "$3"
   local bucket_name="$1"
@@ -85,14 +95,22 @@ function s3_create() {
   validate_region "$region"
   log "INFO" "Creating bucket '$bucket_name' in region '$region' with ACL '$acl'..."
   if ! bash "$SCRIPT_DIR/modules/s3/create.sh" "$bucket_name" "$region" "$acl" | tee -a "$LOG_FILE"; then
-    handle_error $? "s3 create"
+    case $? in
+      1) exit_code_1 ;;
+      127) exit_code_127 ;;
+      *) handle_error $? "s3 create" ;;
+    esac
   fi
 }
 
 function s3_list() {
   log "INFO" "Listing S3 buckets..."
   if ! bash "$SCRIPT_DIR/modules/s3/list.sh" | tee -a "$LOG_FILE"; then
-    handle_error $? "s3 list"
+    case $? in
+      1) exit_code_1 ;;
+      127) exit_code_127 ;;
+      *) handle_error $? "s3 list" ;;
+    esac
   fi
 }
 
@@ -103,7 +121,11 @@ function s3_delete() {
   fi
   log "INFO" "Deleting bucket '$1'..."
   if ! bash "$SCRIPT_DIR/modules/s3/delete.sh" "$1" | tee -a "$LOG_FILE"; then
-    handle_error $? "s3 delete"
+    case $? in
+      1) exit_code_1 ;;
+      127) exit_code_127 ;;
+      *) handle_error $? "s3 delete" ;;
+    esac
   fi
 }
 

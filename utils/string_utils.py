@@ -1,85 +1,72 @@
 ```python
 """
-String utility functions.
-
-This module provides various functions for string manipulation and processing.
+This module provides utility functions for common string operations.
 """
 
-import re
-
-def is_empty(string: str) -> bool:
+def camel_to_snake_case(input_string: str) -> str:
     """
-    Check if a string is empty.
+    Converts a camel case string to snake case.
 
     Args:
-    string (str): The input string.
+        input_string (str): The input string to convert.
 
     Returns:
-    bool: True if the string is empty, False otherwise.
+        str: The input string in snake case.
     """
-    return not string.strip()
+    snake_case = ""
+    for i, char in enumerate(input_string):
+        if char.isupper():
+            if i > 0:
+                snake_case += "_"
+            snake_case += char.lower()
+        else:
+            snake_case += char
+    return snake_case
 
-def is_match(pattern: str, string: str) -> bool:
+
+def snake_to_camel_case(input_string: str) -> str:
     """
-    Check if a string matches a regular expression pattern.
+    Converts a snake case string to camel case.
 
     Args:
-    pattern (str): The regular expression pattern.
-    string (str): The input string.
+        input_string (str): The input string to convert.
 
     Returns:
-    bool: True if the string matches the pattern, False otherwise.
+        str: The input string in camel case.
     """
-    return bool(re.match(pattern, string))
+    words = input_string.split("_")
+    camel_case = words[0]
+    for word in words[1:]:
+        camel_case += word.capitalize()
+    return camel_case
 
-def remove_special_chars(string: str) -> str:
+
+def remove_special_chars(input_string: str) -> str:
     """
-    Remove special characters from a string.
+    Removes special characters from a string.
 
     Args:
-    string (str): The input string.
+        input_string (str): The input string to remove special characters from.
 
     Returns:
-    str: The string with special characters removed.
+        str: The input string with special characters removed.
     """
-    return re.sub('[^A-Za-z0-9]+', '', string)
+    return "".join(char for char in input_string if char.isalnum() or char.isspace())
 
-def truncate_string(string: str, max_length: int) -> str:
+
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncate a string to a specified length.
+    Truncates a string to a specified maximum length.
 
     Args:
-    string (str): The input string.
-    max_length (int): The maximum length of the string.
+        input_string (str): The input string to truncate.
+        max_length (int): The maximum length of the output string.
 
     Returns:
-    str: The truncated string.
+        str: The input string truncated to the specified maximum length.
     """
-    if len(string) > max_length:
-        return string[:max_length] + '...'
-    return string
-
-def to_title_case(string: str) -> str:
-    """
-    Convert a string to title case.
-
-    Args:
-    string (str): The input string.
-
-    Returns:
-    str: The string in title case.
-    """
-    return string.title()
-
-def to_snake_case(string: str) -> str:
-    """
-    Convert a string to snake case.
-
-    Args:
-    string (str): The input string.
-
-    Returns:
-    str: The string in snake case.
-    """
-    return re.sub(' ', '_', string).lower()
+    if len(input_string) > max_length:
+        return input_string[:max_length] + "..."
+    else:
+        return input_string
 ```

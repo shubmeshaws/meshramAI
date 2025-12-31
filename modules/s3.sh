@@ -16,13 +16,16 @@ function handle_error() {
   exit $exit_code
 }
 
-function validate_input() {
-  if [[ -z "$1" || -z "$2" ]]; then
-    log "ERROR" "Usage: meshram s3 create <bucket-name> <region> [public|private]"
+function validate_bucket_name() {
+  if [[ -z "$1" ]]; then
+    log "ERROR" "Usage: meshram s3 create <bucket-name> [options]"
     exit 1
   fi
-  if [[ "$3" != "public" && "$3" != "private" && -n "$3" ]]; then
-    log "ERROR" "Invalid ACL: $3. Only 'public' or 'private' are allowed"
+}
+
+function validate_acl() {
+  if [[ "$1" != "public" && "$1" != "private" && -n "$1" ]]; then
+    log "ERROR" "Invalid ACL: $1. Only 'public' or 'private' are allowed"
     exit 1
   fi
 }
@@ -87,7 +90,8 @@ function exit_code_127() {
 }
 
 function s3_create() {
-  validate_input "$1" "$2" "$3"
+  validate_bucket_name "$1"
+  validate_acl "$3"
   local bucket_name="$1"
   local input_region="$2"
   local acl="${3:-private}" # default to private

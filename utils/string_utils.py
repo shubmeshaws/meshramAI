@@ -1,72 +1,59 @@
 ```python
 """
-This module provides utility functions for common string operations.
+String utility functions for general use.
 """
 
-def camel_to_snake_case(input_string: str) -> str:
+import re
+
+def is_empty(string: str) -> bool:
     """
-    Converts a camel case string to snake case.
+    Checks if a string is empty or contains only whitespace.
 
     Args:
-        input_string (str): The input string to convert.
+    string (str): The input string.
 
     Returns:
-        str: The input string in snake case.
+    bool: True if the string is empty, False otherwise.
     """
-    snake_case = ""
-    for i, char in enumerate(input_string):
-        if char.isupper():
-            if i > 0:
-                snake_case += "_"
-            snake_case += char.lower()
-        else:
-            snake_case += char
-    return snake_case
+    return not string.strip()
 
-
-def snake_to_camel_case(input_string: str) -> str:
+def validate_email(email: str) -> bool:
     """
-    Converts a snake case string to camel case.
+    Validates an email address.
 
     Args:
-        input_string (str): The input string to convert.
+    email (str): The email address to validate.
 
     Returns:
-        str: The input string in camel case.
+    bool: True if the email is valid, False otherwise.
     """
-    words = input_string.split("_")
-    camel_case = words[0]
-    for word in words[1:]:
-        camel_case += word.capitalize()
-    return camel_case
-
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(email_regex, email))
 
 def remove_special_chars(input_string: str) -> str:
     """
     Removes special characters from a string.
 
     Args:
-        input_string (str): The input string to remove special characters from.
+    input_string (str): The input string.
 
     Returns:
-        str: The input string with special characters removed.
+    str: The string without special characters.
     """
-    return "".join(char for char in input_string if char.isalnum() or char.isspace())
-
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 
 def truncate_string(input_string: str, max_length: int) -> str:
     """
     Truncates a string to a specified maximum length.
 
     Args:
-        input_string (str): The input string to truncate.
-        max_length (int): The maximum length of the output string.
+    input_string (str): The input string.
+    max_length (int): The maximum length of the output string.
 
     Returns:
-        str: The input string truncated to the specified maximum length.
+    str: The truncated string.
     """
     if len(input_string) > max_length:
         return input_string[:max_length] + "..."
-    else:
-        return input_string
+    return input_string
 ```

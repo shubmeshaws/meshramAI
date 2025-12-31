@@ -89,6 +89,18 @@ function exit_code_127() {
   exit 127
 }
 
+function run_script() {
+  local script="$1"
+  local args="$2"
+  if ! bash "$SCRIPT_DIR/modules/s3/$script.sh" $args | tee -a "$LOG_FILE"; then
+    case $? in
+      1) exit_code_1 ;;
+      127) exit_code_127 ;;
+      *) handle_error $? "s3 $script" ;;
+    esac
+  fi
+}
+
 function s3_create() {
   validate_bucket_name "$1"
   validate_acl "$3"
@@ -98,24 +110,12 @@ function s3_create() {
   local region=$(map_region_name "$input_region")
   validate_region "$region"
   log "INFO" "Creating bucket '$bucket_name' in region '$region' with ACL '$acl'..."
-  if ! bash "$SCRIPT_DIR/modules/s3/create.sh" "$bucket_name" "$region" "$acl" | tee -a "$LOG_FILE"; then
-    case $? in
-      1) exit_code_1 ;;
-      127) exit_code_127 ;;
-      *) handle_error $? "s3 create" ;;
-    esac
-  fi
+  run_script "create" "$bucket_name $region $acl"
 }
 
 function s3_list() {
   log "INFO" "Listing S3 buckets..."
-  if ! bash "$SCRIPT_DIR/modules/s3/list.sh" | tee -a "$LOG_FILE"; then
-    case $? in
-      1) exit_code_1 ;;
-      127) exit_code_127 ;;
-      *) handle_error $? "s3 list" ;;
-    esac
-  fi
+  run_script "list"
 }
 
 function s3_delete() {
@@ -124,13 +124,7 @@ function s3_delete() {
     exit 1
   fi
   log "INFO" "Deleting bucket '$1'..."
-  if ! bash "$SCRIPT_DIR/modules/s3/delete.sh" "$1" | tee -a "$LOG_FILE"; then
-    case $? in
-      1) exit_code_1 ;;
-      127) exit_code_127 ;;
-      *) handle_error $? "s3 delete" ;;
-    esac
-  fi
+  run_script "delete" "$1"
 }
 
 function check_environment() {

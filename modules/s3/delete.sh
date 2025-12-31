@@ -82,6 +82,13 @@ function s3_delete() {
     return $?
   fi
 
+  echo "[WARNING] Bucket '$BUCKET_NAME' has been emptied. Are you sure you want to delete it? (y/n)"
+  read -r confirmation
+  if [[ "$confirmation" != "y" ]]; then
+    echo "[INFO] Deletion cancelled."
+    return 0
+  fi
+
   # Delete the bucket
   if ! output=$(timeout 30s aws s3api delete-bucket --bucket "$BUCKET_NAME" --region "$REGION" 2>&1); then
     handle_aws_error "$output" "delete-bucket"

@@ -1,58 +1,85 @@
 ```python
 """
-This module provides utility functions for handling string operations.
+String utility functions.
+
+This module provides various functions for string manipulation and processing.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def is_empty(string: str) -> bool:
     """
-    Checks if a given string is empty.
+    Check if a string is empty.
 
     Args:
-    input_string (str): The string to check.
+    string (str): The input string.
 
     Returns:
     bool: True if the string is empty, False otherwise.
     """
-    return not input_string.strip()
+    return not string.strip()
 
-def validate_email(email: str) -> bool:
+def is_match(pattern: str, string: str) -> bool:
     """
-    Validates an email address using a regular expression.
+    Check if a string matches a regular expression pattern.
 
     Args:
-    email (str): The email address to validate.
+    pattern (str): The regular expression pattern.
+    string (str): The input string.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+    bool: True if the string matches the pattern, False otherwise.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
+    return bool(re.match(pattern, string))
 
-def compare_strings(str1: str, str2: str) -> bool:
+def remove_special_chars(string: str) -> str:
     """
-    Compares two strings ignoring case and leading/trailing whitespace.
+    Remove special characters from a string.
 
     Args:
-    str1 (str): The first string to compare.
-    str2 (str): The second string to compare.
+    string (str): The input string.
 
     Returns:
-    bool: True if the strings are equal, False otherwise.
+    str: The string with special characters removed.
     """
-    return str1.strip().casefold() == str2.strip().casefold()
+    return re.sub('[^A-Za-z0-9]+', '', string)
 
-def format_string(input_string: str, **kwargs) -> str:
+def truncate_string(string: str, max_length: int) -> str:
     """
-    Formats a string using keyword arguments.
+    Truncate a string to a specified length.
 
     Args:
-    input_string (str): The string to format.
-    **kwargs: Keyword arguments to replace in the string.
+    string (str): The input string.
+    max_length (int): The maximum length of the string.
 
     Returns:
-    str: The formatted string.
+    str: The truncated string.
     """
-    return input_string.format(**kwargs)
+    if len(string) > max_length:
+        return string[:max_length] + '...'
+    return string
+
+def to_title_case(string: str) -> str:
+    """
+    Convert a string to title case.
+
+    Args:
+    string (str): The input string.
+
+    Returns:
+    str: The string in title case.
+    """
+    return string.title()
+
+def to_snake_case(string: str) -> str:
+    """
+    Convert a string to snake case.
+
+    Args:
+    string (str): The input string.
+
+    Returns:
+    str: The string in snake case.
+    """
+    return re.sub(' ', '_', string).lower()
 ```

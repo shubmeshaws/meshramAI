@@ -124,4 +124,11 @@ function ec2_terminate() {
   fi
   run_ec2_script "terminate" "$instance_id"
 }
+
+function main() {
+  # Main function to handle script execution
+  ec2_handler "$@"
+}
+
+main "$@"
 ```

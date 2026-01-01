@@ -109,20 +109,26 @@ function vpc_handler() {
   esac
 }
 
+function execute_vpc_script() {
+  local script_name="$1"
+  local args="$2"
+  local script_path="$SCRIPT_DIR/modules/vpc/$script_name.sh"
+  log_info "Executing $script_name script..."
+  execute_script "$script_path" "$args"
+}
+
 function vpc_create() {
-  log_info "Creating VPC..."
-  execute_script "$SCRIPT_DIR/modules/vpc/create.sh"
+  execute_vpc_script "create"
 }
 
 function vpc_list() {
-  log_info "Listing VPCs..."
-  execute_script "$SCRIPT_DIR/modules/vpc/list.sh"
+  execute_vpc_script "list"
 }
 
 function vpc_delete() {
   local vpc_id="$1"
   log_info "Deleting VPC $vpc_id..."
-  execute_script "$SCRIPT_DIR/modules/vpc/delete.sh" "$vpc_id"
+  execute_vpc_script "delete" "$vpc_id"
 }
 
 function trap_handler() {

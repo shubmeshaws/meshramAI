@@ -1,71 +1,67 @@
 ```python
 """
-String utility module.
-
-This module provides functions for string manipulation and validation.
+String utility functions.
 """
 
 import re
 
-def is_empty(string: str) -> bool:
+def snake_to_camel(snake_str):
     """
-    Checks if a string is empty.
+    Convert a snake_case string to camelCase.
 
     Args:
-    string (str): The string to check.
+        snake_str (str): The snake_case string.
 
     Returns:
-    bool: True if the string is empty, False otherwise.
+        str: The camelCase string.
     """
-    return not string.strip()
+    components = snake_str.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
 
-def validate_email(email: str) -> bool:
+def camel_to_snake(camel_str):
     """
-    Validates an email address.
+    Convert a camelCase string to snake_case.
 
     Args:
-    email (str): The email address to validate.
+        camel_str (str): The camelCase string.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+        str: The snake_case string.
     """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, email))
+    snake_str = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', camel_str)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', snake_str).lower()
 
-def remove_special_chars(input_string: str) -> str:
+def remove_special_chars(input_str):
     """
-    Removes special characters from a string.
+    Remove special characters from a string.
 
     Args:
-    input_string (str): The string to remove special characters from.
+        input_str (str): The input string.
 
     Returns:
-    str: The string without special characters.
+        str: The string without special characters.
     """
-    return re.sub('[^A-Za-z0-9]+', '', input_string)
+    return re.sub('[^A-Za-z0-9]+', '', input_str)
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def truncate_string(input_str, max_length):
     """
-    Truncates a string to a specified length.
+    Truncate a string to a maximum length.
 
     Args:
-    input_string (str): The string to truncate.
-    max_length (int): The maximum length of the string.
+        input_str (str): The input string.
+        max_length (int): The maximum length.
 
     Returns:
-    str: The truncated string.
+        str: The truncated string.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + '...'
-    return input_string
+    if len(input_str) > max_length:
+        return input_str[:max_length] + '...'
+    return input_str
 
-def main():
-    # Example usage
-    print(is_empty(""))  # True
-    print(validate_email("example@example.com"))  # True
-    print(remove_special_chars("Hello, World!"))  # "HelloWorld"
-    print(truncate_string("This is a long string", 10))  # "This is a..."
-
-if __name__ == "__main__":
-    main()
+# Example usage:
+if __name__ == '__main__':
+    print(snake_to_camel('hello_world'))  # Output: helloWorld
+    print(camel_to_snake('helloWorld'))  # Output: hello_world
+    print(remove_special_chars('Hello, World!'))  # Output: HelloWorld
+    print(truncate_string('This is a very long string', 10))  # Output: This is a...
 ```

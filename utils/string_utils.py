@@ -2,73 +2,70 @@
 """
 String utility module.
 
-Provides functions for common string operations, including validation, formatting, and manipulation.
+This module provides functions for string manipulation and validation.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def is_empty(string: str) -> bool:
     """
-    Checks if a string is empty or contains only whitespace characters.
+    Checks if a string is empty.
 
     Args:
-    input_string (str): The input string to check.
+    string (str): The string to check.
 
     Returns:
     bool: True if the string is empty, False otherwise.
     """
-    return not input_string.strip()
+    return not string.strip()
 
-def validate_email(input_string: str) -> bool:
+def validate_email(email: str) -> bool:
     """
-    Validates an email address using a regular expression.
+    Validates an email address.
 
     Args:
-    input_string (str): The email address to validate.
+    email (str): The email address to validate.
 
     Returns:
     bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    return bool(re.match(email_regex, input_string))
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(email_regex, email))
 
-def format_string(input_string: str, **kwargs) -> str:
+def remove_special_chars(input_string: str) -> str:
     """
-    Formats a string using keyword arguments.
+    Removes special characters from a string.
 
     Args:
-    input_string (str): The input string to format.
-    **kwargs: Keyword arguments to replace placeholders in the input string.
+    input_string (str): The string to remove special characters from.
 
     Returns:
-    str: The formatted string.
+    str: The string without special characters.
     """
-    return input_string.format(**kwargs)
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 
 def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncates a string to a specified maximum length.
+    Truncates a string to a specified length.
 
     Args:
-    input_string (str): The input string to truncate.
-    max_length (int): The maximum length of the output string.
+    input_string (str): The string to truncate.
+    max_length (int): The maximum length of the string.
 
     Returns:
     str: The truncated string.
     """
     if len(input_string) > max_length:
-        return input_string[:max_length - 3] + "..."
+        return input_string[:max_length] + '...'
     return input_string
 
-def remove_special_characters(input_string: str) -> str:
-    """
-    Removes special characters from a string.
+def main():
+    # Example usage
+    print(is_empty(""))  # True
+    print(validate_email("example@example.com"))  # True
+    print(remove_special_chars("Hello, World!"))  # "HelloWorld"
+    print(truncate_string("This is a long string", 10))  # "This is a..."
 
-    Args:
-    input_string (str): The input string to process.
-
-    Returns:
-    str: The input string with special characters removed.
-    """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+if __name__ == "__main__":
+    main()
 ```

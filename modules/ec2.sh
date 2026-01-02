@@ -64,9 +64,15 @@ function ec2_handler() {
       show_ec2_help
       ;;
     create)
+      if [ $# -ne 0 ]; then
+        log_error "Usage: meshram ec2 create" 1
+      fi
       ec2_create
       ;;
     list)
+      if [ $# -ne 0 ]; then
+        log_error "Usage: meshram ec2 list" 1
+      fi
       ec2_list
       ;;
     terminate)

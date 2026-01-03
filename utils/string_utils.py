@@ -1,61 +1,65 @@
 ```python
 """
-String utility module.
-
-Provides functions for string manipulation and validation.
+String utility functions for general use.
 """
 
 import re
 
-def is_empty(string: str) -> bool:
+def to_title_case(input_string: str) -> str:
     """
-    Checks if a string is empty.
+    Converts a string to title case.
 
     Args:
-        string (str): The input string.
+        input_string (str): The string to convert.
 
     Returns:
-        bool: True if the string is empty, False otherwise.
+        str: The input string in title case.
     """
-    return not string.strip()
+    return input_string.title()
 
-def validate_email(email: str) -> bool:
-    """
-    Validates an email address.
-
-    Args:
-        email (str): The email address to validate.
-
-    Returns:
-        bool: True if the email is valid, False otherwise.
-    """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, email))
-
-def remove_special_chars(string: str) -> str:
+def remove_special_chars(input_string: str) -> str:
     """
     Removes special characters from a string.
 
     Args:
-        string (str): The input string.
+        input_string (str): The string to clean.
 
     Returns:
-        str: The string with special characters removed.
+        str: The input string with special characters removed.
     """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', string)
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
 
-def truncate_string(string: str, max_length: int) -> str:
+def slugify(input_string: str) -> str:
     """
-    Truncates a string to a specified length.
+    Converts a string to a slug (lowercase, no spaces, no special characters).
 
     Args:
-        string (str): The input string.
+        input_string (str): The string to slugify.
+
+    Returns:
+        str: The input string as a slug.
+    """
+    return re.sub(r'[^a-zA-Z0-9]', '-', input_string.lower()).strip('-')
+
+def truncate_string(input_string: str, max_length: int) -> str:
+    """
+    Truncates a string to a maximum length.
+
+    Args:
+        input_string (str): The string to truncate.
         max_length (int): The maximum length of the string.
 
     Returns:
-        str: The truncated string.
+        str: The input string truncated to the maximum length.
     """
-    if len(string) > max_length:
-        return string[:max_length] + "..."
-    return string
+    if len(input_string) > max_length:
+        return input_string[:max_length] + '...'
+    return input_string
+
+# Example usage:
+if __name__ == "__main__":
+    print(to_title_case("hello world"))  # Output: Hello World
+    print(remove_special_chars("Hello, World!"))  # Output: Hello World
+    print(slugify("Hello, World!"))  # Output: hello-world
+    print(truncate_string("This is a very long string", 10))  # Output: This is a...
 ```

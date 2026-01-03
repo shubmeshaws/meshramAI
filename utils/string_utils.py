@@ -1,8 +1,8 @@
 ```python
 """
-Utility module for string manipulation and validation.
+String utility functions.
 
-This module provides functions for common string operations.
+This module provides a set of functions to handle string operations, including validation, sanitization, and formatting.
 """
 
 import re
@@ -12,7 +12,7 @@ def validate_email(email: str) -> bool:
     Validate an email address.
 
     Args:
-    email (str): The email address to be validated.
+    email (str): The email address to validate.
 
     Returns:
     bool: True if the email is valid, False otherwise.
@@ -20,43 +20,42 @@ def validate_email(email: str) -> bool:
     email_regex = r"[^@]+@[^@]+\.[^@]+"
     return bool(re.match(email_regex, email))
 
-def validate_ip_address(ip_address: str) -> bool:
+def sanitize_string(input_string: str) -> str:
     """
-    Validate an IP address.
+    Sanitize a string by removing special characters and leading/trailing whitespaces.
 
     Args:
-    ip_address (str): The IP address to be validated.
+    input_string (str): The string to sanitize.
 
     Returns:
-    bool: True if the IP address is valid, False otherwise.
+    str: The sanitized string.
     """
-    ip_address_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_address_regex, ip_address))
+    sanitized_string = re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+    return sanitized_string.strip()
 
-def remove_special_characters(input_string: str) -> str:
+def format_string(input_string: str, **kwargs) -> str:
     """
-    Remove special characters from a string.
+    Format a string using keyword arguments.
 
     Args:
-    input_string (str): The string to remove special characters from.
+    input_string (str): The string to format.
+    **kwargs: Keyword arguments to use for formatting.
 
     Returns:
-    str: The string without special characters.
+    str: The formatted string.
     """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+    return input_string.format(**kwargs)
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def convert_to_slug(input_string: str) -> str:
     """
-    Truncate a string to a specified length.
+    Convert a string to a slug (lowercase, hyphen-separated).
 
     Args:
-    input_string (str): The string to be truncated.
-    max_length (int): The maximum length of the string.
+    input_string (str): The string to convert.
 
     Returns:
-    str: The truncated string.
+    str: The converted slug.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
-    return input_string
+    slug = input_string.lower().replace(' ', '-')
+    return re.sub(r'[^a-z0-9-]', '', slug)
 ```

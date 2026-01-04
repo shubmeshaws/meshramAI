@@ -53,6 +53,19 @@ function handle_aws_error() {
   return 1
 }
 
+function get_confirmation() {
+  local prompt="$1"
+  while true; do
+    echo "$prompt"
+    read -r confirmation
+    case "$confirmation" in
+      y) return 0 ;;
+      n) return 1 ;;
+      *) echo "[ERROR] Invalid input. Please enter 'y' or 'n'." ;;
+    esac
+  done
+}
+
 function s3_delete() {
   BUCKET_NAME="$1"
   INPUT_REGION="$2"
@@ -69,9 +82,7 @@ function s3_delete() {
     return $?
   fi
 
-  echo "[WARNING] Deleting S3 bucket '$BUCKET_NAME' in region '$REGION' will PERMANENTLY DELETE all its contents. Are you sure? (y/n)"
-  read -r confirmation
-  if [[ "$confirmation" != "y" ]]; then
+  if ! get_confirmation "[WARNING] Deleting S3 bucket '$BUCKET_NAME' in region '$REGION' will PERMANENTLY DELETE all its contents. Are you sure? (y/n)"; then
     echo "[INFO] Deletion cancelled."
     return 0
   fi
@@ -82,9 +93,7 @@ function s3_delete() {
     return $?
   fi
 
-  echo "[WARNING] Bucket '$BUCKET_NAME' has been emptied. Are you sure you want to delete it? (y/n)"
-  read -r confirmation
-  if [[ "$confirmation" != "y" ]]; then
+  if ! get_confirmation "[WARNING] Bucket '$BUCKET_NAME' has been emptied. Are you sure you want to delete it? (y/n)"; then
     echo "[INFO] Deletion cancelled."
     return 0
   fi

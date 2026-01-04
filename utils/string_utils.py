@@ -1,65 +1,60 @@
 ```python
 """
-String utility module.
-
-This module provides functions for parsing, formatting, and validating strings.
+String utility functions for meshram project.
 """
 
 import re
 
-def parse_aws_id(aws_id):
+def validate_email(email: str) -> bool:
     """
-    Parse an AWS ID and extract the resource type and ID.
+    Validate an email address.
 
     Args:
-        aws_id (str): The AWS ID to parse.
+    email (str): Email address to be validated.
 
     Returns:
-        tuple: A tuple containing the resource type and ID.
+    bool: True if the email is valid, False otherwise.
     """
-    match = re.match(r"(?P<resource_type>i-|ami-|arn:aws:)[a-zA-Z0-9-]+(?P<resource_id>[a-zA-Z0-9]+)", aws_id)
-    if match:
-        return match.group("resource_type"), match.group("resource_id")
-    return None, None
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email))
 
-def format_aws_id(resource_type, resource_id):
+def remove_special_chars(input_str: str) -> str:
     """
-    Format an AWS ID from a resource type and ID.
+    Remove special characters from a string.
 
     Args:
-        resource_type (str): The resource type.
-        resource_id (str): The resource ID.
+    input_str (str): Input string to remove special characters from.
 
     Returns:
-        str: The formatted AWS ID.
+    str: String with special characters removed.
     """
-    return f"{resource_type}{resource_id}"
+    return re.sub('[^A-Za-z0-9]+', '', input_str)
 
-def validate_aws_id(aws_id):
+def truncate_string(input_str: str, max_length: int) -> str:
     """
-    Validate an AWS ID.
+    Truncate a string to a specified length.
 
     Args:
-        aws_id (str): The AWS ID to validate.
+    input_str (str): Input string to be truncated.
+    max_length (int): Maximum length of the output string.
 
     Returns:
-        bool: True if the AWS ID is valid, False otherwise.
+    str: Truncated string.
     """
-    match = re.match(r"(?P<resource_type>i-|ami-|arn:aws:)[a-zA-Z0-9-]+(?P<resource_id>[a-zA-Z0-9]+)", aws_id)
-    return bool(match)
+    if len(input_str) > max_length:
+        return input_str[:max_length] + "..."
+    return input_str
 
-def truncate_string(s, max_length):
+def camel_case_to_snake_case(input_str: str) -> str:
     """
-    Truncate a string to a maximum length.
+    Convert a camel case string to snake case.
 
     Args:
-        s (str): The string to truncate.
-        max_length (int): The maximum length.
+    input_str (str): Input string in camel case.
 
     Returns:
-        str: The truncated string.
+    str: String in snake case.
     """
-    if len(s) > max_length:
-        return s[:max_length - 3] + "..."
-    return s
+    snake_case_str = re.sub(r'(?<!^)(?=[A-Z])', '_', input_str).lower()
+    return snake_case_str
 ```

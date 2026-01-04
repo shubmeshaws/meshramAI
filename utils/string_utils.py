@@ -1,59 +1,65 @@
 ```python
 """
-Utility functions for string manipulation.
+String utility module.
+
+This module provides functions for parsing, formatting, and validating strings.
 """
 
-def to_title_case(input_string: str) -> str:
+import re
+
+def parse_aws_id(aws_id):
     """
-    Converts a string to title case.
+    Parse an AWS ID and extract the resource type and ID.
 
     Args:
-        input_string (str): The input string to convert.
+        aws_id (str): The AWS ID to parse.
 
     Returns:
-        str: The input string in title case.
+        tuple: A tuple containing the resource type and ID.
     """
-    return input_string.title()
+    match = re.match(r"(?P<resource_type>i-|ami-|arn:aws:)[a-zA-Z0-9-]+(?P<resource_id>[a-zA-Z0-9]+)", aws_id)
+    if match:
+        return match.group("resource_type"), match.group("resource_id")
+    return None, None
 
-
-def is_empty_string(input_string: str) -> bool:
+def format_aws_id(resource_type, resource_id):
     """
-    Checks if a string is empty.
+    Format an AWS ID from a resource type and ID.
 
     Args:
-        input_string (str): The input string to check.
+        resource_type (str): The resource type.
+        resource_id (str): The resource ID.
 
     Returns:
-        bool: True if the string is empty, False otherwise.
+        str: The formatted AWS ID.
     """
-    return len(input_string.strip()) == 0
+    return f"{resource_type}{resource_id}"
 
-
-def truncate_string(input_string: str, max_length: int) -> str:
+def validate_aws_id(aws_id):
     """
-    Truncates a string to a specified maximum length.
+    Validate an AWS ID.
 
     Args:
-        input_string (str): The input string to truncate.
-        max_length (int): The maximum length of the output string.
+        aws_id (str): The AWS ID to validate.
 
     Returns:
-        str: The truncated input string.
+        bool: True if the AWS ID is valid, False otherwise.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
-    return input_string
+    match = re.match(r"(?P<resource_type>i-|ami-|arn:aws:)[a-zA-Z0-9-]+(?P<resource_id>[a-zA-Z0-9]+)", aws_id)
+    return bool(match)
 
-
-def remove_special_characters(input_string: str) -> str:
+def truncate_string(s, max_length):
     """
-    Removes special characters from a string.
+    Truncate a string to a maximum length.
 
     Args:
-        input_string (str): The input string to clean.
+        s (str): The string to truncate.
+        max_length (int): The maximum length.
 
     Returns:
-        str: The input string with special characters removed.
+        str: The truncated string.
     """
-    return "".join(char for char in input_string if char.isalnum() or char.isspace())
+    if len(s) > max_length:
+        return s[:max_length - 3] + "..."
+    return s
 ```

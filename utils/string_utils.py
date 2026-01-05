@@ -1,62 +1,65 @@
 ```python
 """
-String utility functions for data manipulation.
+Utility functions for string manipulation and formatting.
 """
 
-import re
-
-def camel_case_to_snake_case(input_str: str) -> str:
+def truncate_string(input_str, max_length):
     """
-    Convert a camel case string to snake case.
+    Truncates a string to a specified maximum length.
 
     Args:
-    input_str (str): The input string in camel case.
+        input_str (str): The input string to be truncated.
+        max_length (int): The maximum length of the output string.
 
     Returns:
-    str: The input string converted to snake case.
+        str: The truncated string.
     """
-    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', input_str)
-    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+    if len(input_str) <= max_length:
+        return input_str
+    else:
+        return input_str[:max_length - 3] + "..."
 
-
-def remove_special_chars(input_str: str) -> str:
+def remove_special_chars(input_str):
     """
-    Remove special characters from a string.
+    Removes special characters from a string.
 
     Args:
-    input_str (str): The input string.
+        input_str (str): The input string.
 
     Returns:
-    str: The input string with special characters removed.
+        str: The string without special characters.
     """
-    return re.sub('[^A-Za-z0-9]+', '', input_str)
+    return ''.join(e for e in input_str if e.isalnum() or e.isspace())
 
-
-def truncate_string(input_str: str, max_length: int) -> str:
+def to_title_case(input_str):
     """
-    Truncate a string to a specified maximum length.
+    Converts a string to title case.
 
     Args:
-    input_str (str): The input string.
-    max_length (int): The maximum length of the output string.
+        input_str (str): The input string.
 
     Returns:
-    str: The input string truncated to the specified maximum length.
+        str: The string in title case.
     """
-    if len(input_str) > max_length:
-        return input_str[:max_length - 3] + '...'
-    return input_str
+    return input_str.title()
 
-
-def is_empty_string(input_str: str) -> bool:
+def format_string(input_str, **kwargs):
     """
-    Check if a string is empty or contains only whitespace.
+    Formats a string using keyword arguments.
 
     Args:
-    input_str (str): The input string.
+        input_str (str): The input string.
+        **kwargs: Keyword arguments to be used in string formatting.
 
     Returns:
-    bool: True if the input string is empty or contains only whitespace, False otherwise.
+        str: The formatted string.
     """
-    return input_str.strip() == ''
+    return input_str.format(**kwargs)
+
+# Example usage:
+if __name__ == "__main__":
+    print(truncate_string("This is a very long string", 20))
+    print(remove_special_chars("Hello, World!"))
+    print(to_title_case("hello world"))
+    print(format_string("My name is {name}", name="John"))
 ```

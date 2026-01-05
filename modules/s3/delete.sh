@@ -66,6 +66,12 @@ function get_confirmation() {
   done
 }
 
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+if [ ! -f "$SCRIPT_DIR/regions.conf" ]; then
+  echo "[ERROR] regions.conf file not found in $SCRIPT_DIR"
+  exit 1
+fi
+
 function s3_delete() {
   BUCKET_NAME="$1"
   INPUT_REGION="$2"

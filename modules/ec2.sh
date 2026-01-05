@@ -6,9 +6,11 @@ if [ -z "$SCRIPT_DIR" ]; then
   log_error "SCRIPT_DIR variable is not set" 1
 fi
 
-# Check if LOG_FILE is set
+# Check if LOG_FILE is set and has a valid file path
 if [ -z "$LOG_FILE" ]; then
   log_error "LOG_FILE variable is not set" 1
+elif [ "${LOG_FILE:0:1}" != "/" ]; then
+  log_error "LOG_FILE variable should be an absolute path" 1
 fi
 
 function log_error() {

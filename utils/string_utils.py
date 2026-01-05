@@ -1,65 +1,59 @@
 ```python
 """
-Utility functions for string manipulation and formatting.
+This module provides utility functions for string manipulation and validation.
 """
 
-def truncate_string(input_str, max_length):
+import re
+
+def is_valid_email(email: str) -> bool:
     """
-    Truncates a string to a specified maximum length.
+    Checks if the provided email is valid.
 
     Args:
-        input_str (str): The input string to be truncated.
-        max_length (int): The maximum length of the output string.
+        email (str): The email to validate.
 
     Returns:
-        str: The truncated string.
+        bool: True if the email is valid, False otherwise.
     """
-    if len(input_str) <= max_length:
-        return input_str
-    else:
-        return input_str[:max_length - 3] + "..."
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email))
 
-def remove_special_chars(input_str):
+def is_valid_ip_address(ip_address: str) -> bool:
     """
-    Removes special characters from a string.
+    Checks if the provided IP address is valid.
 
     Args:
-        input_str (str): The input string.
+        ip_address (str): The IP address to validate.
 
     Returns:
-        str: The string without special characters.
+        bool: True if the IP address is valid, False otherwise.
     """
-    return ''.join(e for e in input_str if e.isalnum() or e.isspace())
+    ip_address_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_address_regex, ip_address))
 
-def to_title_case(input_str):
+def snake_case_to_camel_case(snake_case_string: str) -> str:
     """
-    Converts a string to title case.
+    Converts a snake case string to camel case.
 
     Args:
-        input_str (str): The input string.
+        snake_case_string (str): The snake case string to convert.
 
     Returns:
-        str: The string in title case.
+        str: The camel case version of the input string.
     """
-    return input_str.title()
+    components = snake_case_string.split("_")
+    return components[0] + "".join(x.title() for x in components[1:])
 
-def format_string(input_str, **kwargs):
+def camel_case_to_snake_case(camel_case_string: str) -> str:
     """
-    Formats a string using keyword arguments.
+    Converts a camel case string to snake case.
 
     Args:
-        input_str (str): The input string.
-        **kwargs: Keyword arguments to be used in string formatting.
+        camel_case_string (str): The camel case string to convert.
 
     Returns:
-        str: The formatted string.
+        str: The snake case version of the input string.
     """
-    return input_str.format(**kwargs)
-
-# Example usage:
-if __name__ == "__main__":
-    print(truncate_string("This is a very long string", 20))
-    print(remove_special_chars("Hello, World!"))
-    print(to_title_case("hello world"))
-    print(format_string("My name is {name}", name="John"))
+    snake_case_string = "".join(["_" + i.lower() if i.isupper() else i for i in camel_case_string]).lstrip("_")
+    return snake_case_string
 ```

@@ -15,7 +15,11 @@ function handle_error() {
       echo "[ERROR] AWS CLI command failed with an unknown error. Check the AWS CLI version and configuration. Error: $error_output"
       ;;
     *)
-      echo "[ERROR] Failed to list S3 buckets with exit code $exit_code. Error: $error_output"
+      if echo "$error_output" | grep -q "AccessDenied"; then
+        echo "[ERROR] Access denied to list S3 buckets. Please ensure the AWS IAM role or user has the necessary permissions (s3:ListBuckets). Error: $error_output"
+      else
+        echo "[ERROR] Failed to list S3 buckets with exit code $exit_code. Error: $error_output"
+      fi
       ;;
   esac
 }

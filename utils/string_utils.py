@@ -1,71 +1,74 @@
 ```python
 """
-Utility functions for common string operations.
+String utility functions.
+
+This module provides functions for string manipulation and validation.
 """
 
-def camel_case_to_snake_case(input_string):
+import re
+
+def validate_email(email: str) -> bool:
     """
-    Convert a camel case string to snake case.
-    
+    Validate an email address.
+
     Args:
-        input_string (str): The input string in camel case.
-    
+    email (str): The email address to validate.
+
     Returns:
-        str: The input string converted to snake case.
+    bool: True if the email is valid, False otherwise.
     """
-    words = []
-    word = ""
-    for char in input_string:
-        if char.isupper():
-            if word:
-                words.append(word)
-            word = char.lower()
-        else:
-            word += char
-    if word:
-        words.append(word)
-    return "_".join(words)
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(email_regex, email))
 
-
-def snake_case_to_camel_case(input_string):
+def validate_ip(ip: str) -> bool:
     """
-    Convert a snake case string to camel case.
-    
+    Validate an IP address.
+
     Args:
-        input_string (str): The input string in snake case.
-    
+    ip (str): The IP address to validate.
+
     Returns:
-        str: The input string converted to camel case.
+    bool: True if the IP is valid, False otherwise.
     """
-    words = input_string.split("_")
-    return words[0] + "".join(word.capitalize() for word in words[1:])
+    ip_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_regex, ip))
 
-
-def trim_string(input_string, max_length):
+def slugify(s: str) -> str:
     """
-    Trim a string to a specified maximum length.
-    
+    Convert a string to a slug.
+
     Args:
-        input_string (str): The input string to be trimmed.
-        max_length (int): The maximum allowed length of the string.
-    
+    s (str): The string to convert.
+
     Returns:
-        str: The input string trimmed to the specified maximum length.
+    str: The slugified string.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length - 3] + "..."
-    return input_string
+    return re.sub(r"[^a-z0-9_\-]", "", s.lower().replace(" ", "-"))
 
-
-def is_empty_string(input_string):
+def truncate(s: str, max_length: int) -> str:
     """
-    Check if a string is empty or contains only whitespace characters.
-    
+    Truncate a string to a maximum length.
+
     Args:
-        input_string (str): The input string to be checked.
-    
+    s (str): The string to truncate.
+    max_length (int): The maximum length.
+
     Returns:
-        bool: True if the string is empty or contains only whitespace characters, False otherwise.
+    str: The truncated string.
     """
-    return not input_string.strip()
+    if len(s) > max_length:
+        return s[:max_length - 3] + "..."
+    return s
+
+def is_empty(s: str) -> bool:
+    """
+    Check if a string is empty.
+
+    Args:
+    s (str): The string to check.
+
+    Returns:
+    bool: True if the string is empty, False otherwise.
+    """
+    return not s.strip()
 ```

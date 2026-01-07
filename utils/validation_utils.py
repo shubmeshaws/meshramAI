@@ -1,63 +1,60 @@
 ```python
-# utils/validation_utils.py
-
 import re
-import ipaddress
-from typing import Any
+import json
 
-def validate_string(input_string: str, min_length: int = 1, max_length: int = 100) -> bool:
+def validate_aws_credentials(aws_access_key_id, aws_secret_access_key):
     """
-    Validate if the input string meets the length requirements.
+    Validate AWS credentials.
 
     Args:
-    input_string (str): The input string to be validated.
-    min_length (int): The minimum allowed length of the string (default is 1).
-    max_length (int): The maximum allowed length of the string (default is 100).
+        aws_access_key_id (str): AWS access key ID.
+        aws_secret_access_key (str): AWS secret access key.
 
     Returns:
-    bool: True if the string is valid, False otherwise.
+        bool: True if credentials are valid, False otherwise.
     """
-    return min_length <= len(input_string) <= max_length
-
-def validate_ip_address(ip_address: str) -> bool:
-    """
-    Validate if the input string is a valid IP address.
-
-    Args:
-    ip_address (str): The input string to be validated.
-
-    Returns:
-    bool: True if the string is a valid IP address, False otherwise.
-    """
-    try:
-        ipaddress.ip_address(ip_address)
-        return True
-    except ValueError:
+    if not aws_access_key_id or not aws_secret_access_key:
         return False
 
-def validate_email(email: str) -> bool:
+    # Basic validation for access key ID and secret access key
+    if not re.match(r'^[A-Z0-9]{20}$', aws_access_key_id):
+        return False
+    if not re.match(r'^[a-zA-Z0-9/+=]{40}$', aws_secret_access_key):
+        return False
+
+    return True
+
+
+def validate_region(region_name):
     """
-    Validate if the input string is a valid email address.
+    Validate an AWS region name.
 
     Args:
-    email (str): The input string to be validated.
+        region_name (str): AWS region name.
 
     Returns:
-    bool: True if the string is a valid email address, False otherwise.
+        bool: True if region is valid, False otherwise.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
+    # Load regions from configuration file
+    with open('regions.conf', 'r') as f:
+        regions = [line.strip() for line in f.readlines()]
 
-def validate_type(input_value: Any, expected_type: type) -> bool:
+    return region_name in regions
+
+
+def validate_json(json_data):
     """
-    Validate if the input value is of the expected type.
+    Validate JSON data.
 
     Args:
-    input_value (Any): The input value to be validated.
-    expected_type (type): The expected type of the input value.
+        json_data (str): JSON data as a string.
 
     Returns:
-    bool: True if the input value is of the expected type, False otherwise.
+        bool: True if JSON is valid, False otherwise.
     """
-    return isinstance(input_value, expected_type)
+    try:
+        json.loads(json_data)
+        return True
+    except json.JSONDecodeError:
+        return False
 ```

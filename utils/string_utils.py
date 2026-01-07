@@ -1,74 +1,71 @@
 ```python
 """
-String utility functions.
-
-This module provides functions for string manipulation and validation.
+String utility functions for general use.
 """
 
 import re
 
+def is_empty_string(input_string: str) -> bool:
+    """
+    Checks if a string is empty or contains only whitespace.
+
+    Args:
+        input_string (str): The string to check.
+
+    Returns:
+        bool: True if the string is empty or contains only whitespace, False otherwise.
+    """
+    return not input_string.strip()
+
 def validate_email(email: str) -> bool:
     """
-    Validate an email address.
+    Validates an email address using a regular expression.
 
     Args:
-    email (str): The email address to validate.
+        email (str): The email address to validate.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+        bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
     return bool(re.match(email_regex, email))
 
-def validate_ip(ip: str) -> bool:
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Validate an IP address.
+    Truncates a string to a specified maximum length.
 
     Args:
-    ip (str): The IP address to validate.
+        input_string (str): The string to truncate.
+        max_length (int): The maximum length of the string.
 
     Returns:
-    bool: True if the IP is valid, False otherwise.
+        str: The truncated string.
     """
-    ip_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_regex, ip))
+    if len(input_string) > max_length:
+        return input_string[:max_length] + "..."
+    return input_string
 
-def slugify(s: str) -> str:
+def remove_special_chars(input_string: str) -> str:
     """
-    Convert a string to a slug.
+    Removes special characters from a string.
 
     Args:
-    s (str): The string to convert.
+        input_string (str): The string to remove special characters from.
 
     Returns:
-    str: The slugified string.
+        str: The string with special characters removed.
     """
-    return re.sub(r"[^a-z0-9_\-]", "", s.lower().replace(" ", "-"))
+    return re.sub(r"[^a-zA-Z0-9\s]", "", input_string)
 
-def truncate(s: str, max_length: int) -> str:
+def title_case(input_string: str) -> str:
     """
-    Truncate a string to a maximum length.
+    Converts a string to title case.
 
     Args:
-    s (str): The string to truncate.
-    max_length (int): The maximum length.
+        input_string (str): The string to convert.
 
     Returns:
-    str: The truncated string.
+        str: The string in title case.
     """
-    if len(s) > max_length:
-        return s[:max_length - 3] + "..."
-    return s
-
-def is_empty(s: str) -> bool:
-    """
-    Check if a string is empty.
-
-    Args:
-    s (str): The string to check.
-
-    Returns:
-    bool: True if the string is empty, False otherwise.
-    """
-    return not s.strip()
+    return input_string.title()
 ```

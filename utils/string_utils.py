@@ -1,68 +1,63 @@
 ```python
 """
-Utility functions for string manipulation.
+String utility functions.
+
+This module provides various functions for string manipulation and formatting.
 """
 
-def to_snake_case(input_string: str) -> str:
+import re
+
+def camel_to_snake(name: str) -> str:
     """
-    Convert a string to snake case.
-    
+    Convert a camelCase string to snake_case.
+
     Args:
-    input_string (str): The input string to convert.
-    
+    name (str): The input string in camelCase.
+
     Returns:
-    str: The input string in snake case.
+    str: The input string converted to snake_case.
     """
-    return input_string.replace(' ', '_').lower()
+    name = re.sub('([A-Z])', r'_\1', name)
+    return name.lower()
 
-
-def to_camel_case(input_string: str) -> str:
+def snake_to_camel(name: str) -> str:
     """
-    Convert a string to camel case.
-    
+    Convert a snake_case string to camelCase.
+
     Args:
-    input_string (str): The input string to convert.
-    
+    name (str): The input string in snake_case.
+
     Returns:
-    str: The input string in camel case.
+    str: The input string converted to camelCase.
     """
-    words = input_string.split(' ')
-    return words[0].lower() + ''.join(word.capitalize() for word in words[1:])
+    components = name.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
 
-
-def trim_string(input_string: str) -> str:
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Trim leading and trailing whitespace from a string.
-    
+    Truncate a string to a specified maximum length.
+
     Args:
-    input_string (str): The input string to trim.
-    
+    input_string (str): The input string to be truncated.
+    max_length (int): The maximum length of the output string.
+
     Returns:
-    str: The trimmed input string.
+    str: The truncated string.
     """
-    return input_string.strip()
+    if len(input_string) <= max_length:
+        return input_string
+    else:
+        return input_string[:max_length] + '...'
 
-
-def is_empty_string(input_string: str) -> bool:
+def remove_special_chars(input_string: str) -> str:
     """
-    Check if a string is empty.
-    
+    Remove special characters from a string.
+
     Args:
-    input_string (str): The input string to check.
-    
+    input_string (str): The input string.
+
     Returns:
-    bool: True if the input string is empty, False otherwise.
+    str: The input string with special characters removed.
     """
-    return len(trim_string(input_string)) == 0
-
-
-def main():
-    print(to_snake_case("Hello World"))  # Output: hello_world
-    print(to_camel_case("hello world"))  # Output: helloWorld
-    print(trim_string("   Hello World   "))  # Output: Hello World
-    print(is_empty_string("   "))  # Output: True
-
-
-if __name__ == "__main__":
-    main()
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 ```

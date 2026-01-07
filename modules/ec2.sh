@@ -135,6 +135,7 @@ function ec2_terminate() {
 
 function main() {
   # Main function to handle script execution
+  trap 'log_error "Unexpected error occurred" 1' ERR
   ec2_handler "$@"
 }
 

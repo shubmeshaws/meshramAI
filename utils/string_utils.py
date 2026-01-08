@@ -1,59 +1,59 @@
 ```python
 """
-This module provides utility functions for string manipulation and validation.
+String utility functions for common string operations.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def is_empty(string):
     """
-    Checks if the input string is empty or contains only whitespace characters.
-
+    Checks if a string is empty or contains only whitespace characters.
+    
     Args:
-    input_string (str): The input string to be checked.
-
+        string (str): The input string to check.
+    
     Returns:
-    bool: True if the string is empty, False otherwise.
+        bool: True if the string is empty, False otherwise.
     """
-    return not input_string.strip()
+    return not string.strip()
 
-def validate_email(email: str) -> bool:
+def is_valid_email(email):
     """
-    Validates if the input string is a valid email address.
-
+    Checks if a string is a valid email address.
+    
     Args:
-    email (str): The input email address to be validated.
-
+        email (str): The input email address to validate.
+    
     Returns:
-    bool: True if the email is valid, False otherwise.
+        bool: True if the email is valid, False otherwise.
     """
     email_regex = r"[^@]+@[^@]+\.[^@]+"
     return bool(re.match(email_regex, email))
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def normalize_string(input_string):
     """
-    Truncates the input string to the specified maximum length.
-
+    Normalizes a string by converting it to lowercase and removing leading/trailing whitespace.
+    
     Args:
-    input_string (str): The input string to be truncated.
-    max_length (int): The maximum length of the output string.
-
+        input_string (str): The input string to normalize.
+    
     Returns:
-    str: The truncated string.
+        str: The normalized string.
+    """
+    return input_string.strip().lower()
+
+def truncate_string(input_string, max_length):
+    """
+    Truncates a string to a specified maximum length.
+    
+    Args:
+        input_string (str): The input string to truncate.
+        max_length (int): The maximum length of the output string.
+    
+    Returns:
+        str: The truncated string.
     """
     if len(input_string) > max_length:
         return input_string[:max_length] + "..."
     return input_string
-
-def remove_special_characters(input_string: str) -> str:
-    """
-    Removes all special characters from the input string.
-
-    Args:
-    input_string (str): The input string to be cleaned.
-
-    Returns:
-    str: The cleaned string without special characters.
-    """
-    return re.sub('[^A-Za-z0-9]+', '', input_string)
 ```

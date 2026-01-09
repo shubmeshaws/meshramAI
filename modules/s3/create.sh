@@ -64,31 +64,13 @@ function s3_create() {
 
   if [[ "$REGION" == "us-east-1" ]]; then
     output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --acl "$ACL" 2>&1)
-    status=$?
   else
     output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --create-bucket-configuration LocationConstraint="$REGION" --acl "$ACL" 2>&1)
-    status=$?
   fi
 
-  if [ $status -ne 0 ]; then
-    case $output in
-      *"BucketAlreadyOwnedByYou"*)
-        echo "[ERROR] Bucket '$BUCKET_NAME' already exists and is owned by you in region '$REGION'."
-        ;;
-      *"BucketAlreadyExists"*)
-        echo "[ERROR] Bucket '$BUCKET_NAME' already exists and is owned by another account."
-        ;;
-      *"InvalidAccessKeyId"*)
-        echo "[ERROR] Invalid access key ID. Please check your AWS credentials."
-        ;;
-      *"SignatureDoesNotMatch"*)
-        echo "[ERROR] Signature does not match. Please check your AWS credentials."
-        ;;
-      *)
-        echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION':"
-        echo "$output"
-        ;;
-    esac
+  if [ $? -ne 0 ]; then
+    echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION':"
+    echo "$output"
     return 1
   fi
 

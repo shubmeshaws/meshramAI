@@ -17,6 +17,23 @@ function is_aws_cli_configured() {
   aws sts get-caller-identity &> /dev/null
 }
 
+function is_valid_bucket_name() {
+  local BUCKET_NAME="$1"
+  # Check if the bucket name is not empty and its length is between 3 and 63 characters
+  if [ ${#BUCKET_NAME} -lt 3 ] || [ ${#BUCKET_NAME} -gt 63 ]; then
+    return 1
+  fi
+  # Check if the bucket name only contains lowercase letters, numbers, and hyphens
+  if ! [[ "$BUCKET_NAME" =~ ^[a-z0-9-]+$ ]]; then
+    return 1
+  fi
+  # Check if the bucket name does not start or end with a hyphen
+  if [[ "$BUCKET_NAME" =~ ^- ]] || [[ "$BUCKET_NAME" =~ -$ ]]; then
+    return 1
+  fi
+  return 0
+}
+
 function s3_create() {
   BUCKET_NAME="$1"
   INPUT_REGION="$2"
@@ -49,6 +66,11 @@ function s3_create() {
 
   if [ ! -s "$SCRIPT_DIR/regions.conf" ]; then
     echo "[ERROR] File 'regions.conf' is empty in '$SCRIPT_DIR'."
+    return 1
+  fi
+
+  if ! is_valid_bucket_name "$BUCKET_NAME"; then
+    echo "[ERROR] Invalid bucket name '$BUCKET_NAME'. Please use a valid bucket name (only lowercase letters, numbers, and hyphens, between 3 and 63 characters, and does not start or end with a hyphen)."
     return 1
   fi
 

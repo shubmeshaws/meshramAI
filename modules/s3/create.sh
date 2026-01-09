@@ -47,7 +47,13 @@ function s3_create() {
     return 1
   fi
 
-  if ! REGION=$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf" 2>/dev/null); then
+  if [ ! -s "$SCRIPT_DIR/regions.conf" ]; then
+    echo "[ERROR] File 'regions.conf' is empty in '$SCRIPT_DIR'."
+    return 1
+  fi
+
+  REGION=$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf" 2>/dev/null)
+  if [ -z "$REGION" ]; then
     echo "[ERROR] Region '$INPUT_REGION' not found in 'regions.conf'."
     return 1
   fi

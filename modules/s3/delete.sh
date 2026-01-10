@@ -3,6 +3,16 @@
 
 set -eu
 
+# Set default timeouts if not provided
+DEFAULT_AWS_TIMEOUT=30
+DEFAULT_S3_RM_TIMEOUT=300
+DEFAULT_AWS_STS_TIMEOUT=10
+
+# Allow configuration through environment variables
+AWS_TIMEOUT=${AWS_TIMEOUT:-$DEFAULT_AWS_TIMEOUT}
+S3_RM_TIMEOUT=${S3_RM_TIMEOUT:-$DEFAULT_S3_RM_TIMEOUT}
+AWS_STS_TIMEOUT=${AWS_STS_TIMEOUT:-$DEFAULT_AWS_STS_TIMEOUT}
+
 function validate_bucket_name() {
   local BUCKET_NAME="$1"
   if [[ -z "$BUCKET_NAME" ]]; then
@@ -21,7 +31,7 @@ function validate_region() {
     echo "[ERROR] Region is required"
     return 1
   fi
-  if ! timeout 10s aws s3 ls "s3://$INPUT_REGION" &> /dev/null; then
+  if ! timeout "$AWS_STS_TIMEOUT"s aws s3 ls "s3://$INPUT_REGION" &> /dev/null; then
     echo "[ERROR] Invalid region '$INPUT_REGION'. Please check the region name."
     return 1
   fi
@@ -32,7 +42,7 @@ function validate_aws_cli() {
     echo "[ERROR] AWS CLI is not installed or not in the system's PATH."
     return 1
   fi
-  if ! timeout 10s aws sts get-caller-identity &> /dev/null; then
+  if ! timeout "$AWS_STS_TIMEOUT"s aws sts get-caller-identity &> /dev/null; then
     echo "[ERROR] AWS CLI is not configured properly. Please run 'aws configure' to set up your AWS credentials."
     return 1
   fi
@@ -83,7 +93,7 @@ function s3_delete() {
   REGION="$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf")"
   REGION="${REGION:-$INPUT_REGION}"
 
-  if ! output=$(timeout 30s aws s3api head-bucket --bucket "$BUCKET_NAME" --region "$REGION" 2>&1); then
+  if ! output=$(timeout "$AWS_TIMEOUT"s aws s3api head-bucket --bucket "$BUCKET_NAME" --region "$REGION" 2>&1); then
     handle_aws_error "$output" "head-bucket"
     return $?
   fi
@@ -94,7 +104,7 @@ function s3_delete() {
   fi
 
   echo "[INFO] Emptying bucket '$BUCKET_NAME'..."
-  if ! output=$(timeout 300s aws s3 rm s3://"$BUCKET_NAME" --recursive --region "$REGION" 2>&1); then
+  if ! output=$(timeout "$S3_RM_TIMEOUT"s aws s3 rm s3://"$BUCKET_NAME" --recursive --region "$REGION" 2>&1); then
     handle_aws_error "$output" "empty-bucket"
     return $?
   fi
@@ -105,7 +115,7 @@ function s3_delete() {
   fi
 
   # Delete the bucket
-  if ! output=$(timeout 30s aws s3api delete-bucket --bucket "$BUCKET_NAME" --region "$REGION" 2>&1); then
+  if ! output=$(timeout "$AWS_TIMEOUT"s aws s3api delete-bucket --bucket "$BUCKET_NAME" --region "$REGION" 2>&1); then
     handle_aws_error "$output" "delete-bucket"
     return $?
   fi

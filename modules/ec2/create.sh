@@ -14,7 +14,13 @@ function describe_images() {
   OUTPUT=$(aws ec2 describe-images --owners "$OWNER" --filters "$FILTERS" "Name=state,Values=available" --region "$REGION" --query 'Images[*].[ImageId,CreationDate]' --output text 2>&1)
   local RETURN_CODE=$?
   if [ $RETURN_CODE -ne 0 ]; then
-    handle_describe_images_error "$OUTPUT" $RETURN_CODE
+    if echo "$OUTPUT" | grep -q "InvalidClientTokenId"; then
+      echo "Error: Invalid AWS credentials"
+    elif echo "$OUTPUT" | grep -q "AuthFailure"; then
+      echo "Error: Authentication failure"
+    else
+      echo "Error: Failed to describe images - $OUTPUT"
+    fi
     return $RETURN_CODE
   fi
   echo "$OUTPUT"

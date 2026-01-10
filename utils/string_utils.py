@@ -1,66 +1,67 @@
 ```python
 """
-String utility module for general string operations.
+String utility functions.
+
+This module provides functions for common string operations such as validation and formatting.
 """
 
 import re
 
-def validate_email(email: str) -> bool:
+def validate_input_string(input_str, min_length=1, max_length=255):
+    """
+    Validate an input string.
+
+    Args:
+        input_str (str): The input string to validate.
+        min_length (int): The minimum allowed length (default: 1).
+        max_length (int): The maximum allowed length (default: 255).
+
+    Returns:
+        bool: True if the input string is valid, False otherwise.
+    """
+    if not isinstance(input_str, str):
+        return False
+    if len(input_str) < min_length or len(input_str) > max_length:
+        return False
+    return True
+
+def format_string_to_title_case(input_str):
+    """
+    Format a string to title case.
+
+    Args:
+        input_str (str): The input string to format.
+
+    Returns:
+        str: The formatted string in title case.
+    """
+    return input_str.title()
+
+def validate_email_address(email_address):
     """
     Validate an email address.
 
     Args:
-    email (str): The email address to be validated.
+        email_address (str): The email address to validate.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+        bool: True if the email address is valid, False otherwise.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email_address))
 
-def sanitize_string(input_string: str) -> str:
-    """
-    Sanitize a string by removing leading/trailing whitespaces and special characters.
-
-    Args:
-    input_string (str): The string to be sanitized.
-
-    Returns:
-    str: The sanitized string.
-    """
-    sanitized_string = input_string.strip()
-    sanitized_string = re.sub(r'[^a-zA-Z0-9\s]', '', sanitized_string)
-    return sanitized_string
-
-def format_string(input_string: str, upper_case: bool = False) -> str:
-    """
-    Format a string by converting it to upper case or lower case.
-
-    Args:
-    input_string (str): The string to be formatted.
-    upper_case (bool): Whether to convert the string to upper case. Defaults to False.
-
-    Returns:
-    str: The formatted string.
-    """
-    if upper_case:
-        return input_string.upper()
-    else:
-        return input_string.lower()
-
-def truncate_string(input_string: str, max_length: int) -> str:
+def truncate_string(input_str, max_length=255):
     """
     Truncate a string to a specified maximum length.
 
     Args:
-    input_string (str): The string to be truncated.
-    max_length (int): The maximum length of the string.
+        input_str (str): The input string to truncate.
+        max_length (int): The maximum allowed length (default: 255).
 
     Returns:
-    str: The truncated string.
+        str: The truncated string.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
-    else:
-        return input_string
+    if len(input_str) > max_length:
+        return input_str[:max_length - 3] + "..."
+    return input_str
 ```

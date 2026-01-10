@@ -4,9 +4,10 @@
 function handle_error() {
   local exit_code=$1
   local error_output=$2
+  local command=$3
   case $exit_code in
     124)
-      echo "[ERROR] AWS CLI command timed out after 30 seconds. Check your network connection or AWS service status. Error: $error_output"
+      echo "[ERROR] Command '$command' timed out after 30 seconds. Check your network connection or AWS service status. Error: $error_output"
       ;;
     130)
       echo "[ERROR] AWS CLI command was interrupted. Please try again. Error: $error_output"
@@ -42,11 +43,12 @@ function s3_list() {
   fi
 
   echo "[INFO] Listing S3 buckets..."
-  if output=$(timeout 30s aws s3api list-buckets --query "Buckets[].Name" --output table 2>&1); then
+  command="aws s3api list-buckets --query \"Buckets[].Name\" --output table"
+  if output=$(timeout 30s $command 2>&1); then
     echo "$output"
     echo "[INFO] S3 buckets listed successfully."
   else
-    handle_error $? "$output"
+    handle_error $? "$output" "$command"
   fi
 }
 

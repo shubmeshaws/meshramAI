@@ -82,6 +82,11 @@ if [ ! -f "$SCRIPT_DIR/regions.conf" ]; then
   exit 1
 fi
 
+if [ ! -s "$SCRIPT_DIR/regions.conf" ]; then
+  echo "[ERROR] regions.conf file is empty in $SCRIPT_DIR"
+  exit 1
+fi
+
 function s3_delete() {
   BUCKET_NAME="$1"
   INPUT_REGION="$2"

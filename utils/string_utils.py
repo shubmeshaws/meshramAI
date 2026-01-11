@@ -1,67 +1,59 @@
 ```python
 """
-String utility functions.
-
-This module provides functions for common string operations such as validation and formatting.
+Utility module for handling string operations.
 """
 
 import re
 
-def validate_input_string(input_str, min_length=1, max_length=255):
+def is_empty_string(input_string: str) -> bool:
     """
-    Validate an input string.
+    Checks if a given string is empty or contains only whitespace characters.
 
     Args:
-        input_str (str): The input string to validate.
-        min_length (int): The minimum allowed length (default: 1).
-        max_length (int): The maximum allowed length (default: 255).
+    input_string (str): The input string to check.
 
     Returns:
-        bool: True if the input string is valid, False otherwise.
+    bool: True if the string is empty or contains only whitespace characters, False otherwise.
     """
-    if not isinstance(input_str, str):
-        return False
-    if len(input_str) < min_length or len(input_str) > max_length:
-        return False
-    return True
+    return not input_string.strip()
 
-def format_string_to_title_case(input_str):
+def validate_email(email: str) -> bool:
     """
-    Format a string to title case.
+    Validates an email address using a regular expression.
 
     Args:
-        input_str (str): The input string to format.
+    email (str): The email address to validate.
 
     Returns:
-        str: The formatted string in title case.
-    """
-    return input_str.title()
-
-def validate_email_address(email_address):
-    """
-    Validate an email address.
-
-    Args:
-        email_address (str): The email address to validate.
-
-    Returns:
-        bool: True if the email address is valid, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
     email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    return bool(re.match(email_regex, email_address))
+    return bool(re.match(email_regex, email))
 
-def truncate_string(input_str, max_length=255):
+def remove_special_characters(input_string: str) -> str:
     """
-    Truncate a string to a specified maximum length.
+    Removes special characters from a given string.
 
     Args:
-        input_str (str): The input string to truncate.
-        max_length (int): The maximum allowed length (default: 255).
+    input_string (str): The input string to process.
 
     Returns:
-        str: The truncated string.
+    str: The input string with special characters removed.
     """
-    if len(input_str) > max_length:
-        return input_str[:max_length - 3] + "..."
-    return input_str
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+
+def truncate_string(input_string: str, max_length: int) -> str:
+    """
+    Truncates a given string to a specified maximum length.
+
+    Args:
+    input_string (str): The input string to truncate.
+    max_length (int): The maximum length of the output string.
+
+    Returns:
+    str: The truncated string.
+    """
+    if len(input_string) > max_length:
+        return input_string[:max_length] + '...'
+    return input_string
 ```

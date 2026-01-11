@@ -1,59 +1,63 @@
 ```python
 """
-Utility module for handling string operations.
+String utility module.
+
+This module provides various functions for string manipulation and formatting.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def camel_case_to_snake_case(input_string: str) -> str:
     """
-    Checks if a given string is empty or contains only whitespace characters.
+    Convert camel case string to snake case.
 
     Args:
-    input_string (str): The input string to check.
+        input_string (str): The camel case string to convert.
 
     Returns:
-    bool: True if the string is empty or contains only whitespace characters, False otherwise.
+        str: The converted snake case string.
     """
-    return not input_string.strip()
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
 
-def validate_email(email: str) -> bool:
+def snake_case_to_camel_case(input_string: str) -> str:
     """
-    Validates an email address using a regular expression.
+    Convert snake case string to camel case.
 
     Args:
-    email (str): The email address to validate.
+        input_string (str): The snake case string to convert.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+        str: The converted camel case string.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    return bool(re.match(email_regex, email))
-
-def remove_special_characters(input_string: str) -> str:
-    """
-    Removes special characters from a given string.
-
-    Args:
-    input_string (str): The input string to process.
-
-    Returns:
-    str: The input string with special characters removed.
-    """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+    words = input_string.split('_')
+    return words[0] + ''.join(word.capitalize() for word in words[1:])
 
 def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncates a given string to a specified maximum length.
+    Truncate a string to a specified maximum length.
 
     Args:
-    input_string (str): The input string to truncate.
-    max_length (int): The maximum length of the output string.
+        input_string (str): The string to truncate.
+        max_length (int): The maximum length of the string.
 
     Returns:
-    str: The truncated string.
+        str: The truncated string.
     """
     if len(input_string) > max_length:
-        return input_string[:max_length] + '...'
+        return input_string[:max_length - 3] + '...'
     return input_string
+
+def indent_string(input_string: str, indent_level: int) -> str:
+    """
+    Indent a string by a specified number of spaces.
+
+    Args:
+        input_string (str): The string to indent.
+        indent_level (int): The number of spaces to indent.
+
+    Returns:
+        str: The indented string.
+    """
+    indent = ' ' * indent_level
+    return '\n'.join(indent + line for line in input_string.split('\n'))
 ```

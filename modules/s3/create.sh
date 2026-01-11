@@ -82,6 +82,12 @@ function s3_create() {
 
   REGION="${REGION:-$INPUT_REGION}"
 
+  # Check if the region is valid
+  if ! grep -q "^$INPUT_REGION=" "$SCRIPT_DIR/regions.conf"; then
+    echo "[ERROR] Region '$INPUT_REGION' does not match the format in 'regions.conf'."
+    return 1
+  fi
+
   echo "[INFO] Checking if bucket '$BUCKET_NAME' already exists..."
   if aws s3api head-bucket --bucket "$BUCKET_NAME" &> /dev/null; then
     echo "[INFO] Bucket '$BUCKET_NAME' already exists."

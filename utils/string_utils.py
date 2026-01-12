@@ -1,65 +1,57 @@
 ```python
 """
-String utility module.
-
-This module provides functions for string manipulation and validation.
+Utility functions for string manipulation and validation.
 """
 
 import re
 
-def is_empty(string):
+def is_valid_email(email: str) -> bool:
     """
-    Check if a string is empty.
-
+    Checks if the given email is valid.
+    
     Args:
-        string (str): The input string.
-
+    email (str): The email to be validated.
+    
     Returns:
-        bool: True if the string is empty, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    return not string.strip()
-
-def validate_email(email):
-    """
-    Validate an email address.
-
-    Args:
-        email (str): The email address to validate.
-
-    Returns:
-        bool: True if the email is valid, False otherwise.
-    """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
     return bool(re.match(email_regex, email))
 
-def snake_to_camel_case(snake_case_string):
+def validate_ip_address(ip: str) -> bool:
     """
-    Convert a snake case string to camel case.
-
+    Checks if the given IP address is valid.
+    
     Args:
-        snake_case_string (str): The input string in snake case.
-
+    ip (str): The IP address to be validated.
+    
     Returns:
-        str: The input string in camel case.
+    bool: True if the IP address is valid, False otherwise.
     """
-    words = snake_case_string.split("_")
-    return words[0] + "".join(word.capitalize() for word in words[1:])
+    ip_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_regex, ip))
 
-def camel_to_snake_case(camel_case_string):
+def remove_special_chars(input_str: str) -> str:
     """
-    Convert a camel case string to snake case.
-
+    Removes all special characters from the given string.
+    
     Args:
-        camel_case_string (str): The input string in camel case.
-
+    input_str (str): The string from which special characters are to be removed.
+    
     Returns:
-        str: The input string in snake case.
+    str: The string without special characters.
     """
-    snake_case_string = ""
-    for char in camel_case_string:
-        if char.isupper():
-            snake_case_string += "_" + char.lower()
-        else:
-            snake_case_string += char
-    return snake_case_string
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_str)
+
+def camel_case_to_snake_case(input_str: str) -> str:
+    """
+    Converts a camel case string to snake case.
+    
+    Args:
+    input_str (str): The camel case string to be converted.
+    
+    Returns:
+    str: The snake case equivalent of the input string.
+    """
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_str).lower()
 ```

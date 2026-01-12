@@ -1,59 +1,65 @@
 ```python
 """
-This module provides utility functions for string manipulation and validation.
+String utility module.
+
+This module provides functions for string manipulation and validation.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def is_empty(string):
     """
-    Checks if the input string is empty or contains only whitespace characters.
+    Check if a string is empty.
 
     Args:
-    input_string (str): The input string to check.
+        string (str): The input string.
 
     Returns:
-    bool: True if the string is empty, False otherwise.
+        bool: True if the string is empty, False otherwise.
     """
-    return not input_string.strip()
+    return not string.strip()
 
-def validate_email(email: str) -> bool:
+def validate_email(email):
     """
-    Validates an email address using a regular expression.
+    Validate an email address.
 
     Args:
-    email (str): The email address to validate.
+        email (str): The email address to validate.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+        bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     return bool(re.match(email_regex, email))
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def snake_to_camel_case(snake_case_string):
     """
-    Truncates a string to a specified maximum length.
+    Convert a snake case string to camel case.
 
     Args:
-    input_string (str): The input string to truncate.
-    max_length (int): The maximum length of the output string.
+        snake_case_string (str): The input string in snake case.
 
     Returns:
-    str: The truncated string.
+        str: The input string in camel case.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
-    return input_string
+    words = snake_case_string.split("_")
+    return words[0] + "".join(word.capitalize() for word in words[1:])
 
-def remove_special_chars(input_string: str) -> str:
+def camel_to_snake_case(camel_case_string):
     """
-    Removes special characters from a string.
+    Convert a camel case string to snake case.
 
     Args:
-    input_string (str): The input string to process.
+        camel_case_string (str): The input string in camel case.
 
     Returns:
-    str: The string with special characters removed.
+        str: The input string in snake case.
     """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+    snake_case_string = ""
+    for char in camel_case_string:
+        if char.isupper():
+            snake_case_string += "_" + char.lower()
+        else:
+            snake_case_string += char
+    return snake_case_string
 ```

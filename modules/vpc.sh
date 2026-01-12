@@ -10,6 +10,12 @@ function validate_vpc_id() {
   return 0
 }
 
+function show_vpc_help() {
+  echo "Valid VPC ID format: vpc-xxxxxxxxxxxxxxxxx"
+  echo "Where 'x' is a lowercase letter or number."
+  echo "Example: vpc-1234567890abcdef"
+}
+
 function validate_and_handle_vpc_id() {
   local vpc_id="$1"
   if ! validate_vpc_id "$vpc_id"; then

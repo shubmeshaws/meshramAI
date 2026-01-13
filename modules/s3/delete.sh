@@ -76,6 +76,25 @@ function get_confirmation() {
   done
 }
 
+function retry_aws_command() {
+  local command="$1"
+  local timeout="$2"
+  local max_retries="${3:-3}"
+  local retry_count=0
+  while [ $retry_count -lt $max_retries ]; do
+    if ! output=$(timeout "$timeout"s $command 2>&1); then
+      handle_aws_error "$output" "$command"
+      ((retry_count++))
+      sleep 1
+    else
+      echo "$output"
+      return 0
+    fi
+  done
+  echo "[ERROR] Command '$command' failed after $max_retries retries"
+  return 1
+}
+
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 if [ ! -f "$SCRIPT_DIR/regions.conf" ]; then
   echo "[ERROR] regions.conf file not found in $SCRIPT_DIR"
@@ -98,8 +117,7 @@ function s3_delete() {
   REGION="$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf")"
   REGION="${REGION:-$INPUT_REGION}"
 
-  if ! output=$(timeout "$AWS_TIMEOUT"s aws s3api head-bucket --bucket "$BUCKET_NAME" --region "$REGION" 2>&1); then
-    handle_aws_error "$output" "head-bucket"
+  if ! output=$(retry_aws_command "aws s3api head-bucket --bucket $BUCKET_NAME --region $REGION" "$AWS_TIMEOUT"); then
     return $?
   fi
 
@@ -109,8 +127,7 @@ function s3_delete() {
   fi
 
   echo "[INFO] Emptying bucket '$BUCKET_NAME'..."
-  if ! output=$(timeout "$S3_RM_TIMEOUT"s aws s3 rm s3://"$BUCKET_NAME" --recursive --region "$REGION" 2>&1); then
-    handle_aws_error "$output" "empty-bucket"
+  if ! output=$(retry_aws_command "aws s3 rm s3://$BUCKET_NAME --recursive --region $REGION" "$S3_RM_TIMEOUT"); then
     return $?
   fi
 
@@ -120,8 +137,7 @@ function s3_delete() {
   fi
 
   # Delete the bucket
-  if ! output=$(timeout "$AWS_TIMEOUT"s aws s3api delete-bucket --bucket "$BUCKET_NAME" --region "$REGION" 2>&1); then
-    handle_aws_error "$output" "delete-bucket"
+  if ! output=$(retry_aws_command "aws s3api delete-bucket --bucket $BUCKET_NAME --region $REGION" "$AWS_TIMEOUT"); then
     return $?
   fi
 

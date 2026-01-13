@@ -43,10 +43,14 @@ function s3_list() {
   fi
 
   echo "[INFO] Listing S3 buckets..."
-  command="aws s3api list-buckets --query \"Buckets[].Name\" --output table"
+  command="aws s3api list-buckets"
   if output=$(timeout 30s $command 2>&1); then
-    echo "$output"
-    echo "[INFO] S3 buckets listed successfully."
+    if processed_output=$(echo "$output" | jq -r '.Buckets[] | .Name' 2>&1); then
+      echo "$processed_output" | column -t
+      echo "[INFO] S3 buckets listed successfully."
+    else
+      echo "[ERROR] Failed to process AWS CLI output. Error: $processed_output"
+    fi
   else
     handle_error $? "$output" "$command"
   fi

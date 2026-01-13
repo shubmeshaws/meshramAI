@@ -1,14 +1,18 @@
 ```bash
 #!/bin/bash
 
-# Check if SCRIPT_DIR is set
+# Check if SCRIPT_DIR is set and not empty
 if [ -z "$SCRIPT_DIR" ]; then
   log_error "SCRIPT_DIR variable is not set" 1
+elif [ "$SCRIPT_DIR" = "" ]; then
+  log_error "SCRIPT_DIR variable is empty" 1
 fi
 
-# Check if LOG_FILE is set and has a valid file path
+# Check if LOG_FILE is set, not empty, and has a valid file path
 if [ -z "$LOG_FILE" ]; then
   log_error "LOG_FILE variable is not set" 1
+elif [ "$LOG_FILE" = "" ]; then
+  log_error "LOG_FILE variable is empty" 1
 elif [ "${LOG_FILE:0:1}" != "/" ]; then
   log_error "LOG_FILE variable should be an absolute path" 1
 fi

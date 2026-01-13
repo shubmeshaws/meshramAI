@@ -1,57 +1,79 @@
 ```python
 """
-Utility functions for string manipulation and validation.
+String utilities module.
+
+This module provides a set of functions for string operations, including validation, manipulation, and formatting.
 """
 
 import re
 
-def is_valid_email(email: str) -> bool:
+def is_empty_string(input_string: str) -> bool:
     """
-    Checks if the given email is valid.
-    
-    Args:
-    email (str): The email to be validated.
-    
-    Returns:
-    bool: True if the email is valid, False otherwise.
-    """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    return bool(re.match(email_regex, email))
+    Check if a string is empty or contains only whitespace.
 
-def validate_ip_address(ip: str) -> bool:
-    """
-    Checks if the given IP address is valid.
-    
     Args:
-    ip (str): The IP address to be validated.
-    
-    Returns:
-    bool: True if the IP address is valid, False otherwise.
-    """
-    ip_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_regex, ip))
+        input_string (str): The input string to check.
 
-def remove_special_chars(input_str: str) -> str:
-    """
-    Removes all special characters from the given string.
-    
-    Args:
-    input_str (str): The string from which special characters are to be removed.
-    
     Returns:
-    str: The string without special characters.
+        bool: True if the string is empty or contains only whitespace, False otherwise.
     """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_str)
+    return not input_string.strip()
 
-def camel_case_to_snake_case(input_str: str) -> str:
+def validate_email(input_string: str) -> bool:
     """
-    Converts a camel case string to snake case.
-    
+    Validate an email address.
+
     Args:
-    input_str (str): The camel case string to be converted.
-    
+        input_string (str): The input string to validate.
+
     Returns:
-    str: The snake case equivalent of the input string.
+        bool: True if the email address is valid, False otherwise.
     """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_str).lower()
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(email_regex, input_string))
+
+def remove_special_chars(input_string: str) -> str:
+    """
+    Remove special characters from a string.
+
+    Args:
+        input_string (str): The input string to process.
+
+    Returns:
+        str: The input string with special characters removed.
+    """
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+
+def format_string(input_string: str, **kwargs) -> str:
+    """
+    Format a string using keyword arguments.
+
+    Args:
+        input_string (str): The input string to format.
+        **kwargs: Keyword arguments to use for formatting.
+
+    Returns:
+        str: The formatted string.
+    """
+    return input_string.format(**kwargs)
+
+def camel_case_to_snake_case(input_string: str) -> str:
+    """
+    Convert a camel case string to snake case.
+
+    Args:
+        input_string (str): The input string to convert.
+
+    Returns:
+        str: The input string in snake case.
+    """
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
+
+# Example usage
+if __name__ == "__main__":
+    print(is_empty_string(""))  # True
+    print(validate_email("example@example.com"))  # True
+    print(remove_special_chars("Hello, World!"))  # "Hello World"
+    print(format_string("Hello, {}!", name="World"))  # "Hello, World!"
+    print(camel_case_to_snake_case("HelloWorld"))  # "hello_world"
 ```

@@ -1,79 +1,73 @@
 ```python
 """
-String utilities module.
-
-This module provides a set of functions for string operations, including validation, manipulation, and formatting.
+String utility functions for common operations.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def is_valid_ipv4(ip_address: str) -> bool:
     """
-    Check if a string is empty or contains only whitespace.
+    Validate an IPv4 address.
 
     Args:
-        input_string (str): The input string to check.
+    ip_address (str): The IP address to validate.
 
     Returns:
-        bool: True if the string is empty or contains only whitespace, False otherwise.
+    bool: True if the IP address is valid, False otherwise.
     """
-    return not input_string.strip()
+    pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(pattern, ip_address))
 
-def validate_email(input_string: str) -> bool:
+def is_valid_ipv6(ip_address: str) -> bool:
     """
-    Validate an email address.
+    Validate an IPv6 address.
 
     Args:
-        input_string (str): The input string to validate.
+    ip_address (str): The IP address to validate.
 
     Returns:
-        bool: True if the email address is valid, False otherwise.
+    bool: True if the IP address is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, input_string))
+    pattern = r"^([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}$"
+    return bool(re.match(pattern, ip_address))
+
+def validate_hostname(hostname: str) -> bool:
+    """
+    Validate a hostname.
+
+    Args:
+    hostname (str): The hostname to validate.
+
+    Returns:
+    bool: True if the hostname is valid, False otherwise.
+    """
+    pattern = r"^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$"
+    return bool(re.match(pattern, hostname))
 
 def remove_special_chars(input_string: str) -> str:
     """
     Remove special characters from a string.
 
     Args:
-        input_string (str): The input string to process.
+    input_string (str): The string to clean.
 
     Returns:
-        str: The input string with special characters removed.
+    str: The cleaned string.
     """
     return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
 
-def format_string(input_string: str, **kwargs) -> str:
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Format a string using keyword arguments.
+    Truncate a string to a specified length.
 
     Args:
-        input_string (str): The input string to format.
-        **kwargs: Keyword arguments to use for formatting.
+    input_string (str): The string to truncate.
+    max_length (int): The maximum length of the string.
 
     Returns:
-        str: The formatted string.
+    str: The truncated string.
     """
-    return input_string.format(**kwargs)
-
-def camel_case_to_snake_case(input_string: str) -> str:
-    """
-    Convert a camel case string to snake case.
-
-    Args:
-        input_string (str): The input string to convert.
-
-    Returns:
-        str: The input string in snake case.
-    """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
-
-# Example usage
-if __name__ == "__main__":
-    print(is_empty_string(""))  # True
-    print(validate_email("example@example.com"))  # True
-    print(remove_special_chars("Hello, World!"))  # "Hello World"
-    print(format_string("Hello, {}!", name="World"))  # "Hello, World!"
-    print(camel_case_to_snake_case("HelloWorld"))  # "hello_world"
+    if len(input_string) > max_length:
+        return input_string[:max_length] + "..."
+    return input_string
 ```

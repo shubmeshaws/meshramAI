@@ -4,6 +4,9 @@ INVALID_VPC_ID_ERROR_MESSAGE="Invalid VPC ID: %s. A valid VPC ID should be in th
 
 function validate_vpc_id() {
   local vpc_id="$1"
+  if [ -z "$vpc_id" ]; then
+    return 1
+  fi
   if ! [[ "$vpc_id" =~ $VPC_ID_PATTERN ]]; then
     return 1
   fi
@@ -18,6 +21,11 @@ function show_vpc_help() {
 
 function validate_and_handle_vpc_id() {
   local vpc_id="$1"
+  if [ -z "$vpc_id" ]; then
+    echo "ERROR: VPC ID is required." >&2
+    show_vpc_help
+    exit 1
+  fi
   if ! validate_vpc_id "$vpc_id"; then
     local error_message=$(printf "$INVALID_VPC_ID_ERROR_MESSAGE" "$vpc_id")
     echo "ERROR: $error_message" >&2

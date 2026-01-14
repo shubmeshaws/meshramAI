@@ -9,13 +9,13 @@ import re
 
 def is_empty_string(input_string: str) -> bool:
     """
-    Check if the input string is empty.
+    Check if a string is empty or contains only whitespace.
 
     Args:
-        input_string (str): The input string to check.
+    input_string (str): The input string to check.
 
     Returns:
-        bool: True if the string is empty, False otherwise.
+    bool: True if the string is empty or contains only whitespace, False otherwise.
     """
     return not input_string.strip()
 
@@ -24,39 +24,38 @@ def validate_email(email: str) -> bool:
     Validate an email address.
 
     Args:
-        email (str): The email address to validate.
+    email (str): The email address to validate.
 
     Returns:
-        bool: True if the email is valid, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
     return bool(re.match(email_regex, email))
 
-def snake_case_to_camel_case(input_string: str) -> str:
+def remove_special_chars(input_string: str) -> str:
     """
-    Convert a snake case string to camel case.
+    Remove special characters from a string.
 
     Args:
-        input_string (str): The input string to convert.
+    input_string (str): The input string to process.
 
     Returns:
-        str: The input string converted to camel case.
+    str: The input string with special characters removed.
     """
-    words = input_string.split("_")
-    return words[0] + "".join(word.capitalize() for word in words[1:])
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
 
 def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncate a string to a maximum length.
+    Truncate a string to a specified maximum length.
 
     Args:
-        input_string (str): The input string to truncate.
-        max_length (int): The maximum length of the output string.
+    input_string (str): The input string to truncate.
+    max_length (int): The maximum length of the output string.
 
     Returns:
-        str: The truncated input string.
+    str: The input string truncated to the specified maximum length.
     """
     if len(input_string) > max_length:
-        return input_string[: max_length - 3] + "..."
+        return input_string[:max_length] + '...'
     return input_string
 ```

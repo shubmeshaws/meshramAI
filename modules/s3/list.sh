@@ -42,6 +42,12 @@ function s3_list() {
     return
   fi
 
+  # Check if jq is installed
+  if ! command -v jq &> /dev/null; then
+    echo "[ERROR] jq is not installed. Please install it before proceeding."
+    return
+  fi
+
   echo "[INFO] Listing S3 buckets..."
   command="aws s3api list-buckets"
   if output=$(timeout 30s $command 2>&1); then
@@ -49,7 +55,7 @@ function s3_list() {
       echo "$processed_output" | column -t
       echo "[INFO] S3 buckets listed successfully."
     else
-      echo "[ERROR] Failed to process AWS CLI output. Error: $processed_output"
+      echo "[ERROR] Failed to process AWS CLI output with jq. Error: $processed_output"
     fi
   else
     handle_error $? "$output" "$command"

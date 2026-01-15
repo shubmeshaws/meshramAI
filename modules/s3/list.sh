@@ -29,6 +29,26 @@ function handle_error() {
   esac
 }
 
+function retry_command() {
+  local command=$1
+  local max_retries=$2
+  local retry_count=0
+  while [ $retry_count -lt $max_retries ]; do
+    if output=$(timeout 30s $command 2>&1); then
+      echo "$output"
+      return
+    else
+      handle_error $? "$output" "$command"
+      retry_count=$((retry_count + 1))
+      if [ $retry_count -lt $max_retries ]; then
+        echo "[INFO] Retrying command '$command' in 1 second..."
+        sleep 1
+      fi
+    fi
+  done
+  echo "[ERROR] All retries failed for command '$command'."
+}
+
 function s3_list() {
   # Check if AWS CLI is installed
   if ! command -v aws &> /dev/null; then
@@ -50,15 +70,13 @@ function s3_list() {
 
   echo "[INFO] Listing S3 buckets..."
   command="aws s3api list-buckets"
-  if output=$(timeout 30s $command 2>&1); then
+  if output=$(retry_command "$command" 3); then
     if processed_output=$(echo "$output" | jq -r '.Buckets[] | .Name' 2>&1); then
       echo "$processed_output" | column -t
       echo "[INFO] S3 buckets listed successfully."
     else
       echo "[ERROR] Failed to process AWS CLI output with jq. Error: $processed_output"
     fi
-  else
-    handle_error $? "$output" "$command"
   fi
 }
 

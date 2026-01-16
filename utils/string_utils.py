@@ -1,60 +1,58 @@
 ```python
 """
-String Utilities
-================
-
-This module provides a set of functions for general string manipulation and validation.
+String utility functions.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
-    """
-    Check if a string is empty or contains only whitespace.
-
-    Args:
-        input_string (str): The input string to check.
-
-    Returns:
-        bool: True if the string is empty or contains only whitespace, False otherwise.
-    """
-    return not input_string.strip()
-
 def validate_email(email: str) -> bool:
     """
-    Validate an email address using a regular expression.
+    Validate an email address.
 
     Args:
-        email (str): The email address to validate.
+    email (str): The email address to validate.
 
     Returns:
-        bool: True if the email address is valid, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
     return bool(re.match(email_regex, email))
 
-def extract_numbers(input_string: str) -> list[int]:
+def validate_ip_address(ip_address: str) -> bool:
     """
-    Extract all numbers from a string.
+    Validate an IP address.
 
     Args:
-        input_string (str): The input string to extract numbers from.
+    ip_address (str): The IP address to validate.
 
     Returns:
-        list[int]: A list of extracted numbers.
+    bool: True if the IP address is valid, False otherwise.
     """
-    return [int(num) for num in re.findall(r"\d+", input_string)]
+    ip_address_regex = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
+    return bool(re.match(ip_address_regex, ip_address))
+
+def remove_special_chars(input_string: str) -> str:
+    """
+    Remove special characters from a string.
+
+    Args:
+    input_string (str): The string to remove special characters from.
+
+    Returns:
+    str: The string with special characters removed.
+    """
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 
 def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncate a string to a specified maximum length.
+    Truncate a string to a specified length.
 
     Args:
-        input_string (str): The input string to truncate.
-        max_length (int): The maximum length of the output string.
+    input_string (str): The string to truncate.
+    max_length (int): The maximum length of the string.
 
     Returns:
-        str: The truncated string.
+    str: The truncated string.
     """
     if len(input_string) > max_length:
         return input_string[:max_length] + "..."

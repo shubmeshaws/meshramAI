@@ -72,8 +72,12 @@ function s3_list() {
   command="aws s3api list-buckets"
   if output=$(retry_command "$command" 3); then
     if processed_output=$(echo "$output" | jq -r '.Buckets[] | .Name' 2>&1); then
-      echo "$processed_output" | column -t
-      echo "[INFO] S3 buckets listed successfully."
+      if echo "$processed_output" | grep -q "parse error"; then
+        echo "[ERROR] Failed to parse AWS CLI output with jq. Error: $processed_output"
+      else
+        echo "$processed_output" | column -t
+        echo "[INFO] S3 buckets listed successfully."
+      fi
     else
       echo "[ERROR] Failed to process AWS CLI output with jq. Error: $processed_output"
     fi

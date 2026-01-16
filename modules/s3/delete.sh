@@ -106,6 +106,11 @@ if [ ! -s "$SCRIPT_DIR/regions.conf" ]; then
   exit 1
 fi
 
+# Validate regions.conf file format
+if ! awk -F= '{if (NF != 2) {print "[ERROR] Invalid regions.conf format. Each line must be in the format 'region=endpoint'"; exit 1}}' "$SCRIPT_DIR/regions.conf" &> /dev/null; then
+  exit 1
+fi
+
 function s3_delete() {
   BUCKET_NAME="$1"
   INPUT_REGION="$2"

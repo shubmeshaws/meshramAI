@@ -89,7 +89,14 @@ function s3_create() {
   fi
 
   echo "[INFO] Checking if bucket '$BUCKET_NAME' already exists..."
-  if aws s3api head-bucket --bucket "$BUCKET_NAME" &> /dev/null; then
+  if ! output=$(aws s3api head-bucket --bucket "$BUCKET_NAME" 2>&1); then
+    if echo "$output" | grep -q "404"; then
+      echo "[INFO] Bucket '$BUCKET_NAME' does not exist."
+    else
+      echo "[ERROR] Failed to check if bucket '$BUCKET_NAME' exists: $output"
+      return 1
+    fi
+  else
     echo "[INFO] Bucket '$BUCKET_NAME' already exists."
     return 0
   fi
@@ -97,15 +104,15 @@ function s3_create() {
   echo "[INFO] Creating bucket '$BUCKET_NAME' in region '$REGION' with ACL '$ACL'..."
 
   if [[ "$REGION" == "us-east-1" ]]; then
-    output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --acl "$ACL" 2>&1)
+    if ! output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --acl "$ACL" 2>&1); then
+      echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION': $output"
+      return 1
+    fi
   else
-    output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --create-bucket-configuration LocationConstraint="$REGION" --acl "$ACL" 2>&1)
-  fi
-
-  if [ $? -ne 0 ]; then
-    echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION':"
-    echo "$output"
-    return 1
+    if ! output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --create-bucket-configuration LocationConstraint="$REGION" --acl "$ACL" 2>&1); then
+      echo "[ERROR] Failed to create bucket '$BUCKET_NAME' in region '$REGION': $output"
+      return 1
+    fi
   fi
 
   echo "[SUCCESS] Bucket '$BUCKET_NAME' created in region '$REGION'."

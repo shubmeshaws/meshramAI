@@ -57,7 +57,7 @@ function s3_list() {
   fi
 
   # Validate AWS CLI configuration by checking access to STS
-  if ! aws sts get-caller-identity &> /dev/null; then
+  if ! output=$(retry_command "aws sts get-caller-identity" 3) &> /dev/null; then
     echo "[ERROR] Invalid AWS CLI configuration. Please verify your AWS credentials."
     return
   fi

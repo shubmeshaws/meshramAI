@@ -1,59 +1,63 @@
 ```python
 """
-String utility functions.
+String Utilities Module
+========================
+This module contains functions for common string operations.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def camel_case_to_snake_case(input_string: str) -> str:
     """
-    Checks if the input string is empty or contains only whitespace characters.
-
+    Convert a camel case string to snake case.
+    
     Args:
-        input_string (str): The input string to check.
-
+        input_string (str): The string to convert.
+    
     Returns:
-        bool: True if the input string is empty or contains only whitespace characters, False otherwise.
+        str: The converted string.
     """
-    return not input_string.strip()
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', input_string)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
-def validate_email(email: str) -> bool:
+def snake_case_to_camel_case(input_string: str) -> str:
     """
-    Validates an email address.
-
+    Convert a snake case string to camel case.
+    
     Args:
-        email (str): The email address to validate.
-
+        input_string (str): The string to convert.
+    
     Returns:
-        bool: True if the email address is valid, False otherwise.
+        str: The converted string.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
+    words = input_string.split('_')
+    return words[0] + ''.join(word.capitalize() for word in words[1:])
+
+def remove_special_characters(input_string: str) -> str:
+    """
+    Remove all special characters from a string.
+    
+    Args:
+        input_string (str): The string to clean.
+    
+    Returns:
+        str: The cleaned string.
+    """
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 
 def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncates a string to a specified maximum length.
-
+    Truncate a string to a specified maximum length.
+    
     Args:
-        input_string (str): The input string to truncate.
-        max_length (int): The maximum length of the output string.
-
+        input_string (str): The string to truncate.
+        max_length (int): The maximum length of the string.
+    
     Returns:
         str: The truncated string.
     """
     if len(input_string) > max_length:
-        return input_string[:max_length - 3] + "..."
-    return input_string
-
-def remove_special_characters(input_string: str) -> str:
-    """
-    Removes special characters from a string.
-
-    Args:
-        input_string (str): The input string to remove special characters from.
-
-    Returns:
-        str: The string with special characters removed.
-    """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+        return input_string[:max_length] + '...'
+    else:
+        return input_string
 ```

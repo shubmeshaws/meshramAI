@@ -19,6 +19,10 @@ function handle_error() {
       if [ -n "$error_output" ]; then
         if echo "$error_output" | grep -q "AccessDenied"; then
           echo "[ERROR] Access denied to list S3 buckets. Please ensure the AWS IAM role or user has the necessary permissions (s3:ListBuckets). Error: $error_output"
+        elif echo "$error_output" | grep -q "Unable to locate credentials"; then
+          echo "[ERROR] Unable to locate AWS credentials. Please ensure your AWS credentials are properly configured. Error: $error_output"
+        elif echo "$error_output" | grep -q "parse error"; then
+          echo "[ERROR] Failed to parse AWS CLI output. Error: $error_output"
         else
           echo "[ERROR] Failed to list S3 buckets with exit code $exit_code. Error: $error_output"
         fi

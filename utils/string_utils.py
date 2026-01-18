@@ -1,59 +1,69 @@
 ```python
 """
 String utility functions.
+
+This module provides functions for string manipulation and formatting.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def snake_to_camel_case(snake_str):
     """
-    Checks if the input string is empty or contains only whitespace characters.
+    Convert a snake case string to camel case.
 
     Args:
-        input_string (str): The input string to check.
+        snake_str (str): The input string in snake case.
 
     Returns:
-        bool: True if the input string is empty or contains only whitespace characters, False otherwise.
+        str: The input string converted to camel case.
     """
-    return not input_string.strip()
+    components = snake_str.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
 
-def validate_email(email: str) -> bool:
+def camel_to_snake_case(camel_str):
     """
-    Validates an email address.
+    Convert a camel case string to snake case.
 
     Args:
-        email (str): The email address to validate.
+        camel_str (str): The input string in camel case.
 
     Returns:
-        bool: True if the email address is valid, False otherwise.
+        str: The input string converted to snake case.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
+    snake_str = re.sub('([A-Z])', r'_\1', camel_str).lower()
+    return snake_str.lstrip('_')
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def remove_whitespace(input_str):
     """
-    Truncates a string to a specified maximum length.
+    Remove all whitespace characters from a string.
 
     Args:
-        input_string (str): The input string to truncate.
+        input_str (str): The input string.
+
+    Returns:
+        str: The input string with all whitespace characters removed.
+    """
+    return input_str.replace(' ', '')
+
+def truncate_string(input_str, max_length):
+    """
+    Truncate a string to a specified maximum length.
+
+    Args:
+        input_str (str): The input string.
         max_length (int): The maximum length of the output string.
 
     Returns:
-        str: The truncated string.
+        str: The input string truncated to the specified maximum length.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length - 3] + "..."
-    return input_string
+    if len(input_str) > max_length:
+        return input_str[:max_length] + '...'
+    return input_str
 
-def remove_special_characters(input_string: str) -> str:
-    """
-    Removes special characters from a string.
-
-    Args:
-        input_string (str): The input string to remove special characters from.
-
-    Returns:
-        str: The string with special characters removed.
-    """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+# Example usage:
+if __name__ == '__main__':
+    print(snake_to_camel_case('hello_world'))  # Output: helloWorld
+    print(camel_to_snake_case('helloWorld'))  # Output: hello_world
+    print(remove_whitespace('hello world'))  # Output: helloworld
+    print(truncate_string('hello world, this is a long string', 15))  # Output: hello world, th...
 ```

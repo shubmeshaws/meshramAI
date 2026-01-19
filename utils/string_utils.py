@@ -2,59 +2,51 @@
 # utils/string_utils.py
 
 """
-Utility functions for string manipulation and validation.
+String utilities module.
 """
 
-def is_empty_string(input_string: str) -> bool:
+import re
+
+def camel_case_to_snake_case(input_str: str) -> str:
     """
-    Check if a string is empty or contains only whitespace characters.
+    Convert camel case string to snake case.
 
     Args:
-    input_string (str): The string to check.
+        input_str (str): Input string in camel case.
 
     Returns:
-    bool: True if the string is empty or contains only whitespace characters, False otherwise.
+        str: Converted string in snake case.
     """
-    return not input_string.strip()
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', input_str)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
-def validate_email(email: str) -> bool:
+
+def snake_case_to_camel_case(input_str: str) -> str:
     """
-    Validate an email address.
+    Convert snake case string to camel case.
 
     Args:
-    email (str): The email address to validate.
+        input_str (str): Input string in snake case.
 
     Returns:
-    bool: True if the email address is valid, False otherwise.
+        str: Converted string in camel case.
     """
-    import re
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    return bool(re.match(email_regex, email))
+    components = input_str.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
 
-def normalize_string(input_string: str) -> str:
-    """
-    Normalize a string by converting it to lowercase and removing leading/trailing whitespace.
 
-    Args:
-    input_string (str): The string to normalize.
-
-    Returns:
-    str: The normalized string.
-    """
-    return input_string.strip().lower()
-
-def truncate_string(input_string: str, max_length: int) -> str:
+def truncate_string(input_str: str, max_length: int = 50) -> str:
     """
     Truncate a string to a specified maximum length.
 
     Args:
-    input_string (str): The string to truncate.
-    max_length (int): The maximum length of the string.
+        input_str (str): Input string.
+        max_length (int): Maximum length of the output string. Defaults to 50.
 
     Returns:
-    str: The truncated string.
+        str: Truncated string.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
-    return input_string
+    if len(input_str) > max_length:
+        return input_str[:max_length] + '...'
+    return input_str
 ```

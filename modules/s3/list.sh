@@ -37,6 +37,7 @@ function retry_command() {
   local command=$1
   local max_retries=$2
   local retry_count=0
+  local backoff_delay=1
   while [ $retry_count -lt $max_retries ]; do
     if output=$(timeout 30s $command 2>&1); then
       echo "$output"
@@ -45,8 +46,12 @@ function retry_command() {
       handle_error $? "$output" "$command"
       retry_count=$((retry_count + 1))
       if [ $retry_count -lt $max_retries ]; then
-        echo "[INFO] Retrying command '$command' in 1 second..."
-        sleep 1
+        echo "[INFO] Retrying command '$command' in $backoff_delay seconds..."
+        sleep $backoff_delay
+        backoff_delay=$((backoff_delay * 2))
+        if [ $backoff_delay -gt 32 ]; then
+          backoff_delay=32
+        fi
       fi
     fi
   done

@@ -34,6 +34,19 @@ function is_valid_bucket_name() {
   return 0
 }
 
+function is_valid_region_name() {
+  local REGION_NAME="$1"
+  # Check if the region name only contains letters, numbers, and hyphens
+  if ! [[ "$REGION_NAME" =~ ^[a-zA-Z0-9-]+$ ]]; then
+    return 1
+  fi
+  # Check if the region name is not empty
+  if [ -z "$REGION_NAME" ]; then
+    return 1
+  fi
+  return 0
+}
+
 function handle_error() {
   local ERROR_MESSAGE="$1"
   local ERROR_CODE="$2"
@@ -78,6 +91,11 @@ function s3_create() {
 
   if ! is_valid_bucket_name "$BUCKET_NAME"; then
     handle_error "Invalid bucket name '$BUCKET_NAME'. Please use a valid bucket name (only lowercase letters, numbers, and hyphens, between 3 and 63 characters, and does not start or end with a hyphen)." 1
+    return
+  fi
+
+  if ! is_valid_region_name "$INPUT_REGION"; then
+    handle_error "Invalid region name '$INPUT_REGION'. Please use a valid region name (only letters, numbers, and hyphens, not empty)." 1
     return
   fi
 

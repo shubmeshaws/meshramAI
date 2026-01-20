@@ -1,69 +1,8 @@
 ```python
 import re
-import ipaddress
+import boto3
 
-def validate_ip_address(ip):
-    """
-    Validate an IP address.
-
-    Args:
-        ip (str): The IP address to validate.
-
-    Returns:
-        bool: True if the IP address is valid, False otherwise.
-    """
-    try:
-        ipaddress.ip_address(ip)
-        return True
-    except ValueError:
-        return False
-
-def validate_aws_resource_name(name):
-    """
-    Validate an AWS resource name.
-
-    Args:
-        name (str): The AWS resource name to validate.
-
-    Returns:
-        bool: True if the AWS resource name is valid, False otherwise.
-    """
-    # AWS resource names can be up to 255 characters long and must start with a letter
-    if not re.match('^[a-zA-Z][a-zA-Z0-9-_]{0,254}$', name):
-        return False
-    return True
-
-def validate_aws_tag_key(key):
-    """
-    Validate an AWS tag key.
-
-    Args:
-        key (str): The AWS tag key to validate.
-
-    Returns:
-        bool: True if the AWS tag key is valid, False otherwise.
-    """
-    # AWS tag keys can be up to 128 characters long and must start with a letter
-    if not re.match('^[a-zA-Z][a-zA-Z0-9-_]{0,127}$', key):
-        return False
-    return True
-
-def validate_aws_tag_value(value):
-    """
-    Validate an AWS tag value.
-
-    Args:
-        value (str): The AWS tag value to validate.
-
-    Returns:
-        bool: True if the AWS tag value is valid, False otherwise.
-    """
-    # AWS tag values can be up to 256 characters long
-    if len(value) > 256:
-        return False
-    return True
-
-def validate_region(region):
+def validate_aws_region(region):
     """
     Validate an AWS region.
 
@@ -71,11 +10,62 @@ def validate_region(region):
         region (str): The AWS region to validate.
 
     Returns:
-        bool: True if the AWS region is valid, False otherwise.
+        bool: True if the region is valid, False otherwise.
     """
-    # List of valid AWS regions
-    valid_regions = ['us-east-1', 'us-west-2', 'us-west-1', 'eu-west-1', 'eu-central-1', 'ap-northeast-1', 'ap-northeast-2', 'ap-southeast-1', 'ap-southeast-2', 'sa-east-1']
-    if region not in valid_regions:
+    ec2 = boto3.client('ec2')
+    try:
+        ec2.describe_regions(RegionNames=[region])
+        return True
+    except Exception as e:
         return False
-    return True
+
+
+def validate_s3_bucket_name(bucket_name):
+    """
+    Validate an S3 bucket name.
+
+    Args:
+        bucket_name (str): The S3 bucket name to validate.
+
+    Returns:
+        bool: True if the bucket name is valid, False otherwise.
+    """
+    pattern = r'^[a-z0-9.-]{3,63}$'
+    return bool(re.match(pattern, bucket_name))
+
+
+def validate_ec2_instance_type(instance_type):
+    """
+    Validate an EC2 instance type.
+
+    Args:
+        instance_type (str): The EC2 instance type to validate.
+
+    Returns:
+        bool: True if the instance type is valid, False otherwise.
+    """
+    ec2 = boto3.client('ec2')
+    try:
+        ec2.describe_instance_types(InstanceTypes=[instance_type])
+        return True
+    except Exception as e:
+        return False
+
+
+def validate_vpc_id(vpc_id):
+    """
+    Validate a VPC ID.
+
+    Args:
+        vpc_id (str): The VPC ID to validate.
+
+    Returns:
+        bool: True if the VPC ID is valid, False otherwise.
+    """
+    ec2 = boto3.client('ec2')
+    try:
+        ec2.describe_vpcs(VpcIds=[vpc_id])
+        return True
+    except Exception as e:
+        return False
 ```

@@ -1,59 +1,60 @@
 ```python
 """
-String utility functions.
+Utility file for handling string operations.
 """
 
 import re
 
-def validate_email(email: str) -> bool:
+def is_valid_ip(ip_address: str) -> bool:
     """
-    Validate an email address.
-    
-    Args:
-    email (str): The email address to validate.
-    
-    Returns:
-    bool: True if the email is valid, False otherwise.
-    """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
+    Validate if the given string is a valid IP address.
 
-def camel_case_to_snake_case(input_string: str) -> str:
-    """
-    Convert a camel case string to snake case.
-    
     Args:
-    input_string (str): The string to convert.
-    
-    Returns:
-    str: The input string in snake case.
-    """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
+    ip_address (str): The IP address to validate.
 
-def trim_string(input_string: str, max_length: int) -> str:
-    """
-    Trim a string to a specified length.
-    
-    Args:
-    input_string (str): The string to trim.
-    max_length (int): The maximum length of the string.
-    
     Returns:
-    str: The trimmed string.
+    bool: True if the IP address is valid, False otherwise.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length - 3] + '...'
-    return input_string
+    pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(pattern, ip_address))
 
-def is_empty_string(input_string: str) -> bool:
+def is_valid_hostname(hostname: str) -> bool:
     """
-    Check if a string is empty or contains only whitespace characters.
-    
+    Validate if the given string is a valid hostname.
+
     Args:
-    input_string (str): The string to check.
-    
+    hostname (str): The hostname to validate.
+
     Returns:
-    bool: True if the string is empty, False otherwise.
+    bool: True if the hostname is valid, False otherwise.
     """
-    return not input_string.strip()
+    pattern = r"^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$"
+    return bool(re.match(pattern, hostname))
+
+def remove_special_chars(input_str: str) -> str:
+    """
+    Remove special characters from a given string.
+
+    Args:
+    input_str (str): The input string.
+
+    Returns:
+    str: The input string with special characters removed.
+    """
+    return re.sub('[^A-Za-z0-9]+', '', input_str)
+
+def truncate_string(input_str: str, max_length: int) -> str:
+    """
+    Truncate a given string to a specified maximum length.
+
+    Args:
+    input_str (str): The input string.
+    max_length (int): The maximum length of the output string.
+
+    Returns:
+    str: The input string truncated to the specified maximum length.
+    """
+    if len(input_str) > max_length:
+        return input_str[:max_length] + "..."
+    return input_str
 ```

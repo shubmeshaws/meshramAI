@@ -111,6 +111,12 @@ if ! awk -F= '{if (NF != 2) {print "[ERROR] Invalid regions.conf format. Each li
   exit 1
 fi
 
+# Check for duplicate region entries in regions.conf
+if awk -F= '!seen[$1]++ {print $1}' "$SCRIPT_DIR/regions.conf" | sort -u | wc -l -ne $(awk -F= '{print $1}' "$SCRIPT_DIR/regions.conf" | sort -u | wc -l); then
+  echo "[ERROR] regions.conf file contains duplicate region entries"
+  exit 1
+fi
+
 function s3_delete() {
   BUCKET_NAME="$1"
   INPUT_REGION="$2"

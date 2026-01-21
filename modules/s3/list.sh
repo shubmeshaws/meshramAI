@@ -1,13 +1,19 @@
 ```bash
 #!/bin/bash
 
+# Define named constants
+MAX_RETRIES=3
+TIMEOUT_SECONDS=30
+MAX_BACKOFF_DELAY=32
+BACKOFF_DELAY_INITIAL=1
+
 function handle_error() {
   local exit_code=$1
   local error_output=$2
   local command=$3
   case $exit_code in
     124)
-      echo "[ERROR] Command '$command' timed out after 30 seconds. Check your network connection or AWS service status. Error: $error_output"
+      echo "[ERROR] Command '$command' timed out after $TIMEOUT_SECONDS seconds. Check your network connection or AWS service status. Error: $error_output"
       ;;
     130)
       echo "[ERROR] AWS CLI command was interrupted. Please try again. Error: $error_output"
@@ -37,9 +43,9 @@ function retry_command() {
   local command=$1
   local max_retries=$2
   local retry_count=0
-  local backoff_delay=1
+  local backoff_delay=$BACKOFF_DELAY_INITIAL
   while [ $retry_count -lt $max_retries ]; do
-    if output=$(timeout 30s $command 2>&1); then
+    if output=$(timeout $TIMEOUT_SECONDS"s" $command 2>&1); then
       echo "$output"
       return
     else
@@ -49,8 +55,8 @@ function retry_command() {
         echo "[INFO] Retrying command '$command' in $backoff_delay seconds..."
         sleep $backoff_delay
         backoff_delay=$((backoff_delay * 2))
-        if [ $backoff_delay -gt 32 ]; then
-          backoff_delay=32
+        if [ $backoff_delay -gt $MAX_BACKOFF_DELAY ]; then
+          backoff_delay=$MAX_BACKOFF_DELAY
         fi
       fi
     fi
@@ -66,7 +72,7 @@ function s3_list() {
   fi
 
   # Validate AWS CLI configuration by checking access to STS
-  if ! output=$(retry_command "aws sts get-caller-identity" 3) &> /dev/null; then
+  if ! output=$(retry_command "aws sts get-caller-identity" $MAX_RETRIES) &> /dev/null; then
     echo "[ERROR] Invalid AWS CLI configuration. Please verify your AWS credentials."
     return
   fi
@@ -79,7 +85,7 @@ function s3_list() {
 
   echo "[INFO] Listing S3 buckets..."
   command="aws s3api list-buckets"
-  if output=$(retry_command "$command" 3); then
+  if output=$(retry_command "$command" $MAX_RETRIES); then
     if processed_output=$(echo "$output" | jq -r '.Buckets[] | .Name' 2>&1); then
       if echo "$processed_output" | grep -q "parse error"; then
         echo "[ERROR] Failed to parse AWS CLI output with jq. Error: $processed_output"

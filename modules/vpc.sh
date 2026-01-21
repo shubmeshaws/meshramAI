@@ -34,4 +34,11 @@ function validate_and_handle_vpc_id() {
     exit $EXIT_ON_ERROR
   fi
 }
+
+function main() {
+  local vpc_id="$1"
+  validate_and_handle_vpc_id "$vpc_id"
+}
+
+main "$1"
 ```

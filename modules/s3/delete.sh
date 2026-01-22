@@ -154,4 +154,18 @@ function s3_delete() {
 
   echo "[SUCCESS] Bucket '$BUCKET_NAME' deleted from region '$REGION'."
 }
+
+function main() {
+  if [ $# -ne 2 ]; then
+    echo "[ERROR] Usage: $0 <bucket_name> <region>"
+    exit 1
+  fi
+
+  BUCKET_NAME="$1"
+  INPUT_REGION="$2"
+
+  s3_delete "$BUCKET_NAME" "$INPUT_REGION"
+}
+
+main "$@"
 ```

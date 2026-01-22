@@ -83,6 +83,11 @@ function s3_list() {
     return
   fi
 
+  # Check if column is installed
+  if ! command -v column &> /dev/null; then
+    echo "[ERROR] column is not installed. Please install it before proceeding. Output will be displayed without formatting."
+  fi
+
   echo "[INFO] Listing S3 buckets..."
   command="aws s3api list-buckets"
   if output=$(retry_command "$command" $MAX_RETRIES); then
@@ -90,7 +95,11 @@ function s3_list() {
       if echo "$processed_output" | grep -q "parse error"; then
         echo "[ERROR] Failed to parse AWS CLI output with jq. Error: $processed_output"
       else
-        echo "$processed_output" | column -t
+        if command -v column &> /dev/null; then
+          echo "$processed_output" | column -t
+        else
+          echo "$processed_output"
+        fi
         echo "[INFO] S3 buckets listed successfully."
       fi
     else

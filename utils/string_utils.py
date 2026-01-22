@@ -1,60 +1,62 @@
 ```python
 """
-Utility file for handling string operations.
+String utility functions.
+
+This module provides a collection of functions for string manipulation and validation.
 """
 
 import re
 
-def is_valid_ip(ip_address: str) -> bool:
+def validate_email(email: str) -> bool:
     """
-    Validate if the given string is a valid IP address.
+    Validate an email address.
 
     Args:
-    ip_address (str): The IP address to validate.
+    email (str): The email address to validate.
 
     Returns:
-    bool: True if the IP address is valid, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    pattern = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(pattern, ip_address))
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(email_regex, email))
 
-def is_valid_hostname(hostname: str) -> bool:
+def snake_case_to_camel_case(snake_case_str: str) -> str:
     """
-    Validate if the given string is a valid hostname.
+    Convert a snake_case string to camelCase.
 
     Args:
-    hostname (str): The hostname to validate.
+    snake_case_str (str): The string to convert.
 
     Returns:
-    bool: True if the hostname is valid, False otherwise.
+    str: The camelCase equivalent of the input string.
     """
-    pattern = r"^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$"
-    return bool(re.match(pattern, hostname))
-
-def remove_special_chars(input_str: str) -> str:
-    """
-    Remove special characters from a given string.
-
-    Args:
-    input_str (str): The input string.
-
-    Returns:
-    str: The input string with special characters removed.
-    """
-    return re.sub('[^A-Za-z0-9]+', '', input_str)
+    components = snake_case_str.split("_")
+    return components[0] + "".join(x.title() for x in components[1:])
 
 def truncate_string(input_str: str, max_length: int) -> str:
     """
-    Truncate a given string to a specified maximum length.
+    Truncate a string to a specified maximum length.
 
     Args:
-    input_str (str): The input string.
+    input_str (str): The string to truncate.
     max_length (int): The maximum length of the output string.
 
     Returns:
-    str: The input string truncated to the specified maximum length.
+    str: The truncated string.
     """
     if len(input_str) > max_length:
-        return input_str[:max_length] + "..."
+        return input_str[: max_length - 3] + "..."
     return input_str
+
+def remove_special_chars(input_str: str) -> str:
+    """
+    Remove special characters from a string.
+
+    Args:
+    input_str (str): The string to clean.
+
+    Returns:
+    str: The input string with all special characters removed.
+    """
+    return re.sub(r"[^a-zA-Z0-9\s]", "", input_str)
 ```

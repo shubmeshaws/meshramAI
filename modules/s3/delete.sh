@@ -106,6 +106,12 @@ if [ ! -s "$SCRIPT_DIR/regions.conf" ]; then
   exit 1
 fi
 
+# Check permissions of regions.conf
+if [ $(stat -c "%a" "$SCRIPT_DIR/regions.conf") -ne 600 ]; then
+  echo "[ERROR] regions.conf file has incorrect permissions. Expected 600, got $(stat -c "%a" "$SCRIPT_DIR/regions.conf")"
+  exit 1
+fi
+
 # Validate regions.conf file format
 if ! awk -F= '{if (NF != 2) {print "[ERROR] Invalid regions.conf format. Each line must be in the format 'region=endpoint'"; exit 1}}' "$SCRIPT_DIR/regions.conf" &> /dev/null; then
   exit 1

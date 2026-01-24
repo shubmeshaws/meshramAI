@@ -21,18 +21,30 @@ function show_vpc_help() {
   echo "Example: vpc-1234567890abcdef"
 }
 
+function handle_error() {
+  local error_type="$1"
+  local vpc_id="$2"
+  case "$error_type" in
+    missing)
+      echo "ERROR: VPC ID is required." >&2
+      show_vpc_help
+      exit $EXIT_ON_MISSING_VPC_ID
+      ;;
+    invalid)
+      local error_message=$(printf "$INVALID_VPC_ID_ERROR_MESSAGE" "$vpc_id")
+      echo "ERROR: $error_message" >&2
+      show_vpc_help
+      exit $EXIT_ON_INVALID_VPC_ID
+      ;;
+  esac
+}
+
 function validate_and_handle_vpc_id() {
   local vpc_id="$1"
   if [ -z "$vpc_id" ]; then
-    echo "ERROR: VPC ID is required." >&2
-    show_vpc_help
-    exit $EXIT_ON_MISSING_VPC_ID
-  fi
-  if ! validate_vpc_id "$vpc_id"; then
-    local error_message=$(printf "$INVALID_VPC_ID_ERROR_MESSAGE" "$vpc_id")
-    echo "ERROR: $error_message" >&2
-    show_vpc_help
-    exit $EXIT_ON_INVALID_VPC_ID
+    handle_error "missing"
+  elif ! validate_vpc_id "$vpc_id"; then
+    handle_error "invalid" "$vpc_id"
   fi
 }
 

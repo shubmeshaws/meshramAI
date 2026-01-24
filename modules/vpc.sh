@@ -6,10 +6,14 @@ EXIT_ON_INVALID_VPC_ID=20
 
 function validate_vpc_id() {
   local vpc_id="$1"
+  local error_message=""
   if [ -z "$vpc_id" ]; then
-    return 1
+    error_message="VPC ID is empty"
+  elif ! [[ "$vpc_id" =~ $VPC_ID_PATTERN ]]; then
+    error_message="VPC ID does not match the pattern: $VPC_ID_PATTERN"
   fi
-  if ! [[ "$vpc_id" =~ $VPC_ID_PATTERN ]]; then
+  if [ -n "$error_message" ]; then
+    echo "$error_message" >&2
     return 1
   fi
   return 0

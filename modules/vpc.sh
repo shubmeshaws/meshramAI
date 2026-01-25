@@ -10,7 +10,7 @@ function validate_vpc_id() {
   if [ -z "$vpc_id" ]; then
     error_message="VPC ID is empty"
   elif ! [[ "$vpc_id" =~ $VPC_ID_PATTERN ]]; then
-    error_message="VPC ID does not match the pattern: $VPC_ID_PATTERN"
+    error_message=$(printf "$INVALID_VPC_ID_ERROR_MESSAGE" "$vpc_id")
   fi
   if [ -n "$error_message" ]; then
     echo "$error_message" >&2

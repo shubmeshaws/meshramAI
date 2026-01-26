@@ -17,6 +17,7 @@ ERROR_INVALID_REGION_NAME=30
 ERROR_REGION_NOT_FOUND=40
 ERROR_BUCKET_ALREADY_EXISTS=50
 ERROR_FAILED_TO_CREATE_BUCKET=60
+ERROR_INVALID_REGIONS_CONF=70
 
 function is_aws_cli_installed() {
   command -v aws &> /dev/null
@@ -63,6 +64,41 @@ function handle_error() {
   return "$ERROR_CODE"
 }
 
+function validate_regions_conf() {
+  local FILE_PATH="$1"
+  local REGION_NAMES=()
+
+  if [ ! -f "$FILE_PATH" ]; then
+    handle_error "File '$FILE_PATH' not found." $ERROR_INVALID_REGIONS_CONF
+    return
+  fi
+
+  if [ ! -s "$FILE_PATH" ]; then
+    handle_error "File '$FILE_PATH' is empty." $ERROR_INVALID_REGIONS_CONF
+    return
+  fi
+
+  while IFS= read -r line; do
+    line=$(echo "$line" | tr -d '[:space:]')
+    if [ -z "$line" ]; then
+      continue
+    fi
+
+    if ! [[ "$line" =~ ^[a-zA-Z0-9-]+=[a-zA-Z0-9-]+$ ]]; then
+      handle_error "Invalid format in '$FILE_PATH': '$line'" $ERROR_INVALID_REGIONS_CONF
+      return
+    fi
+
+    region_name=$(echo "$line" | cut -d '=' -f 1)
+    if [[ " ${REGION_NAMES[@]} " =~ " $region_name " ]]; then
+      handle_error "Duplicate region name '$region_name' in '$FILE_PATH'" $ERROR_INVALID_REGIONS_CONF
+      return
+    fi
+
+    REGION_NAMES+=("$region_name")
+  done < "$FILE_PATH"
+}
+
 function s3_create() {
   BUCKET_NAME="$1"
   INPUT_REGION="$2"
@@ -88,15 +124,7 @@ function s3_create() {
     return
   fi
 
-  if [ ! -f "$SCRIPT_DIR/regions.conf" ]; then
-    handle_error "File 'regions.conf' not found in '$SCRIPT_DIR'." 1
-    return
-  fi
-
-  if [ ! -s "$SCRIPT_DIR/regions.conf" ]; then
-    handle_error "File 'regions.conf' is empty in '$SCRIPT_DIR'." 1
-    return
-  fi
+  validate_regions_conf "$SCRIPT_DIR/regions.conf"
 
   if ! is_valid_bucket_name "$BUCKET_NAME"; then
     handle_error "Invalid bucket name '$BUCKET_NAME'. Please use a valid bucket name (only lowercase letters, numbers, and hyphens, between 3 and 63 characters, and does not start or end with a hyphen)." $ERROR_INVALID_BUCKET_NAME

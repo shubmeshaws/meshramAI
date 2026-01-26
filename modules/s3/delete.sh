@@ -170,7 +170,11 @@ function main() {
   BUCKET_NAME="$1"
   INPUT_REGION="$2"
 
-  s3_delete "$BUCKET_NAME" "$INPUT_REGION"
+  if ! s3_delete "$BUCKET_NAME" "$INPUT_REGION"; then
+    echo "[ERROR] An error occurred while deleting the bucket: $?"
+  else
+    echo "[INFO] Bucket deletion completed successfully."
+  fi
 }
 
 main "$@"

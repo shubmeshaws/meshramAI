@@ -64,10 +64,20 @@ function retry_command() {
   echo "[ERROR] All retries failed for command '$command'."
 }
 
+function check_command() {
+  local command=$1
+  local package_name=$2
+  local installation_instructions=$3
+  if ! command -v $command &> /dev/null; then
+    echo "[ERROR] $command is not installed. To install, run: $installation_instructions"
+    return 1
+  fi
+  return 0
+}
+
 function s3_list() {
   # Check if AWS CLI is installed
-  if ! command -v aws &> /dev/null; then
-    echo "[ERROR] AWS CLI is not installed. Please install and configure it before proceeding."
+  if ! check_command "aws" "AWS CLI" "sudo apt-get install awscli (on Ubuntu) or brew install awscli (on macOS)"; then
     return
   fi
 
@@ -78,14 +88,13 @@ function s3_list() {
   fi
 
   # Check if jq is installed
-  if ! command -v jq &> /dev/null; then
-    echo "[ERROR] jq is not installed. Please install it before proceeding."
+  if ! check_command "jq" "jq" "sudo apt-get install jq (on Ubuntu) or brew install jq (on macOS)"; then
     return
   fi
 
   # Check if column is installed
-  if ! command -v column &> /dev/null; then
-    echo "[ERROR] column is not installed. Please install it before proceeding. Output will be displayed without formatting."
+  if ! check_command "column" "column" "sudo apt-get install column (on Ubuntu) or brew install column (on macOS)"; then
+    echo "[INFO] column is not installed. Output will be displayed without formatting."
   fi
 
   echo "[INFO] Listing S3 buckets..."

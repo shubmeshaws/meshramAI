@@ -48,6 +48,13 @@ function validate_aws_cli() {
   fi
 }
 
+function validate_aws_credentials() {
+  if [[ -z "${AWS_ACCESS_KEY_ID}" || -z "${AWS_SECRET_ACCESS_KEY}" ]]; then
+    echo "[ERROR] AWS credentials are not set. Please set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables."
+    return 1
+  fi
+}
+
 function handle_aws_error() {
   local output="$1"
   local command="$2"
@@ -130,6 +137,7 @@ function s3_delete() {
   validate_bucket_name "$BUCKET_NAME"
   validate_region "$INPUT_REGION"
   validate_aws_cli
+  validate_aws_credentials
 
   REGION="$(awk -F= -v region="$INPUT_REGION" '$1 == region { print $2 }' "$SCRIPT_DIR/regions.conf")"
   REGION="${REGION:-$INPUT_REGION}"

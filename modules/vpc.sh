@@ -6,15 +6,13 @@ EXIT_ON_INVALID_VPC_ID=20
 
 function validate_vpc_id() {
   local vpc_id="$1"
-  local error_message=""
   if [ -z "$vpc_id" ]; then
-    error_message="VPC ID is empty"
+    echo "VPC ID is empty" >&2
+    return $EXIT_ON_MISSING_VPC_ID
   elif ! [[ "$vpc_id" =~ $VPC_ID_PATTERN ]]; then
-    error_message=$(printf "$INVALID_VPC_ID_ERROR_MESSAGE" "$vpc_id")
-  fi
-  if [ -n "$error_message" ]; then
+    local error_message=$(printf "$INVALID_VPC_ID_ERROR_MESSAGE" "$vpc_id")
     echo "$error_message" >&2
-    return 1
+    return $EXIT_ON_INVALID_VPC_ID
   fi
   return 0
 }
@@ -45,9 +43,12 @@ function handle_error() {
 
 function validate_and_handle_vpc_id() {
   local vpc_id="$1"
-  if [ -z "$vpc_id" ]; then
+  local exit_code
+  validate_vpc_id "$vpc_id"
+  exit_code=$?
+  if [ $exit_code -eq $EXIT_ON_MISSING_VPC_ID ]; then
     handle_error "missing"
-  elif ! validate_vpc_id "$vpc_id"; then
+  elif [ $exit_code -eq $EXIT_ON_INVALID_VPC_ID ]; then
     handle_error "invalid" "$vpc_id"
   fi
 }

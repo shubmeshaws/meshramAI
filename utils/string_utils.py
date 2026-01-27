@@ -1,57 +1,76 @@
 ```python
+"""
+String utility functions.
+
+This module provides functions for common string operations such as trimming, padding, and formatting.
+"""
+
 import re
 
-def validate_email(email: str) -> bool:
+def trim_string(input_str, trim_chars=' \t\r\n'):
     """
-    Validate an email address.
+    Trim leading and trailing characters from a string.
 
     Args:
-    email (str): The email address to validate.
+        input_str (str): The input string to trim.
+        trim_chars (str, optional): The characters to trim. Defaults to ' \t\r\n'.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+        str: The trimmed string.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
+    return input_str.strip(trim_chars)
 
-def sanitize_string(input_string: str) -> str:
+def pad_string(input_str, pad_char=' ', pad_length=10):
     """
-    Sanitize a string by removing special characters and trimming whitespace.
+    Pad a string with a specified character to a specified length.
 
     Args:
-    input_string (str): The string to sanitize.
+        input_str (str): The input string to pad.
+        pad_char (str, optional): The character to use for padding. Defaults to ' '.
+        pad_length (int, optional): The desired length of the padded string. Defaults to 10.
 
     Returns:
-    str: The sanitized string.
+        str: The padded string.
     """
-    sanitized_string = re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
-    return sanitized_string.strip()
+    return input_str.ljust(pad_length, pad_char)
 
-def format_string(input_string: str, max_length: int) -> str:
+def format_string(input_str, **kwargs):
     """
-    Format a string by truncating it to a maximum length and appending an ellipsis if necessary.
+    Format a string using keyword arguments.
 
     Args:
-    input_string (str): The string to format.
-    max_length (int): The maximum length of the formatted string.
+        input_str (str): The input string to format.
+        **kwargs: Keyword arguments to use for formatting.
 
     Returns:
-    str: The formatted string.
+        str: The formatted string.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length - 3] + '...'
-    return input_string
+    return input_str.format(**kwargs)
 
-def camel_case_to_snake_case(input_string: str) -> str:
+def extract_pattern(input_str, pattern):
     """
-    Convert a camel case string to snake case.
+    Extract a pattern from a string using regular expressions.
 
     Args:
-    input_string (str): The string to convert.
+        input_str (str): The input string to extract from.
+        pattern (str): The regular expression pattern to match.
 
     Returns:
-    str: The converted string.
+        list: A list of matches.
     """
-    snake_case_string = re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
-    return snake_case_string
+    return re.findall(pattern, input_str)
+
+def replace_pattern(input_str, pattern, replacement):
+    """
+    Replace a pattern in a string using regular expressions.
+
+    Args:
+        input_str (str): The input string to replace in.
+        pattern (str): The regular expression pattern to match.
+        replacement (str): The replacement string.
+
+    Returns:
+        str: The modified string.
+    """
+    return re.sub(pattern, replacement, input_str)
 ```

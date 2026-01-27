@@ -1,62 +1,57 @@
 ```python
-"""
-String Utilities Module
-========================
-
-This module provides a set of utility functions for string manipulation and validation.
-"""
-
 import re
-
-def is_empty_string(input_string: str) -> bool:
-    """
-    Checks if a given string is empty or contains only whitespace characters.
-
-    Args:
-        input_string (str): The input string to check.
-
-    Returns:
-        bool: True if the string is empty, False otherwise.
-    """
-    return not input_string.strip()
 
 def validate_email(email: str) -> bool:
     """
-    Validates an email address using a regular expression.
+    Validate an email address.
 
     Args:
-        email (str): The email address to validate.
+    email (str): The email address to validate.
 
     Returns:
-        bool: True if the email is valid, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
     return bool(re.match(email_regex, email))
 
-def remove_special_characters(input_string: str) -> str:
+def sanitize_string(input_string: str) -> str:
     """
-    Removes special characters from a given string.
+    Sanitize a string by removing special characters and trimming whitespace.
 
     Args:
-        input_string (str): The input string to clean.
+    input_string (str): The string to sanitize.
 
     Returns:
-        str: The cleaned string.
+    str: The sanitized string.
     """
-    return re.sub('[^A-Za-z0-9\s]+', '', input_string)
+    sanitized_string = re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+    return sanitized_string.strip()
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def format_string(input_string: str, max_length: int) -> str:
     """
-    Truncates a given string to a specified maximum length.
+    Format a string by truncating it to a maximum length and appending an ellipsis if necessary.
 
     Args:
-        input_string (str): The input string to truncate.
-        max_length (int): The maximum length of the output string.
+    input_string (str): The string to format.
+    max_length (int): The maximum length of the formatted string.
 
     Returns:
-        str: The truncated string.
+    str: The formatted string.
     """
     if len(input_string) > max_length:
-        return input_string[:max_length] + '...'
+        return input_string[:max_length - 3] + '...'
     return input_string
+
+def camel_case_to_snake_case(input_string: str) -> str:
+    """
+    Convert a camel case string to snake case.
+
+    Args:
+    input_string (str): The string to convert.
+
+    Returns:
+    str: The converted string.
+    """
+    snake_case_string = re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
+    return snake_case_string
 ```

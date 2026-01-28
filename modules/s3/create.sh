@@ -28,24 +28,17 @@ function s3_create() {
 
   echo "[INFO] Creating bucket '$BUCKET_NAME' in region '$REGION' with ACL '$ACL'..."
 
-  (
-    # try-except block to handle unexpected errors
-    set -e
-    if [[ "$REGION" == "us-east-1" ]]; then
-      if ! output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --acl "$ACL" 2>&1); then
-        handle_error "Failed to create bucket '$BUCKET_NAME' in region '$REGION': $output" $ERROR_FAILED_TO_CREATE_BUCKET
-        return
-      fi
-    else
-      if ! output=$(aws s3api create-bucket --bucket "$BUCKET_NAME" --region "$REGION" --create-bucket-configuration LocationConstraint="$REGION" --acl "$ACL" 2>&1); then
-        handle_error "Failed to create bucket '$BUCKET_NAME' in region '$REGION': $output" $ERROR_FAILED_TO_CREATE_BUCKET
-        return
-      fi
-    fi
-  ) || {
-    handle_error "An unexpected error occurred while creating bucket '$BUCKET_NAME': $?" 1
+  # Create the command to create the bucket
+  create_bucket_cmd="aws s3api create-bucket --bucket $BUCKET_NAME --region $REGION --acl $ACL"
+  if [ "$REGION" != "us-east-1" ]; then
+    create_bucket_cmd+=" --create-bucket-configuration LocationConstraint=$REGION"
+  fi
+
+  # Try to execute the command
+  if ! output=$($create_bucket_cmd 2>&1); then
+    handle_error "Failed to create bucket '$BUCKET_NAME' in region '$REGION': $output" $ERROR_FAILED_TO_CREATE_BUCKET
     return
-  }
+  fi
 
   echo "[SUCCESS] Bucket '$BUCKET_NAME' created in region '$REGION'."
 }

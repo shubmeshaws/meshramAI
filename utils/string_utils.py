@@ -1,53 +1,42 @@
 ```python
 """
-This module provides general string utility functions.
+String utility functions.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def validate_email(email: str) -> bool:
     """
-    Checks if a given string is empty or contains only whitespace characters.
+    Validate an email address.
 
     Args:
-    input_string (str): The input string to check.
+    email (str): The email address to validate.
 
     Returns:
-    bool: True if the string is empty, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    return not input_string.strip()
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email))
 
-def validate_email(input_string: str) -> bool:
+def validate_ip_address(ip_address: str) -> bool:
     """
-    Validates an email address.
+    Validate an IP address.
 
     Args:
-    input_string (str): The input string to validate.
+    ip_address (str): The IP address to validate.
 
     Returns:
-    bool: True if the string is a valid email address, False otherwise.
+    bool: True if the IP address is valid, False otherwise.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, input_string))
-
-def remove_special_chars(input_string: str) -> str:
-    """
-    Removes special characters from a given string.
-
-    Args:
-    input_string (str): The input string to remove special characters from.
-
-    Returns:
-    str: The string with special characters removed.
-    """
-    return re.sub('[^A-Za-z0-9]+', '', input_string)
+    ip_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_regex, ip_address))
 
 def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncates a given string to a specified maximum length.
+    Truncate a string to a specified maximum length.
 
     Args:
-    input_string (str): The input string to truncate.
+    input_string (str): The string to truncate.
     max_length (int): The maximum length of the string.
 
     Returns:
@@ -55,5 +44,26 @@ def truncate_string(input_string: str, max_length: int) -> str:
     """
     if len(input_string) > max_length:
         return input_string[:max_length] + "..."
+    return input_string
+
+def escape_special_characters(input_string: str) -> str:
+    """
+    Escape special characters in a string.
+
+    Args:
+    input_string (str): The string to escape.
+
+    Returns:
+    str: The string with special characters escaped.
+    """
+    special_chars = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#x27;",
+    }
+    for char, escaped_char in special_chars.items():
+        input_string = input_string.replace(char, escaped_char)
     return input_string
 ```

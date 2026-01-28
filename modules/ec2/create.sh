@@ -1,4 +1,19 @@
 ```bash
+function check_aws_cli() {
+  if ! command -v aws &> /dev/null; then
+    echo "Error: AWS CLI is not installed. Please install and configure the AWS CLI before proceeding."
+    return 1
+  fi
+
+  local OUTPUT
+  OUTPUT=$(aws sts get-caller-identity 2>&1)
+  local RETURN_CODE=$?
+  if [ $RETURN_CODE -ne 0 ]; then
+    echo "Error: AWS CLI is not properly configured. Please check your AWS credentials and try again."
+    return $RETURN_CODE
+  fi
+}
+
 function handle_aws_error() {
   local OUTPUT="$1"
   local RETURN_CODE="$2"
@@ -30,6 +45,11 @@ function describe_images() {
   local OWNER="$1"
   local FILTERS="$2"
   local REGION="$3"
+
+  check_aws_cli
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
 
   # Input validation
   if [ -z "$OWNER" ] || [ -z "$FILTERS" ] || [ -z "$REGION" ]; then

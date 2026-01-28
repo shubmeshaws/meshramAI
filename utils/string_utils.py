@@ -1,76 +1,59 @@
 ```python
 """
-String utility functions.
-
-This module provides functions for common string operations such as trimming, padding, and formatting.
+This module provides general string utility functions.
 """
 
 import re
 
-def trim_string(input_str, trim_chars=' \t\r\n'):
+def is_empty_string(input_string: str) -> bool:
     """
-    Trim leading and trailing characters from a string.
+    Checks if a given string is empty or contains only whitespace characters.
 
     Args:
-        input_str (str): The input string to trim.
-        trim_chars (str, optional): The characters to trim. Defaults to ' \t\r\n'.
+    input_string (str): The input string to check.
 
     Returns:
-        str: The trimmed string.
+    bool: True if the string is empty, False otherwise.
     """
-    return input_str.strip(trim_chars)
+    return not input_string.strip()
 
-def pad_string(input_str, pad_char=' ', pad_length=10):
+def validate_email(input_string: str) -> bool:
     """
-    Pad a string with a specified character to a specified length.
+    Validates an email address.
 
     Args:
-        input_str (str): The input string to pad.
-        pad_char (str, optional): The character to use for padding. Defaults to ' '.
-        pad_length (int, optional): The desired length of the padded string. Defaults to 10.
+    input_string (str): The input string to validate.
 
     Returns:
-        str: The padded string.
+    bool: True if the string is a valid email address, False otherwise.
     """
-    return input_str.ljust(pad_length, pad_char)
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
+    return bool(re.match(email_regex, input_string))
 
-def format_string(input_str, **kwargs):
+def remove_special_chars(input_string: str) -> str:
     """
-    Format a string using keyword arguments.
+    Removes special characters from a given string.
 
     Args:
-        input_str (str): The input string to format.
-        **kwargs: Keyword arguments to use for formatting.
+    input_string (str): The input string to remove special characters from.
 
     Returns:
-        str: The formatted string.
+    str: The string with special characters removed.
     """
-    return input_str.format(**kwargs)
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 
-def extract_pattern(input_str, pattern):
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Extract a pattern from a string using regular expressions.
+    Truncates a given string to a specified maximum length.
 
     Args:
-        input_str (str): The input string to extract from.
-        pattern (str): The regular expression pattern to match.
+    input_string (str): The input string to truncate.
+    max_length (int): The maximum length of the string.
 
     Returns:
-        list: A list of matches.
+    str: The truncated string.
     """
-    return re.findall(pattern, input_str)
-
-def replace_pattern(input_str, pattern, replacement):
-    """
-    Replace a pattern in a string using regular expressions.
-
-    Args:
-        input_str (str): The input string to replace in.
-        pattern (str): The regular expression pattern to match.
-        replacement (str): The replacement string.
-
-    Returns:
-        str: The modified string.
-    """
-    return re.sub(pattern, replacement, input_str)
+    if len(input_string) > max_length:
+        return input_string[:max_length] + "..."
+    return input_string
 ```

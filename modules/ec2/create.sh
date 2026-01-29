@@ -42,9 +42,9 @@ function handle_aws_error() {
 }
 
 function describe_images() {
-  local OWNER="$1"
-  local FILTERS="$2"
-  local REGION="$3"
+  local image_owner="$1"
+  local filters="$2"
+  local region="$3"
 
   check_aws_cli
   if [ $? -ne 0 ]; then
@@ -52,18 +52,18 @@ function describe_images() {
   fi
 
   # Input validation
-  if [ -z "$OWNER" ] || [ -z "$FILTERS" ] || [ -z "$REGION" ]; then
-    local ERROR_MESSAGE="Error: OWNER, FILTERS, and REGION are required parameters"
-    echo "$ERROR_MESSAGE"
+  if [ -z "$image_owner" ] || [ -z "$filters" ] || [ -z "$region" ]; then
+    local error_message="Error: image_owner, filters, and region are required parameters"
+    echo "$error_message"
     return 1
   fi
 
-  local OUTPUT
-  OUTPUT=$(aws ec2 describe-images --owners "$OWNER" --filters "$FILTERS" "Name=state,Values=available" --region "$REGION" --query 'Images[*].[ImageId,CreationDate]' --output text 2>&1)
-  local RETURN_CODE=$?
-  handle_aws_error "$OUTPUT" $RETURN_CODE
-  if [ $RETURN_CODE -eq 0 ]; then
-    echo "$OUTPUT"
+  local command_output
+  command_output=$(aws ec2 describe-images --owners "$image_owner" --filters "$filters" "Name=state,Values=available" --region "$region" --query 'Images[*].[ImageId,CreationDate]' --output text 2>&1)
+  local return_code=$?
+  handle_aws_error "$command_output" $return_code
+  if [ $return_code -eq 0 ]; then
+    echo "$command_output"
   fi
 }
 ```

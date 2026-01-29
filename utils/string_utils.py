@@ -1,16 +1,16 @@
 ```python
 """
-String utility functions.
+String utility module for string manipulation and validation.
 """
 
 import re
 
 def validate_email(email: str) -> bool:
     """
-    Validate an email address.
+    Validate if the provided email is valid.
 
     Args:
-    email (str): The email address to validate.
+    email (str): The email to validate.
 
     Returns:
     bool: True if the email is valid, False otherwise.
@@ -20,7 +20,7 @@ def validate_email(email: str) -> bool:
 
 def validate_ip_address(ip_address: str) -> bool:
     """
-    Validate an IP address.
+    Validate if the provided IP address is valid.
 
     Args:
     ip_address (str): The IP address to validate.
@@ -28,42 +28,30 @@ def validate_ip_address(ip_address: str) -> bool:
     Returns:
     bool: True if the IP address is valid, False otherwise.
     """
-    ip_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_regex, ip_address))
+    ip_address_regex = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
+    return bool(re.match(ip_address_regex, ip_address))
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def extract_numbers(input_string: str) -> list:
     """
-    Truncate a string to a specified maximum length.
+    Extract numbers from the provided string.
 
     Args:
-    input_string (str): The string to truncate.
-    max_length (int): The maximum length of the string.
+    input_string (str): The string to extract numbers from.
 
     Returns:
-    str: The truncated string.
+    list: A list of extracted numbers.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
-    return input_string
+    return re.findall(r'\d+', input_string)
 
-def escape_special_characters(input_string: str) -> str:
+def remove_special_characters(input_string: str) -> str:
     """
-    Escape special characters in a string.
+    Remove special characters from the provided string.
 
     Args:
-    input_string (str): The string to escape.
+    input_string (str): The string to remove special characters from.
 
     Returns:
-    str: The string with special characters escaped.
+    str: The string without special characters.
     """
-    special_chars = {
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#x27;",
-    }
-    for char, escaped_char in special_chars.items():
-        input_string = input_string.replace(char, escaped_char)
-    return input_string
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
 ```

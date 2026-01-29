@@ -52,9 +52,16 @@ function describe_images() {
   fi
 
   # Input validation
-  if [ -z "$image_owner" ] || [ -z "$filters" ] || [ -z "$region" ]; then
-    local error_message="Error: image_owner, filters, and region are required parameters"
-    echo "$error_message"
+  if [ -z "$image_owner" ]; then
+    echo "Error: image_owner is a required parameter. Please provide a valid image owner."
+    return 1
+  fi
+  if [ -z "$filters" ]; then
+    echo "Error: filters is a required parameter. Please provide valid filters."
+    return 1
+  fi
+  if [ -z "$region" ]; then
+    echo "Error: region is a required parameter. Please provide a valid AWS region."
     return 1
   fi
 
@@ -64,6 +71,8 @@ function describe_images() {
   handle_aws_error "$command_output" $return_code
   if [ $return_code -eq 0 ]; then
     echo "$command_output"
+  else
+    echo "Failed to describe images: return code $return_code"
   fi
 }
 ```

@@ -34,9 +34,23 @@ function s3_create() {
     create_bucket_cmd+=" --create-bucket-configuration LocationConstraint=$REGION"
   fi
 
-  # Try to execute the command
-  if ! output=$($create_bucket_cmd 2>&1); then
-    handle_error "Failed to create bucket '$BUCKET_NAME' in region '$REGION': $output" $ERROR_FAILED_TO_CREATE_BUCKET
+  # Try to execute the command with retry
+  max_retries=3
+  retry_count=0
+  while [ $retry_count -lt $max_retries ]; do
+    if output=$($create_bucket_cmd 2>&1); then
+      break
+    else
+      retry_count=$((retry_count + 1))
+      if [ $retry_count -lt $max_retries ]; then
+        echo "[WARNING] Failed to create bucket '$BUCKET_NAME' in region '$REGION' (attempt $retry_count/$max_retries): $output. Retrying in 5 seconds..."
+        sleep 5
+      fi
+    fi
+  done
+
+  if [ $retry_count -eq $max_retries ]; then
+    handle_error "Failed to create bucket '$BUCKET_NAME' in region '$REGION' after $max_retries attempts: $output" $ERROR_FAILED_TO_CREATE_BUCKET
     return
   fi
 

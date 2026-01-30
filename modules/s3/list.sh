@@ -5,7 +5,7 @@
 MAX_RETRIES=3
 TIMEOUT_SECONDS=30
 MAX_BACKOFF_DELAY=32
-BACKOFF_DELAY_INITIAL=1
+INITIAL_BACKOFF_DELAY=1
 
 function handle_error() {
   local exit_code=$1
@@ -43,7 +43,6 @@ function retry_command() {
   local command=$1
   local max_retries=$2
   local retry_count=0
-  local backoff_delay=$BACKOFF_DELAY_INITIAL
   while [ $retry_count -lt $max_retries ]; do
     if output=$(timeout $TIMEOUT_SECONDS"s" $command 2>&1); then
       echo "$output"
@@ -52,12 +51,10 @@ function retry_command() {
       handle_error $? "$output" "$command"
       retry_count=$((retry_count + 1))
       if [ $retry_count -lt $max_retries ]; then
+        backoff_delay=$(echo "scale=2; $INITIAL_BACKOFF_DELAY * (2 ^ $retry_count) * (1 + $RANDOM / 32767 * 0.1)" | bc)
+        backoff_delay=$(echo "if ($backoff_delay > $MAX_BACKOFF_DELAY) $MAX_BACKOFF_DELAY else $backoff_delay" | bc)
         echo "[INFO] Retrying command '$command' in $backoff_delay seconds..."
         sleep $backoff_delay
-        backoff_delay=$((backoff_delay * 2))
-        if [ $backoff_delay -gt $MAX_BACKOFF_DELAY ]; then
-          backoff_delay=$MAX_BACKOFF_DELAY
-        fi
       fi
     fi
   done

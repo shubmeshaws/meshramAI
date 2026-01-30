@@ -1,4 +1,6 @@
 ```bash
+#!/bin/bash
+
 function check_aws_cli() {
   if ! command -v aws &> /dev/null; then
     echo "Error: AWS CLI is not installed. Please install and configure the AWS CLI before proceeding."
@@ -75,4 +77,19 @@ function describe_images() {
     echo "Failed to describe images: return code $return_code"
   fi
 }
+
+function main() {
+  if [ $# -ne 3 ]; then
+    echo "Usage: $0 <image_owner> <filters> <region>"
+    return 1
+  fi
+
+  local image_owner="$1"
+  local filters="$2"
+  local region="$3"
+
+  describe_images "$image_owner" "$filters" "$region"
+}
+
+main "$@"
 ```

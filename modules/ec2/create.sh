@@ -88,6 +88,11 @@ function main() {
   local filters="$2"
   local region="$3"
 
+  if [ -z "$image_owner" ] || [ -z "$filters" ] || [ -z "$region" ]; then
+    echo "Error: All arguments (image_owner, filters, region) must be non-empty strings."
+    return 1
+  fi
+
   describe_images "$image_owner" "$filters" "$region"
 }
 

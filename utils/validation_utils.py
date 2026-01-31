@@ -1,97 +1,61 @@
 ```python
-import ipaddress
 import re
+import ipaddress
 
-def is_empty_string(input_string):
+def validate_ip_address(ip):
     """
-    Check if a string is empty or contains only whitespace.
+    Validate an IP address.
 
     Args:
-        input_string (str): The input string to check.
-
-    Returns:
-        bool: True if the string is empty, False otherwise.
-    """
-    return not input_string.strip()
-
-def is_valid_ip_address(ip_address):
-    """
-    Check if a string is a valid IP address.
-
-    Args:
-        ip_address (str): The IP address to check.
+        ip (str): The IP address to validate.
 
     Returns:
         bool: True if the IP address is valid, False otherwise.
     """
     try:
-        ipaddress.ip_address(ip_address)
+        ipaddress.ip_address(ip)
         return True
     except ValueError:
         return False
 
-def is_valid_cidr_block(cidr_block):
+def validate_region(region):
     """
-    Check if a string is a valid CIDR block.
+    Validate an AWS region.
 
     Args:
-        cidr_block (str): The CIDR block to check.
-
-    Returns:
-        bool: True if the CIDR block is valid, False otherwise.
-    """
-    try:
-        ipaddress.ip_network(cidr_block)
-        return True
-    except ValueError:
-        return False
-
-def is_valid_region(region):
-    """
-    Check if a string is a valid AWS region.
-
-    Args:
-        region (str): The region to check.
+        region (str): The region to validate.
 
     Returns:
         bool: True if the region is valid, False otherwise.
     """
-    valid_regions = ["us-east-1", "us-west-2", "eu-west-1", "ap-northeast-1"]
-    return region in valid_regions
+    # For simplicity, we'll assume a set of known regions
+    known_regions = ["us-east-1", "us-west-2", "eu-west-1", "ap-northeast-1"]
+    return region in known_regions
 
-def is_valid_iam_role(role):
+def validate_bucket_name(bucket_name):
     """
-    Check if a string is a valid IAM role.
+    Validate an S3 bucket name.
 
     Args:
-        role (str): The IAM role to check.
+        bucket_name (str): The bucket name to validate.
 
     Returns:
-        bool: True if the IAM role is valid, False otherwise.
+        bool: True if the bucket name is valid, False otherwise.
     """
-    # This is a basic check and may need to be updated based on the specific requirements
-    pattern = r"^arn:aws:iam::\d{12}:role\/[a-zA-Z0-9_+=,.@-]+$"
-    return bool(re.match(pattern, role))
+    pattern = r"^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"
+    return bool(re.match(pattern, bucket_name))
 
-def validate_input(input_data, validation_type):
+def validate_instance_type(instance_type):
     """
-    Validate input data based on the specified type.
+    Validate an EC2 instance type.
 
     Args:
-        input_data (str): The input data to validate.
-        validation_type (str): The type of validation to perform (e.g. ip_address, cidr_block, etc.).
+        instance_type (str): The instance type to validate.
 
     Returns:
-        bool: True if the input data is valid, False otherwise.
+        bool: True if the instance type is valid, False otherwise.
     """
-    validation_functions = {
-        "ip_address": is_valid_ip_address,
-        "cidr_block": is_valid_cidr_block,
-        "region": is_valid_region,
-        "iam_role": is_valid_iam_role,
-    }
-    if validation_type in validation_functions:
-        return validation_functions[validation_type](input_data)
-    else:
-        raise ValueError("Invalid validation type")
+    # For simplicity, we'll assume a set of known instance types
+    known_instance_types = ["t2.micro", "t2.small", "c5.xlarge", "c5.2xlarge"]
+    return instance_type in known_instance_types
 ```

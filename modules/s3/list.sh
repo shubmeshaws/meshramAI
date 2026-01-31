@@ -33,6 +33,8 @@ function handle_error() {
       echo "[ERROR] Unable to locate AWS credentials. Please ensure your AWS credentials are properly configured. Error: $error_output"
     elif echo "$error_output" | grep -q "parse error"; then
       echo "[ERROR] Failed to parse AWS CLI output. Error: $error_output"
+    elif echo "$error_output" | grep -q "Error"; then
+      echo "[ERROR] AWS CLI command returned an error: $error_output"
     else
       echo "[ERROR] Failed to list S3 buckets with exit code $exit_code. Error: $error_output"
     fi
@@ -47,8 +49,12 @@ function retry_command() {
   local retry_count=0
   while [ $retry_count -lt $max_retries ]; do
     if output=$(timeout $TIMEOUT_SECONDS"s" $command 2>&1); then
-      echo "$output"
-      return
+      if echo "$output" | grep -q "Error"; then
+        handle_error 0 "$output" "$command"
+      else
+        echo "$output"
+        return
+      fi
     else
       handle_error $? "$output" "$command"
       retry_count=$((retry_count + 1))

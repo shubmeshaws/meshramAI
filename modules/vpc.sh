@@ -1,17 +1,17 @@
 ```bash
 VPC_ID_PREFIX="vpc-"
-VPC_ID_LENGTH=17
 VPC_ID_CHAR_SET="[a-z0-9]"
 INVALID_VPC_ID_ERROR_MESSAGE="Invalid VPC ID: %s. A valid VPC ID should be in the format '%s%s' where '%s' is a lowercase letter or number. Please check the ID and try again. Example of a valid VPC ID: '%s1234567890abcdef'"
 EXIT_ON_MISSING_VPC_ID=10
 EXIT_ON_INVALID_VPC_ID=20
+VPC_ID_LENGTH=17
 
 function validate_vpc_id() {
   local vpc_id="$1"
   if [ -z "$vpc_id" ]; then
     echo "VPC ID is empty" >&2
     return $EXIT_ON_MISSING_VPC_ID
-  elif ! [[ "$vpc_id" =~ ^${VPC_ID_PREFIX}[${VPC_ID_CHAR_SET}]{${VPC_ID_LENGTH}}$ ]]; then
+  elif ! [[ "$vpc_id" =~ ^${VPC_ID_PREFIX}[${VPC_ID_CHAR_SET}]{${VPC_ID_LENGTH}-1}$ ]]; then
     local error_message=$(printf "$INVALID_VPC_ID_ERROR_MESSAGE" "$vpc_id" "$VPC_ID_PREFIX" "${VPC_ID_CHAR_SET}" "${VPC_ID_CHAR_SET}" "$VPC_ID_PREFIX")
     echo "$error_message" >&2
     return $EXIT_ON_INVALID_VPC_ID

@@ -1,64 +1,72 @@
 ```python
 """
-String utility functions for manipulation and validation.
+String utility functions.
+
+This module provides functions for common string operations such as validation,
+manipulation, and formatting.
 """
 
 import re
+
+def is_empty_string(input_string: str) -> bool:
+    """
+    Check if a string is empty.
+
+    Args:
+    input_string (str): The string to check.
+
+    Returns:
+    bool: True if the string is empty, False otherwise.
+    """
+    return not input_string.strip()
 
 def validate_email(email: str) -> bool:
     """
     Validate an email address.
 
     Args:
-    - email (str): The email address to validate.
+    email (str): The email address to validate.
 
     Returns:
-    - bool: True if the email is valid, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
     return bool(re.match(email_regex, email))
 
-def validate_ip_address(ip_address: str) -> bool:
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Validate an IP address.
+    Truncate a string to a specified length.
 
     Args:
-    - ip_address (str): The IP address to validate.
+    input_string (str): The string to truncate.
+    max_length (int): The maximum length of the string.
 
     Returns:
-    - bool: True if the IP address is valid, False otherwise.
+    str: The truncated string.
     """
-    ip_address_regex = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
-    return bool(re.match(ip_address_regex, ip_address))
+    if len(input_string) > max_length:
+        return input_string[:max_length] + "..."
+    return input_string
 
-def remove_special_characters(input_string: str) -> str:
+def remove_special_chars(input_string: str) -> str:
     """
     Remove special characters from a string.
 
     Args:
-    - input_string (str): The string to remove special characters from.
+    input_string (str): The string to clean.
 
     Returns:
-    - str: The string with special characters removed.
+    str: The cleaned string.
     """
     return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
 
-def slugify(input_string: str) -> str:
-    """
-    Convert a string to a slug.
+def main():
+    # Example usage:
+    print(is_empty_string("   "))  # True
+    print(validate_email("example@example.com"))  # True
+    print(truncate_string("This is a very long string", 10))  # "This is a..."
+    print(remove_special_chars("Hello, World!"))  # "Hello World"
 
-    Args:
-    - input_string (str): The string to convert to a slug.
-
-    Returns:
-    - str: The string converted to a slug.
-    """
-    return re.sub(r'[^a-zA-Z0-9\s-]', '', input_string).lower().replace(' ', '-')
-
-# Example usage:
 if __name__ == "__main__":
-    print(validate_email("example@example.com"))  # Output: True
-    print(validate_ip_address("192.168.1.1"))  # Output: True
-    print(remove_special_characters("Hello, World!"))  # Output: "Hello World"
-    print(slugify("Hello World"))  # Output: "hello-world"
+    main()
 ```

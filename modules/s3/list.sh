@@ -7,39 +7,36 @@ TIMEOUT_SECONDS=30
 MAX_BACKOFF_DELAY=32
 INITIAL_BACKOFF_DELAY=1
 
+# Define error messages as an associative array
+declare -A error_messages
+error_messages[124]="Command timed out after $TIMEOUT_SECONDS seconds. Check your network connection or AWS service status."
+error_messages[130]="AWS CLI command was interrupted. Please try again."
+error_messages[255]="AWS CLI command failed with an unknown error. Check the AWS CLI version and configuration."
+
 function handle_error() {
   local exit_code=$1
   local error_output=$2
   local command=$3
-  local error_messages=(
-    "124:Command '$command' timed out after $TIMEOUT_SECONDS seconds. Check your network connection or AWS service status."
-    "130:AWS CLI command was interrupted. Please try again."
-    "255:AWS CLI command failed with an unknown error. Check the AWS CLI version and configuration."
-  )
 
-  for message in "${error_messages[@]}"; do
-    local code=${message%%:*}
-    local msg=${message#*:}
-    if [ "$exit_code" = "$code" ]; then
-      echo "[ERROR] $msg Error: $error_output"
-      return
-    fi
-  done
-
-  if [ -n "$error_output" ]; then
-    if echo "$error_output" | grep -q "AccessDenied"; then
-      echo "[ERROR] Access denied to list S3 buckets. Please ensure the AWS IAM role or user has the necessary permissions (s3:ListBuckets). Error: $error_output"
-    elif echo "$error_output" | grep -q "Unable to locate credentials"; then
-      echo "[ERROR] Unable to locate AWS credentials. Please ensure your AWS credentials are properly configured. Error: $error_output"
-    elif echo "$error_output" | grep -q "parse error"; then
-      echo "[ERROR] Failed to parse AWS CLI output. Error: $error_output"
-    elif echo "$error_output" | grep -q "Error"; then
-      echo "[ERROR] AWS CLI command returned an error: $error_output"
-    else
-      echo "[ERROR] Failed to list S3 buckets with exit code $exit_code. Error: $error_output"
-    fi
+  # Check if the exit code has a specific error message
+  if [[ ${error_messages[$exit_code]} ]]; then
+    echo "[ERROR] ${error_messages[$exit_code]} Error: $error_output"
   else
-    echo "[ERROR] Failed to list S3 buckets with exit code $exit_code. No error output available."
+    if [ -n "$error_output" ]; then
+      if echo "$error_output" | grep -q "AccessDenied"; then
+        echo "[ERROR] Access denied to list S3 buckets. Please ensure the AWS IAM role or user has the necessary permissions (s3:ListBuckets). Error: $error_output"
+      elif echo "$error_output" | grep -q "Unable to locate credentials"; then
+        echo "[ERROR] Unable to locate AWS credentials. Please ensure your AWS credentials are properly configured. Error: $error_output"
+      elif echo "$error_output" | grep -q "parse error"; then
+        echo "[ERROR] Failed to parse AWS CLI output. Error: $error_output"
+      elif echo "$error_output" | grep -q "Error"; then
+        echo "[ERROR] AWS CLI command returned an error: $error_output"
+      else
+        echo "[ERROR] Failed to list S3 buckets with exit code $exit_code. Error: $error_output"
+      fi
+    else
+      echo "[ERROR] Failed to list S3 buckets with exit code $exit_code. No error output available."
+    fi
   fi
 }
 

@@ -6,13 +6,18 @@ EXIT_ON_MISSING_VPC_ID=10
 EXIT_ON_INVALID_VPC_ID=20
 VPC_ID_LENGTH=17
 
+function generate_error_message() {
+  local vpc_id="$1"
+  printf "$INVALID_VPC_ID_ERROR_MESSAGE" "$vpc_id" "$VPC_ID_PREFIX" "${VPC_ID_CHAR_SET}" "${VPC_ID_CHAR_SET}" "$VPC_ID_PREFIX"
+}
+
 function validate_vpc_id() {
   local vpc_id="$1"
   if [ -z "$vpc_id" ]; then
     echo "VPC ID is empty" >&2
     return $EXIT_ON_MISSING_VPC_ID
   elif ! [[ "$vpc_id" =~ ^${VPC_ID_PREFIX}[${VPC_ID_CHAR_SET}]{${VPC_ID_LENGTH}-1}$ ]]; then
-    local error_message=$(printf "$INVALID_VPC_ID_ERROR_MESSAGE" "$vpc_id" "$VPC_ID_PREFIX" "${VPC_ID_CHAR_SET}" "${VPC_ID_CHAR_SET}" "$VPC_ID_PREFIX")
+    local error_message=$(generate_error_message "$vpc_id")
     echo "$error_message" >&2
     return $EXIT_ON_INVALID_VPC_ID
   fi
@@ -35,7 +40,7 @@ function handle_error() {
       exit $EXIT_ON_MISSING_VPC_ID
       ;;
     invalid)
-      local error_message=$(printf "$INVALID_VPC_ID_ERROR_MESSAGE" "$vpc_id" "$VPC_ID_PREFIX" "${VPC_ID_CHAR_SET}" "${VPC_ID_CHAR_SET}" "$VPC_ID_PREFIX")
+      local error_message=$(generate_error_message "$vpc_id")
       echo "ERROR: $error_message" >&2
       show_vpc_help
       exit $EXIT_ON_INVALID_VPC_ID

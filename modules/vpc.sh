@@ -61,6 +61,11 @@ function validate_and_handle_vpc_id() {
 }
 
 function main() {
+  if [ $# -ne 1 ]; then
+    echo "ERROR: Exactly one VPC ID is required as an argument." >&2
+    show_vpc_help
+    exit $EXIT_ON_MISSING_VPC_ID
+  fi
   local vpc_id="$1"
   validate_and_handle_vpc_id "$vpc_id"
 }

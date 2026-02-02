@@ -1,63 +1,70 @@
 ```python
 """
-String utility module.
-
-This module provides common string operations such as validation and formatting.
+Utility functions for common string operations.
 """
 
 import re
 
-def is_valid_email(email: str) -> bool:
+def trim_string(input_str, max_length=50):
     """
-    Validate an email address.
+    Trim a string to a specified maximum length.
 
     Args:
-    - email (str): The email address to validate.
+        input_str (str): The input string to be trimmed.
+        max_length (int): The maximum length of the output string. Defaults to 50.
 
     Returns:
-    - bool: True if the email is valid, False otherwise.
+        str: The trimmed string.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
+    if len(input_str) > max_length:
+        return input_str[:max_length] + "..."
+    return input_str
 
-def is_valid_ip_address(ip_address: str) -> bool:
+def remove_special_chars(input_str):
     """
-    Validate an IP address.
+    Remove special characters from a string.
 
     Args:
-    - ip_address (str): The IP address to validate.
+        input_str (str): The input string.
 
     Returns:
-    - bool: True if the IP address is valid, False otherwise.
+        str: The string with special characters removed.
     """
-    ip_address_regex = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
-    return bool(re.match(ip_address_regex, ip_address))
+    return re.sub('[^A-Za-z0-9\s]+', '', input_str)
 
-def format_string(input_string: str, **kwargs) -> str:
+def to_snake_case(input_str):
     """
-    Format a string using keyword arguments.
+    Convert a string to snake case.
 
     Args:
-    - input_string (str): The string to format.
-    - **kwargs: Keyword arguments to replace in the string.
+        input_str (str): The input string.
 
     Returns:
-    - str: The formatted string.
+        str: The string in snake case.
     """
-    return input_string.format(**kwargs)
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_str).lower()
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def to_title_case(input_str):
     """
-    Truncate a string to a maximum length.
+    Convert a string to title case.
 
     Args:
-    - input_string (str): The string to truncate.
-    - max_length (int): The maximum length of the string.
+        input_str (str): The input string.
 
     Returns:
-    - str: The truncated string.
+        str: The string in title case.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length - 3] + "..."
-    return input_string
+    return input_str.title()
+
+def is_empty_string(input_str):
+    """
+    Check if a string is empty.
+
+    Args:
+        input_str (str): The input string.
+
+    Returns:
+        bool: True if the string is empty, False otherwise.
+    """
+    return not input_str.strip()
 ```

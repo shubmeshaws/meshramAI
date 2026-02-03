@@ -4,6 +4,7 @@ VPC_ID_CHAR_SET="[a-z0-9]"
 INVALID_VPC_ID_ERROR_MESSAGE="Invalid VPC ID: %s. A valid VPC ID should be in the format '%s%s' where '%s' is a lowercase letter or number. Please check the ID and try again. Example of a valid VPC ID: '%s1234567890abcdef'"
 EXIT_ON_MISSING_VPC_ID=10
 EXIT_ON_INVALID_VPC_ID=20
+EXIT_ON_INVALID_INPUT_TYPE=30
 VPC_ID_LENGTH=17
 
 function generate_error_message() {
@@ -45,6 +46,11 @@ function handle_error() {
       show_vpc_help
       exit $EXIT_ON_INVALID_VPC_ID
       ;;
+    invalid_type)
+      echo "ERROR: Invalid input type. VPC ID must be a string." >&2
+      show_vpc_help
+      exit $EXIT_ON_INVALID_INPUT_TYPE
+      ;;
   esac
 }
 
@@ -67,6 +73,9 @@ function main() {
     exit $EXIT_ON_MISSING_VPC_ID
   fi
   local vpc_id="$1"
+  if ! [[ "$vpc_id" =~ ^[a-zA-Z0-9-]+$ ]]; then
+    handle_error "invalid_type"
+  fi
   validate_and_handle_vpc_id "$vpc_id"
 }
 

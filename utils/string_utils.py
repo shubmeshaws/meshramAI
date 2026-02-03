@@ -1,70 +1,59 @@
 ```python
 """
-Utility functions for common string operations.
+Utility module for common string operations.
 """
 
 import re
 
-def trim_string(input_str, max_length=50):
+def camel_to_snake_case(input_string: str) -> str:
     """
-    Trim a string to a specified maximum length.
+    Converts a camel case string to snake case.
 
     Args:
-        input_str (str): The input string to be trimmed.
-        max_length (int): The maximum length of the output string. Defaults to 50.
+    input_string (str): The input string in camel case.
 
     Returns:
-        str: The trimmed string.
+    str: The input string in snake case.
     """
-    if len(input_str) > max_length:
-        return input_str[:max_length] + "..."
-    return input_str
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
 
-def remove_special_chars(input_str):
+def snake_to_camel_case(input_string: str) -> str:
     """
-    Remove special characters from a string.
+    Converts a snake case string to camel case.
 
     Args:
-        input_str (str): The input string.
+    input_string (str): The input string in snake case.
 
     Returns:
-        str: The string with special characters removed.
+    str: The input string in camel case.
     """
-    return re.sub('[^A-Za-z0-9\s]+', '', input_str)
+    components = input_string.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
 
-def to_snake_case(input_str):
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Convert a string to snake case.
+    Truncates a string to a specified maximum length.
 
     Args:
-        input_str (str): The input string.
+    input_string (str): The input string.
+    max_length (int): The maximum allowed length.
 
     Returns:
-        str: The string in snake case.
+    str: The truncated string.
     """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_str).lower()
+    if len(input_string) > max_length:
+        return input_string[:max_length] + '...'
+    return input_string
 
-def to_title_case(input_str):
+def remove_special_characters(input_string: str) -> str:
     """
-    Convert a string to title case.
+    Removes special characters from a string.
 
     Args:
-        input_str (str): The input string.
+    input_string (str): The input string.
 
     Returns:
-        str: The string in title case.
+    str: The string with special characters removed.
     """
-    return input_str.title()
-
-def is_empty_string(input_str):
-    """
-    Check if a string is empty.
-
-    Args:
-        input_str (str): The input string.
-
-    Returns:
-        bool: True if the string is empty, False otherwise.
-    """
-    return not input_str.strip()
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 ```

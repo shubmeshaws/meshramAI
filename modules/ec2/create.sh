@@ -47,6 +47,8 @@ function describe_images() {
   local image_owner="$1"
   local filters="$2"
   local region="$3"
+  local max_retries=${MAX_RETRIES:-3}
+  local retry_count=0
 
   check_aws_cli
   if [ $? -ne 0 ]; then
@@ -67,15 +69,25 @@ function describe_images() {
     return 1
   fi
 
-  local command_output
-  command_output=$(aws ec2 describe-images --owners "$image_owner" --filters "$filters" "Name=state,Values=available" --region "$region" --query 'Images[*].[ImageId,CreationDate]' --output text 2>&1)
-  local return_code=$?
-  handle_aws_error "$command_output" $return_code
-  if [ $return_code -eq 0 ]; then
-    echo "$command_output"
-  else
-    echo "Failed to describe images: return code $return_code"
-  fi
+  while [ $retry_count -lt $max_retries ]; do
+    local command_output
+    command_output=$(aws ec2 describe-images --owners "$image_owner" --filters "$filters" "Name=state,Values=available" --region "$region" --query 'Images[*].[ImageId,CreationDate]' --output text 2>&1)
+    local return_code=$?
+    if [ $return_code -eq 0 ]; then
+      echo "$command_output"
+      return 0
+    else
+      handle_aws_error "$command_output" $return_code
+      retry_count=$((retry_count + 1))
+      if [ $retry_count -lt $max_retries ]; then
+        echo "Retrying describe images command (attempt $retry_count/$max_retries)..."
+        sleep 1
+      fi
+    fi
+  done
+
+  echo "Failed to describe images after $max_retries retries"
+  return 1
 }
 
 function main() {

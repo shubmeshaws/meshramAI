@@ -75,6 +75,13 @@ function main() {
   local vpc_id="$1"
   if ! [[ "$vpc_id" =~ ^[a-zA-Z0-9-]+$ ]]; then
     handle_error "invalid_type"
+  elif [ "${vpc_id:0:1}" == "-" ] && [ "${#vpc_id}" -eq 1 ]; then
+    handle_error "invalid_type"
+  fi
+  if ! declare -p vpc_id &>/dev/null; then
+    handle_error "invalid_type"
+  elif ! [[ "$(declare -p vpc_id)" =~ "declare --" ]]; then
+    handle_error "invalid_type"
   fi
   validate_and_handle_vpc_id "$vpc_id"
 }

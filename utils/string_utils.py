@@ -2,79 +2,71 @@
 """
 String utility functions.
 
-This module provides a set of functions for common string operations.
+This module provides functions for string manipulation and validation.
 """
 
-def is_empty_string(input_string: str) -> bool:
+import re
+
+def validate_email(email: str) -> bool:
     """
-    Checks if the input string is empty.
+    Validate an email address.
 
     Args:
-        input_string (str): The string to check.
+        email (str): The email address to validate.
 
     Returns:
-        bool: True if the string is empty, False otherwise.
+        bool: True if the email is valid, False otherwise.
     """
-    return not input_string.strip()
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email))
 
-
-def truncate_string(input_string: str, max_length: int) -> str:
+def validate_ip_address(ip: str) -> bool:
     """
-    Truncates the input string to the specified maximum length.
+    Validate an IP address.
 
     Args:
-        input_string (str): The string to truncate.
-        max_length (int): The maximum length of the output string.
+        ip (str): The IP address to validate.
 
     Returns:
-        str: The truncated string.
+        bool: True if the IP is valid, False otherwise.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
-    return input_string
+    ip_regex = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
+    return bool(re.match(ip_regex, ip))
 
-
-def pad_string(input_string: str, min_length: int, pad_char: str = " ") -> str:
+def camel_case_to_snake_case(s: str) -> str:
     """
-    Pads the input string with the specified character to the minimum length.
+    Convert a camel case string to snake case.
 
     Args:
-        input_string (str): The string to pad.
-        min_length (int): The minimum length of the output string.
-        pad_char (str, optional): The character to use for padding. Defaults to " ".
+        s (str): The string to convert.
 
     Returns:
-        str: The padded string.
+        str: The converted string.
     """
-    if len(input_string) < min_length:
-        return input_string + pad_char * (min_length - len(input_string))
-    return input_string
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', s).lower()
 
-
-def split_string(input_string: str, delimiter: str) -> list[str]:
+def snake_case_to_camel_case(s: str) -> str:
     """
-    Splits the input string into a list of substrings using the specified delimiter.
+    Convert a snake case string to camel case.
 
     Args:
-        input_string (str): The string to split.
-        delimiter (str): The delimiter to use for splitting.
+        s (str): The string to convert.
 
     Returns:
-        list[str]: The list of substrings.
+        str: The converted string.
     """
-    return input_string.split(delimiter)
+    words = s.split('_')
+    return words[0] + ''.join(word.capitalize() for word in words[1:])
 
-
-def join_strings(strings: list[str], delimiter: str) -> str:
+def remove_special_characters(s: str) -> str:
     """
-    Joins the list of strings into a single string using the specified delimiter.
+    Remove special characters from a string.
 
     Args:
-        strings (list[str]): The list of strings to join.
-        delimiter (str): The delimiter to use for joining.
+        s (str): The string to clean.
 
     Returns:
-        str: The joined string.
+        str: The cleaned string.
     """
-    return delimiter.join(strings)
+    return re.sub(r'[^a-zA-Z0-9\s]', '', s)
 ```

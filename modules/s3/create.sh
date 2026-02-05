@@ -12,6 +12,17 @@ function s3_create() {
     return
   fi
 
+  # Check if AWS CLI is installed and configured
+  if ! command -v aws &> /dev/null; then
+    handle_error "AWS CLI is not installed." $ERROR_AWS_CLI_NOT_INSTALLED
+    return
+  fi
+
+  if ! aws sts get-caller-identity &> /dev/null; then
+    handle_error "AWS CLI is not configured." $ERROR_AWS_CLI_NOT_CONFIGURED
+    return
+  fi
+
   echo "[INFO] Checking if bucket '$BUCKET_NAME' already exists..."
   if output=$(aws s3api head-bucket --bucket "$BUCKET_NAME" 2>&1); then
     if [ $? -eq 0 ]; then

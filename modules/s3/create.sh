@@ -13,16 +13,19 @@ function s3_create() {
   fi
 
   echo "[INFO] Checking if bucket '$BUCKET_NAME' already exists..."
-  if ! output=$(aws s3api head-bucket --bucket "$BUCKET_NAME" 2>&1); then
-    if echo "$output" | grep -q "404"; then
+  if output=$(aws s3api head-bucket --bucket "$BUCKET_NAME" 2>&1); then
+    if [ $? -eq 0 ]; then
+      echo "[INFO] Bucket '$BUCKET_NAME' already exists."
+      handle_error "Bucket '$BUCKET_NAME' already exists." $ERROR_BUCKET_ALREADY_EXISTS
+      return
+    elif [ $? -eq 254 ]; then
       echo "[INFO] Bucket '$BUCKET_NAME' does not exist."
     else
       handle_error "Failed to check if bucket '$BUCKET_NAME' exists: $output" 1
       return
     fi
   else
-    echo "[INFO] Bucket '$BUCKET_NAME' already exists."
-    handle_error "Bucket '$BUCKET_NAME' already exists." $ERROR_BUCKET_ALREADY_EXISTS
+    handle_error "Failed to check if bucket '$BUCKET_NAME' exists: $output" 1
     return
   fi
 

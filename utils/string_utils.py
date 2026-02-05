@@ -1,46 +1,54 @@
 ```python
 """
-Utility functions for string manipulation.
+String utility functions.
 """
 
 import re
 
-def camel_case_to_snake_case(input_str):
+def format_string(input_str, **kwargs):
     """
-    Converts a camel case string to snake case.
+    Replaces placeholders in the input string with the provided keyword arguments.
     
     Args:
-    input_str (str): The input string in camel case.
+    input_str (str): The input string containing placeholders.
+    **kwargs: Keyword arguments to replace the placeholders.
     
     Returns:
-    str: The input string converted to snake case.
+    str: The formatted string.
     """
-    # Use regular expression to find uppercase letters and insert an underscore before them
-    snake_case_str = re.sub('([A-Z])', r'_\1', input_str).lower()
-    # Remove leading underscore if present
-    if snake_case_str.startswith('_'):
-        snake_case_str = snake_case_str[1:]
-    return snake_case_str
+    return input_str.format(**kwargs)
 
-
-def snake_case_to_camel_case(input_str):
+def validate_email(email):
     """
-    Converts a snake case string to camel case.
+    Validates if the input string is a valid email address.
     
     Args:
-    input_str (str): The input string in snake case.
+    email (str): The input string to be validated.
     
     Returns:
-    str: The input string converted to camel case.
+    bool: True if the input string is a valid email address, False otherwise.
     """
-    # Split the string by underscores and capitalize each word
-    camel_case_str = ''.join(word.capitalize() for word in input_str.split('_'))
-    return camel_case_str
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email))
 
-
-def remove_special_characters(input_str):
+def truncate_string(input_str, max_length):
     """
-    Removes special characters from a string.
+    Truncates the input string to the specified maximum length.
+    
+    Args:
+    input_str (str): The input string to be truncated.
+    max_length (int): The maximum length of the output string.
+    
+    Returns:
+    str: The truncated string.
+    """
+    if len(input_str) > max_length:
+        return input_str[:max_length - 3] + "..."
+    return input_str
+
+def remove_special_chars(input_str):
+    """
+    Removes special characters from the input string.
     
     Args:
     input_str (str): The input string containing special characters.
@@ -48,24 +56,5 @@ def remove_special_characters(input_str):
     Returns:
     str: The input string with special characters removed.
     """
-    # Use regular expression to replace non-alphanumeric characters with an empty string
-    cleaned_str = re.sub('[^A-Za-z0-9]+', '', input_str)
-    return cleaned_str
-
-
-def truncate_string(input_str, max_length):
-    """
-    Truncates a string to a specified maximum length.
-    
-    Args:
-    input_str (str): The input string to be truncated.
-    max_length (int): The maximum allowed length of the string.
-    
-    Returns:
-    str: The input string truncated to the specified maximum length.
-    """
-    if len(input_str) > max_length:
-        return input_str[:max_length] + '...'
-    else:
-        return input_str
+    return re.sub('[^A-Za-z0-9]+', '', input_str)
 ```

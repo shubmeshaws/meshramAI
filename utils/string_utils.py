@@ -1,63 +1,68 @@
 ```python
 """
-Utility module for string manipulation and validation.
+String utility module.
+
+This module provides functions for string manipulation and validation.
 """
 
 import re
 
-def is_valid_ip_address(ip_address: str) -> bool:
+def is_empty(string: str) -> bool:
     """
-    Validate if a given string is a valid IP address.
-    
+    Check if a string is empty or contains only whitespace characters.
+
     Args:
-    ip_address (str): The IP address to validate.
-    
+    string (str): The input string.
+
     Returns:
-    bool: True if the IP address is valid, False otherwise.
+    bool: True if the string is empty, False otherwise.
     """
-    ip_address_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_address_regex, ip_address))
+    return not string.strip()
 
-
-def is_valid_hostname(hostname: str) -> bool:
+def validate_email(email: str) -> bool:
     """
-    Validate if a given string is a valid hostname.
-    
+    Validate an email address.
+
     Args:
-    hostname (str): The hostname to validate.
-    
+    email (str): The email address to validate.
+
     Returns:
-    bool: True if the hostname is valid, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    hostname_regex = r"^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$"
-    return bool(re.match(hostname_regex, hostname))
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email))
 
-
-def truncate_string(input_string: str, max_length: int) -> str:
+def remove_special_chars(string: str) -> str:
     """
-    Truncate a given string to a specified maximum length.
-    
+    Remove special characters from a string.
+
     Args:
-    input_string (str): The string to truncate.
-    max_length (int): The maximum length of the output string.
-    
+    string (str): The input string.
+
+    Returns:
+    str: The string with special characters removed.
+    """
+    return re.sub(r"[^a-zA-Z0-9\s]", "", string)
+
+def truncate_string(string: str, max_length: int) -> str:
+    """
+    Truncate a string to a specified maximum length.
+
+    Args:
+    string (str): The input string.
+    max_length (int): The maximum length of the string.
+
     Returns:
     str: The truncated string.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length - 3] + "..."
-    return input_string
+    if len(string) > max_length:
+        return string[:max_length] + "..."
+    return string
 
-
-def remove_special_characters(input_string: str) -> str:
-    """
-    Remove all special characters from a given string.
-    
-    Args:
-    input_string (str): The string to clean.
-    
-    Returns:
-    str: The cleaned string.
-    """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+# Example usage:
+if __name__ == "__main__":
+    print(is_empty("   "))  # Output: True
+    print(validate_email("test@example.com"))  # Output: True
+    print(remove_special_chars("Hello, World!"))  # Output: "Hello World"
+    print(truncate_string("This is a very long string", 10))  # Output: "This is a..."
 ```

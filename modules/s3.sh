@@ -1,6 +1,10 @@
 ```bash
 function validate_region() {
   local region="$1"
+  if [ -z "$region" ]; then
+    log "ERROR" "Region cannot be empty. Please provide a valid region."
+    exit 1
+  fi
   local valid_regions
   valid_regions=$(aws ec2 describe-regions --output text | awk '{print $2}' 2>/dev/null)
   if [ $? -ne 0 ]; then

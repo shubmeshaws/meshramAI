@@ -1,23 +1,9 @@
 ```python
 """
-String utility module.
-
-This module provides functions for string manipulation and validation.
+String utility functions.
 """
 
 import re
-
-def is_empty(string: str) -> bool:
-    """
-    Check if a string is empty or contains only whitespace characters.
-
-    Args:
-    string (str): The input string.
-
-    Returns:
-    bool: True if the string is empty, False otherwise.
-    """
-    return not string.strip()
 
 def validate_email(email: str) -> bool:
     """
@@ -29,40 +15,43 @@ def validate_email(email: str) -> bool:
     Returns:
     bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     return bool(re.match(email_regex, email))
 
-def remove_special_chars(string: str) -> str:
+def validate_ip_address(ip_address: str) -> bool:
     """
-    Remove special characters from a string.
+    Validate an IP address.
 
     Args:
-    string (str): The input string.
+    ip_address (str): The IP address to validate.
 
     Returns:
-    str: The string with special characters removed.
+    bool: True if the IP address is valid, False otherwise.
     """
-    return re.sub(r"[^a-zA-Z0-9\s]", "", string)
+    ip_address_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_address_regex, ip_address))
 
-def truncate_string(string: str, max_length: int) -> str:
+def extract_numbers(input_string: str) -> list[int]:
     """
-    Truncate a string to a specified maximum length.
+    Extract numbers from a string.
 
     Args:
-    string (str): The input string.
-    max_length (int): The maximum length of the string.
+    input_string (str): The string to extract numbers from.
 
     Returns:
-    str: The truncated string.
+    list[int]: A list of extracted numbers.
     """
-    if len(string) > max_length:
-        return string[:max_length] + "..."
-    return string
+    return [int(num) for num in re.findall(r"\d+", input_string)]
 
-# Example usage:
-if __name__ == "__main__":
-    print(is_empty("   "))  # Output: True
-    print(validate_email("test@example.com"))  # Output: True
-    print(remove_special_chars("Hello, World!"))  # Output: "Hello World"
-    print(truncate_string("This is a very long string", 10))  # Output: "This is a..."
+def camel_case_to_snake_case(input_string: str) -> str:
+    """
+    Convert a camel case string to snake case.
+
+    Args:
+    input_string (str): The string to convert.
+
+    Returns:
+    str: The converted string.
+    """
+    return re.sub(r"([A-Z])", r"_\1", input_string).lower().lstrip("_")
 ```

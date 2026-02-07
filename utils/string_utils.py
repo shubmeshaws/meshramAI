@@ -5,53 +5,69 @@ Utility functions for string manipulation and validation.
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def is_empty(string: str) -> bool:
     """
-    Checks if the input string is empty or contains only whitespace characters.
+    Checks if a string is empty or contains only whitespace characters.
 
     Args:
-    input_string (str): The input string to check.
+    string (str): The input string to check.
 
     Returns:
-    bool: True if the input string is empty or contains only whitespace characters, False otherwise.
+    bool: True if the string is empty, False otherwise.
     """
-    return input_string.strip() == ""
+    return not string.strip()
 
-def validate_email(input_string: str) -> bool:
+def validate_email(email: str) -> bool:
     """
-    Validates if the input string is a valid email address.
+    Validates an email address using a regular expression.
 
     Args:
-    input_string (str): The input string to validate.
+    email (str): The email address to validate.
 
     Returns:
-    bool: True if the input string is a valid email address, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, input_string))
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email))
 
-def validate_ipv4_address(input_string: str) -> bool:
+def validate_ip_address(ip_address: str) -> bool:
     """
-    Validates if the input string is a valid IPv4 address.
+    Validates an IP address using a regular expression.
 
     Args:
-    input_string (str): The input string to validate.
+    ip_address (str): The IP address to validate.
 
     Returns:
-    bool: True if the input string is a valid IPv4 address, False otherwise.
+    bool: True if the IP address is valid, False otherwise.
     """
-    ipv4_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ipv4_regex, input_string))
+    ip_address_regex = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
+    return bool(re.match(ip_address_regex, ip_address))
 
-def remove_special_characters(input_string: str) -> str:
+def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Removes special characters from the input string.
+    Truncates a string to a specified maximum length.
 
     Args:
-    input_string (str): The input string to clean.
+    input_string (str): The input string to truncate.
+    max_length (int): The maximum length of the output string.
 
     Returns:
-    str: The input string with special characters removed.
+    str: The truncated string.
     """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+    if len(input_string) > max_length:
+        return input_string[:max_length] + "..."
+    return input_string
+
+def camel_case_to_snake_case(input_string: str) -> str:
+    """
+    Converts a camel case string to snake case.
+
+    Args:
+    input_string (str): The input string to convert.
+
+    Returns:
+    str: The converted string in snake case.
+    """
+    words = re.sub("([A-Z])", r"_\1", input_string).lower().split("_")
+    return "_".join(words)
 ```

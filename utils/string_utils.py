@@ -1,60 +1,72 @@
 ```python
 """
-String utility functions.
+This module provides utility functions for handling string operations.
 """
 
 import re
 
-def is_empty(string: str) -> bool:
-    """
-    Check if a string is empty or contains only whitespace.
-
-    Args:
-    string (str): The input string to check.
-
-    Returns:
-    bool: True if the string is empty or contains only whitespace, False otherwise.
-    """
-    return not string.strip()
-
 def validate_email(email: str) -> bool:
     """
     Validate an email address.
-
+    
     Args:
-    email (str): The email address to validate.
-
+        email (str): The email address to validate.
+    
     Returns:
-    bool: True if the email address is valid, False otherwise.
+        bool: True if the email is valid, False otherwise.
     """
     email_regex = r"[^@]+@[^@]+\.[^@]+"
     return bool(re.match(email_regex, email))
 
-def format_string(input_string: str, **kwargs) -> str:
+def validate_ip_address(ip_address: str) -> bool:
     """
-    Format a string using keyword arguments.
-
+    Validate an IP address.
+    
     Args:
-    input_string (str): The input string to format.
-    **kwargs: Keyword arguments to replace in the input string.
-
+        ip_address (str): The IP address to validate.
+    
     Returns:
-    str: The formatted string.
+        bool: True if the IP address is valid, False otherwise.
     """
-    return input_string.format(**kwargs)
+    ip_address_regex = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
+    return bool(re.match(ip_address_regex, ip_address))
+
+def remove_special_characters(input_string: str) -> str:
+    """
+    Remove special characters from a string.
+    
+    Args:
+        input_string (str): The input string.
+    
+    Returns:
+        str: The string with special characters removed.
+    """
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 
 def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncate a string to a maximum length.
-
+    Truncate a string to a specified maximum length.
+    
     Args:
-    input_string (str): The input string to truncate.
-    max_length (int): The maximum length of the output string.
-
+        input_string (str): The input string.
+        max_length (int): The maximum length of the string.
+    
     Returns:
-    str: The truncated string.
+        str: The truncated string.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
-    return input_string
+    return input_string[:max_length]
+
+def pad_string(input_string: str, min_length: int, padding_char: str = ' ') -> str:
+    """
+    Pad a string with a specified character to a minimum length.
+    
+    Args:
+        input_string (str): The input string.
+        min_length (int): The minimum length of the string.
+        padding_char (str): The character to use for padding. Defaults to ' '.
+    
+    Returns:
+        str: The padded string.
+    """
+    return input_string.ljust(min_length, padding_char)
 ```

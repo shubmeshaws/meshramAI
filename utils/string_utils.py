@@ -1,72 +1,57 @@
 ```python
 """
-This module provides utility functions for handling string operations.
+Utility functions for string manipulation and validation.
 """
 
 import re
 
-def validate_email(email: str) -> bool:
+def is_empty_string(input_string: str) -> bool:
     """
-    Validate an email address.
-    
-    Args:
-        email (str): The email address to validate.
-    
-    Returns:
-        bool: True if the email is valid, False otherwise.
-    """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
+    Checks if the input string is empty or contains only whitespace characters.
 
-def validate_ip_address(ip_address: str) -> bool:
-    """
-    Validate an IP address.
-    
     Args:
-        ip_address (str): The IP address to validate.
-    
+    input_string (str): The input string to check.
+
     Returns:
-        bool: True if the IP address is valid, False otherwise.
+    bool: True if the input string is empty or contains only whitespace characters, False otherwise.
     """
-    ip_address_regex = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
-    return bool(re.match(ip_address_regex, ip_address))
+    return input_string.strip() == ""
+
+def validate_email(input_string: str) -> bool:
+    """
+    Validates if the input string is a valid email address.
+
+    Args:
+    input_string (str): The input string to validate.
+
+    Returns:
+    bool: True if the input string is a valid email address, False otherwise.
+    """
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(email_regex, input_string))
+
+def validate_ipv4_address(input_string: str) -> bool:
+    """
+    Validates if the input string is a valid IPv4 address.
+
+    Args:
+    input_string (str): The input string to validate.
+
+    Returns:
+    bool: True if the input string is a valid IPv4 address, False otherwise.
+    """
+    ipv4_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ipv4_regex, input_string))
 
 def remove_special_characters(input_string: str) -> str:
     """
-    Remove special characters from a string.
-    
-    Args:
-        input_string (str): The input string.
-    
-    Returns:
-        str: The string with special characters removed.
-    """
-    return re.sub('[^A-Za-z0-9]+', '', input_string)
+    Removes special characters from the input string.
 
-def truncate_string(input_string: str, max_length: int) -> str:
-    """
-    Truncate a string to a specified maximum length.
-    
     Args:
-        input_string (str): The input string.
-        max_length (int): The maximum length of the string.
-    
-    Returns:
-        str: The truncated string.
-    """
-    return input_string[:max_length]
+    input_string (str): The input string to clean.
 
-def pad_string(input_string: str, min_length: int, padding_char: str = ' ') -> str:
-    """
-    Pad a string with a specified character to a minimum length.
-    
-    Args:
-        input_string (str): The input string.
-        min_length (int): The minimum length of the string.
-        padding_char (str): The character to use for padding. Defaults to ' '.
-    
     Returns:
-        str: The padded string.
+    str: The input string with special characters removed.
     """
-    return input_string.ljust(min_length, padding_char)
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
 ```

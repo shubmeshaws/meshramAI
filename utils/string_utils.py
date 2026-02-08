@@ -1,25 +1,13 @@
 ```python
 """
-Utility functions for string manipulation and validation.
+String utility functions for meshram project.
 """
 
 import re
 
-def is_empty(string: str) -> bool:
-    """
-    Checks if a string is empty or contains only whitespace characters.
-
-    Args:
-    string (str): The input string to check.
-
-    Returns:
-    bool: True if the string is empty, False otherwise.
-    """
-    return not string.strip()
-
 def validate_email(email: str) -> bool:
     """
-    Validates an email address using a regular expression.
+    Validate an email address.
 
     Args:
     email (str): The email address to validate.
@@ -27,29 +15,41 @@ def validate_email(email: str) -> bool:
     Returns:
     bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     return bool(re.match(email_regex, email))
 
-def validate_ip_address(ip_address: str) -> bool:
+def validate_phone_number(phone_number: str) -> bool:
     """
-    Validates an IP address using a regular expression.
+    Validate a phone number.
 
     Args:
-    ip_address (str): The IP address to validate.
+    phone_number (str): The phone number to validate.
 
     Returns:
-    bool: True if the IP address is valid, False otherwise.
+    bool: True if the phone number is valid, False otherwise.
     """
-    ip_address_regex = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
-    return bool(re.match(ip_address_regex, ip_address))
+    phone_regex = r"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"
+    return bool(re.match(phone_regex, phone_number))
+
+def remove_special_chars(input_string: str) -> str:
+    """
+    Remove special characters from a string.
+
+    Args:
+    input_string (str): The string to process.
+
+    Returns:
+    str: The input string without special characters.
+    """
+    return re.sub('[^A-Za-z0-9]+', '', input_string)
 
 def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncates a string to a specified maximum length.
+    Truncate a string to a specified maximum length.
 
     Args:
-    input_string (str): The input string to truncate.
-    max_length (int): The maximum length of the output string.
+    input_string (str): The string to truncate.
+    max_length (int): The maximum length of the string.
 
     Returns:
     str: The truncated string.
@@ -57,17 +57,4 @@ def truncate_string(input_string: str, max_length: int) -> str:
     if len(input_string) > max_length:
         return input_string[:max_length] + "..."
     return input_string
-
-def camel_case_to_snake_case(input_string: str) -> str:
-    """
-    Converts a camel case string to snake case.
-
-    Args:
-    input_string (str): The input string to convert.
-
-    Returns:
-    str: The converted string in snake case.
-    """
-    words = re.sub("([A-Z])", r"_\1", input_string).lower().split("_")
-    return "_".join(words)
 ```

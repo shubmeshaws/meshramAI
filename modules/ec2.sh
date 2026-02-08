@@ -6,11 +6,11 @@ function check_directory() {
     if [ -d "$dir" ] && [ -w "$dir" ]; then
       return 0
     else
-      log_error "Directory is not writable: $dir" 1
+      log_error "Directory is not writable: \"$dir\"" 1
       return 1
     fi
   else
-    log_error "Failed to create directory: $dir. Error: $?" 1
+    log_error "Failed to create directory: \"$dir\". Error: $?" 1
     return 1
   fi
 }

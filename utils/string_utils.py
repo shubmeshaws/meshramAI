@@ -1,104 +1,59 @@
 ```python
+# utils/string_utils.py
+
 """
-Utility functions for handling string operations.
-
-This module provides functions for string validation, formatting, and manipulation.
-It can be used throughout the project to ensure consistent string handling.
-
-Examples:
-    >>> from utils.string_utils import is_empty, trim, to_lower
-    >>> is_empty("")
-    True
-    >>> trim("   hello world   ")
-    'hello world'
-    >>> to_lower("HELLO WORLD")
-    'hello world'
+Utility module for common string operations.
 """
 
-def is_empty(s: str) -> bool:
+import re
+
+def is_empty_string(input_string: str) -> bool:
     """
     Checks if a string is empty or contains only whitespace characters.
 
     Args:
-        s (str): The input string to check.
+        input_string (str): The input string to check.
 
     Returns:
-        bool: True if the string is empty or contains only whitespace characters, False otherwise.
+        bool: True if the string is empty, False otherwise.
     """
-    return not s.strip()
+    return not input_string.strip()
 
-
-def trim(s: str) -> str:
+def validate_email(email: str) -> bool:
     """
-    Removes leading and trailing whitespace characters from a string.
+    Validates an email address using a regular expression.
 
     Args:
-        s (str): The input string to trim.
+        email (str): The email address to validate.
 
     Returns:
-        str: The trimmed string.
+        bool: True if the email is valid, False otherwise.
     """
-    return s.strip()
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email))
 
-
-def to_lower(s: str) -> str:
+def sanitize_string(input_string: str) -> str:
     """
-    Converts a string to lowercase.
+    Sanitizes a string by removing special characters and converting to lowercase.
 
     Args:
-        s (str): The input string to convert.
+        input_string (str): The input string to sanitize.
 
     Returns:
-        str: The converted string in lowercase.
+        str: The sanitized string.
     """
-    return s.lower()
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string).lower()
 
-
-def to_upper(s: str) -> str:
-    """
-    Converts a string to uppercase.
-
-    Args:
-        s (str): The input string to convert.
-
-    Returns:
-        str: The converted string in uppercase.
-    """
-    return s.upper()
-
-
-def is_valid_identifier(s: str) -> bool:
-    """
-    Checks if a string is a valid identifier (contains only letters, digits, and underscores).
-
-    Args:
-        s (str): The input string to check.
-
-    Returns:
-        bool: True if the string is a valid identifier, False otherwise.
-    """
-    return s.isidentifier()
-
-
-def format_string(template: str, **kwargs) -> str:
+def format_string(input_string: str, **kwargs) -> str:
     """
     Formats a string using keyword arguments.
 
     Args:
-        template (str): The input string template to format.
-        **kwargs: Keyword arguments to replace in the template.
+        input_string (str): The input string to format.
+        **kwargs: Keyword arguments to replace placeholders in the string.
 
     Returns:
         str: The formatted string.
     """
-    return template.format(**kwargs)
-
-
-# Example usage:
-if __name__ == "__main__":
-    print(is_empty(""))  # Output: True
-    print(trim("   hello world   "))  # Output: 'hello world'
-    print(to_lower("HELLO WORLD"))  # Output: 'hello world'
-    print(is_valid_identifier("hello_world"))  # Output: True
-    print(format_string("Hello, {}!", name="John"))  # Output: 'Hello, John!'
+    return input_string.format(**kwargs)
 ```

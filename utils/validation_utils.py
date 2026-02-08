@@ -1,78 +1,68 @@
 ```python
 import re
+import ipaddress
+from urllib.parse import urlparse
 
-def validate_aws_resource_name(name, max_length=255, min_length=3):
+def validate_ip_address(ip_address):
+    """
+    Validate an IP address.
+
+    Args:
+    ip_address (str): The IP address to validate.
+
+    Returns:
+    bool: True if the IP address is valid, False otherwise.
+    """
+    try:
+        ipaddress.ip_address(ip_address)
+        return True
+    except ValueError:
+        return False
+
+def validate_url(url):
+    """
+    Validate a URL.
+
+    Args:
+    url (str): The URL to validate.
+
+    Returns:
+    bool: True if the URL is valid, False otherwise.
+    """
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False
+
+def validate_aws_resource_name(name, resource_type):
     """
     Validate an AWS resource name.
 
     Args:
-    - name (str): The name of the AWS resource.
-    - max_length (int): The maximum length of the name (default: 255).
-    - min_length (int): The minimum length of the name (default: 3).
+    name (str): The resource name to validate.
+    resource_type (str): The type of AWS resource (e.g., 'vpc', 'subnet', 'sg').
 
     Returns:
-    - bool: True if the name is valid, False otherwise.
+    bool: True if the resource name is valid, False otherwise.
     """
-    if not isinstance(name, str):
-        return False
-    if len(name) < min_length or len(name) > max_length:
-        return False
-    if not re.match("^[a-zA-Z0-9_-]+$", name):
-        return False
-    return True
+    if resource_type == 'vpc':
+        # VPC names can be up to 255 characters long and can contain letters, numbers, and special characters
+        pattern = r'^[a-zA-Z0-9._-]{1,255}$'
+    elif resource_type == 'subnet':
+        # Subnet names can be up to 255 characters long and can contain letters, numbers, and special characters
+        pattern = r'^[a-zA-Z0-9._-]{1,255}$'
+    elif resource_type == 'sg':
+        # Security group names can be up to 255 characters long and can contain letters, numbers, and special characters
+        pattern = r'^[a-zA-Z0-9._-]{1,255}$'
+    else:
+        raise ValueError(f"Unsupported resource type: {resource_type}")
 
-def validate_aws_resource_id(id, min_length=1, max_length=128):
-    """
-    Validate an AWS resource ID.
+    return bool(re.match(pattern, name))
 
-    Args:
-    - id (str): The ID of the AWS resource.
-    - min_length (int): The minimum length of the ID (default: 1).
-    - max_length (int): The maximum length of the ID (default: 128).
-
-    Returns:
-    - bool: True if the ID is valid, False otherwise.
-    """
-    if not isinstance(id, str):
-        return False
-    if len(id) < min_length or len(id) > max_length:
-        return False
-    if not re.match("^[a-zA-Z0-9_-:]+$", id):
-        return False
-    return True
-
-def validate_aws_region(region):
-    """
-    Validate an AWS region.
-
-    Args:
-    - region (str): The AWS region.
-
-    Returns:
-    - bool: True if the region is valid, False otherwise.
-    """
-    valid_regions = ["us-east-1", "us-east-2", "us-west-1", "us-west-2", "ca-central-1", "eu-west-1", "eu-west-2", "eu-west-3", "eu-central-1", "ap-northeast-1", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "sa-east-1"]
-    return region in valid_regions
-
-def validate_aws_bucket_name(name):
-    """
-    Validate an AWS S3 bucket name.
-
-    Args:
-    - name (str): The name of the S3 bucket.
-
-    Returns:
-    - bool: True if the name is valid, False otherwise.
-    """
-    if not isinstance(name, str):
-        return False
-    if len(name) < 3 or len(name) > 63:
-        return False
-    if not re.match("^[a-z0-9.-]+$", name):
-        return False
-    if name[0] == "." or name[-1] == ".":
-        return False
-    if ".." in name:
-        return False
-    return True
+# Example usage:
+if __name__ == "__main__":
+    print(validate_ip_address("192.168.1.1"))  # True
+    print(validate_url("https://www.example.com"))  # True
+    print(validate_aws_resource_name("my-vpc", "vpc"))  # True
 ```

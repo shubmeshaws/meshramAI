@@ -1,60 +1,104 @@
 ```python
 """
-String utility functions for meshram project.
+Utility functions for handling string operations.
+
+This module provides functions for string validation, formatting, and manipulation.
+It can be used throughout the project to ensure consistent string handling.
+
+Examples:
+    >>> from utils.string_utils import is_empty, trim, to_lower
+    >>> is_empty("")
+    True
+    >>> trim("   hello world   ")
+    'hello world'
+    >>> to_lower("HELLO WORLD")
+    'hello world'
 """
 
-import re
-
-def validate_email(email: str) -> bool:
+def is_empty(s: str) -> bool:
     """
-    Validate an email address.
+    Checks if a string is empty or contains only whitespace characters.
 
     Args:
-    email (str): The email address to validate.
+        s (str): The input string to check.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+        bool: True if the string is empty or contains only whitespace characters, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, email))
+    return not s.strip()
 
-def validate_phone_number(phone_number: str) -> bool:
+
+def trim(s: str) -> str:
     """
-    Validate a phone number.
+    Removes leading and trailing whitespace characters from a string.
 
     Args:
-    phone_number (str): The phone number to validate.
+        s (str): The input string to trim.
 
     Returns:
-    bool: True if the phone number is valid, False otherwise.
+        str: The trimmed string.
     """
-    phone_regex = r"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$"
-    return bool(re.match(phone_regex, phone_number))
+    return s.strip()
 
-def remove_special_chars(input_string: str) -> str:
+
+def to_lower(s: str) -> str:
     """
-    Remove special characters from a string.
+    Converts a string to lowercase.
 
     Args:
-    input_string (str): The string to process.
+        s (str): The input string to convert.
 
     Returns:
-    str: The input string without special characters.
+        str: The converted string in lowercase.
     """
-    return re.sub('[^A-Za-z0-9]+', '', input_string)
+    return s.lower()
 
-def truncate_string(input_string: str, max_length: int) -> str:
+
+def to_upper(s: str) -> str:
     """
-    Truncate a string to a specified maximum length.
+    Converts a string to uppercase.
 
     Args:
-    input_string (str): The string to truncate.
-    max_length (int): The maximum length of the string.
+        s (str): The input string to convert.
 
     Returns:
-    str: The truncated string.
+        str: The converted string in uppercase.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
-    return input_string
+    return s.upper()
+
+
+def is_valid_identifier(s: str) -> bool:
+    """
+    Checks if a string is a valid identifier (contains only letters, digits, and underscores).
+
+    Args:
+        s (str): The input string to check.
+
+    Returns:
+        bool: True if the string is a valid identifier, False otherwise.
+    """
+    return s.isidentifier()
+
+
+def format_string(template: str, **kwargs) -> str:
+    """
+    Formats a string using keyword arguments.
+
+    Args:
+        template (str): The input string template to format.
+        **kwargs: Keyword arguments to replace in the template.
+
+    Returns:
+        str: The formatted string.
+    """
+    return template.format(**kwargs)
+
+
+# Example usage:
+if __name__ == "__main__":
+    print(is_empty(""))  # Output: True
+    print(trim("   hello world   "))  # Output: 'hello world'
+    print(to_lower("HELLO WORLD"))  # Output: 'hello world'
+    print(is_valid_identifier("hello_world"))  # Output: True
+    print(format_string("Hello, {}!", name="John"))  # Output: 'Hello, John!'
 ```

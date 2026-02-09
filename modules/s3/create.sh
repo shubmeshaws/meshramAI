@@ -3,42 +3,31 @@
 
 # ... (rest of the code remains the same)
 
+# Define retry configuration
+MAX_RETRIES=3
+RETRY_DELAY=5
+
+function retry_command() {
+  local cmd="$1"
+  local max_retries="$2"
+  local delay="$3"
+  local retry_count=0
+  while [ $retry_count -lt $max_retries ]; do
+    if output=$($cmd 2>&1); then
+      return 0
+    else
+      retry_count=$((retry_count + 1))
+      if [ $retry_count -lt $max_retries ]; then
+        echo "[WARNING] Failed to execute command (attempt $retry_count/$max_retries): $output. Retrying in $delay seconds..."
+        sleep $delay
+      fi
+    fi
+  done
+  return 1
+}
+
 function s3_create() {
   # ... (rest of the function remains the same)
-
-  # Check if the region is valid
-  if ! grep -q "^$INPUT_REGION=" "$SCRIPT_DIR/regions.conf"; then
-    handle_error "Region '$INPUT_REGION' does not match the format in 'regions.conf'." $ERROR_REGION_NOT_FOUND
-    return
-  fi
-
-  # Check if AWS CLI is installed and configured
-  if ! command -v aws &> /dev/null; then
-    handle_error "AWS CLI is not installed." $ERROR_AWS_CLI_NOT_INSTALLED
-    return
-  fi
-
-  if ! aws sts get-caller-identity &> /dev/null; then
-    handle_error "AWS CLI is not configured." $ERROR_AWS_CLI_NOT_CONFIGURED
-    return
-  fi
-
-  echo "[INFO] Checking if bucket '$BUCKET_NAME' already exists..."
-  if output=$(aws s3api head-bucket --bucket "$BUCKET_NAME" 2>&1); then
-    if [ $? -eq 0 ]; then
-      echo "[INFO] Bucket '$BUCKET_NAME' already exists."
-      handle_error "Bucket '$BUCKET_NAME' already exists." $ERROR_BUCKET_ALREADY_EXISTS
-      return
-    elif [ $? -eq 254 ]; then
-      echo "[INFO] Bucket '$BUCKET_NAME' does not exist."
-    else
-      handle_error "Failed to check if bucket '$BUCKET_NAME' exists: $output" 1
-      return
-    fi
-  else
-    handle_error "Failed to check if bucket '$BUCKET_NAME' exists: $output" 1
-    return
-  fi
 
   echo "[INFO] Creating bucket '$BUCKET_NAME' in region '$REGION' with ACL '$ACL'..."
 
@@ -49,22 +38,8 @@ function s3_create() {
   fi
 
   # Try to execute the command with retry
-  max_retries=3
-  retry_count=0
-  while [ $retry_count -lt $max_retries ]; do
-    if output=$($create_bucket_cmd 2>&1); then
-      break
-    else
-      retry_count=$((retry_count + 1))
-      if [ $retry_count -lt $max_retries ]; then
-        echo "[WARNING] Failed to create bucket '$BUCKET_NAME' in region '$REGION' (attempt $retry_count/$max_retries): $output. Retrying in 5 seconds..."
-        sleep 5
-      fi
-    fi
-  done
-
-  if [ $retry_count -eq $max_retries ]; then
-    handle_error "Failed to create bucket '$BUCKET_NAME' in region '$REGION' after $max_retries attempts: $output" $ERROR_FAILED_TO_CREATE_BUCKET
+  if ! retry_command "$create_bucket_cmd" $MAX_RETRIES $RETRY_DELAY; then
+    handle_error "Failed to create bucket '$BUCKET_NAME' in region '$REGION' after $MAX_RETRIES attempts: $output" $ERROR_FAILED_TO_CREATE_BUCKET
     return
   fi
 

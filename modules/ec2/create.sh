@@ -69,9 +69,11 @@ function describe_images() {
     return 1
   fi
 
+  local aws_cli_command="aws ec2 describe-images --owners \"$image_owner\" --filters \"$filters\" \"Name=state,Values=available\" --region \"$region\" --query 'Images[*].[ImageId,CreationDate]' --output text"
+
   while [ $retry_count -lt $max_retries ]; do
     local command_output
-    command_output=$(aws ec2 describe-images --owners "$image_owner" --filters "$filters" "Name=state,Values=available" --region "$region" --query 'Images[*].[ImageId,CreationDate]' --output text 2>&1)
+    command_output=$($aws_cli_command 2>&1)
     local return_code=$?
     if [ $return_code -eq 0 ]; then
       echo "$command_output"

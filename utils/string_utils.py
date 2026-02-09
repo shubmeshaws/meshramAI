@@ -5,68 +5,62 @@ String utility functions.
 
 import re
 
-def is_empty(string: str) -> bool:
+def snake_to_camel_case(input_str):
     """
-    Checks if a string is empty or contains only whitespace characters.
-    
-    Args:
-    string (str): The input string to check.
-    
-    Returns:
-    bool: True if the string is empty, False otherwise.
-    """
-    return not string.strip()
+    Convert a snake_case string to camelCase.
 
-def validate_email(email: str) -> bool:
-    """
-    Validates an email address using a regular expression.
-    
     Args:
-    email (str): The email address to validate.
-    
-    Returns:
-    bool: True if the email is valid, False otherwise.
-    """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, email))
+        input_str (str): The input string in snake_case.
 
-def truncate_string(input_string: str, max_length: int) -> str:
-    """
-    Truncates a string to a specified maximum length.
-    
-    Args:
-    input_string (str): The string to truncate.
-    max_length (int): The maximum length of the output string.
-    
     Returns:
-    str: The truncated string.
+        str: The input string converted to camelCase.
     """
-    if len(input_string) <= max_length:
-        return input_string
-    else:
-        return input_string[:max_length - 3] + "..."
+    words = input_str.split("_")
+    return words[0] + "".join(word.capitalize() for word in words[1:])
 
-def remove_special_chars(input_string: str) -> str:
+def camel_to_snake_case(input_str):
     """
-    Removes special characters from a string.
-    
-    Args:
-    input_string (str): The string to remove special characters from.
-    
-    Returns:
-    str: The string without special characters.
-    """
-    return re.sub('[^A-Za-z0-9]+', '', input_string)
+    Convert a camelCase string to snake_case.
 
-def convert_to_snake_case(input_string: str) -> str:
-    """
-    Converts a string to snake case.
-    
     Args:
-    input_string (str): The string to convert.
-    
+        input_str (str): The input string in camelCase.
+
     Returns:
-    str: The string in snake case.
+        str: The input string converted to snake_case.
     """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
+    return re.sub(r"([A-Z])", r"_\1", input_str).lower()
+
+def remove_special_chars(input_str):
+    """
+    Remove special characters from a string.
+
+    Args:
+        input_str (str): The input string.
+
+    Returns:
+        str: The input string with special characters removed.
+    """
+    return re.sub(r"[^a-zA-Z0-9\s]", "", input_str)
+
+def truncate_string(input_str, max_length):
+    """
+    Truncate a string to a specified maximum length.
+
+    Args:
+        input_str (str): The input string.
+        max_length (int): The maximum length of the output string.
+
+    Returns:
+        str: The input string truncated to the specified maximum length.
+    """
+    if len(input_str) > max_length:
+        return input_str[:max_length - 3] + "..."
+    return input_str
+
+# Example usage:
+if __name__ == "__main__":
+    print(snake_to_camel_case("hello_world"))  # Output: helloWorld
+    print(camel_to_snake_case("helloWorld"))  # Output: hello_world
+    print(remove_special_chars("Hello, World!"))  # Output: Hello World
+    print(truncate_string("This is a very long string", 20))  # Output: This is a very long...
 ```

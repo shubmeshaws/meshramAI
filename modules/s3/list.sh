@@ -29,6 +29,8 @@ function handle_error() {
         echo "[ERROR] Unable to locate AWS credentials. Please ensure your AWS credentials are properly configured. Error: $error_output"
       elif echo "$error_output" | grep -q "parse error"; then
         echo "[ERROR] Failed to parse AWS CLI output. Error: $error_output"
+      elif echo "$error_output" | grep -q "Throttling"; then
+        echo "[ERROR] AWS service is being throttled. Please try again after some time or increase your service limits. Error: $error_output"
       elif echo "$error_output" | grep -q "Error"; then
         echo "[ERROR] AWS CLI command returned an error: $error_output"
       else

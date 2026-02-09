@@ -32,7 +32,7 @@ function handle_error() {
       elif echo "$error_output" | grep -q "Error"; then
         echo "[ERROR] AWS CLI command returned an error: $error_output"
       else
-        echo "[ERROR] Failed to list S3 buckets with exit code $exit_code. Error: $error_output"
+        echo "[ERROR] Failed to list S3 buckets with exit code $exit_code and error output: $error_output. This error is not recognized, please check the AWS CLI output for more information."
       fi
     else
       echo "[ERROR] Failed to list S3 buckets with exit code $exit_code. No error output available."

@@ -42,6 +42,21 @@ function handle_error() {
   fi
 }
 
+function handle_retry_error() {
+  local exit_code=$1
+  local error_output=$2
+  local command=$3
+  local retry_count=$4
+
+  handle_error $exit_code "$error_output" "$command"
+  if [ $retry_count -lt $MAX_RETRIES ]; then
+    backoff_delay=$(echo "scale=2; $INITIAL_BACKOFF_DELAY * (2 ^ $retry_count) * (1 + $RANDOM / 32767 * 0.1)" | bc)
+    backoff_delay=$(echo "if ($backoff_delay > $MAX_BACKOFF_DELAY) $MAX_BACKOFF_DELAY else $backoff_delay" | bc)
+    echo "[INFO] Retrying command '$command' in $backoff_delay seconds..."
+    sleep $backoff_delay
+  fi
+}
+
 function retry_command() {
   local command=$1
   local max_retries=$2
@@ -55,14 +70,8 @@ function retry_command() {
         return
       fi
     else
-      handle_error $? "$output" "$command"
+      handle_retry_error $? "$output" "$command" $retry_count
       retry_count=$((retry_count + 1))
-      if [ $retry_count -lt $max_retries ]; then
-        backoff_delay=$(echo "scale=2; $INITIAL_BACKOFF_DELAY * (2 ^ $retry_count) * (1 + $RANDOM / 32767 * 0.1)" | bc)
-        backoff_delay=$(echo "if ($backoff_delay > $MAX_BACKOFF_DELAY) $MAX_BACKOFF_DELAY else $backoff_delay" | bc)
-        echo "[INFO] Retrying command '$command' in $backoff_delay seconds..."
-        sleep $backoff_delay
-      fi
     fi
   done
   echo "[ERROR] All retries failed for command '$command'."

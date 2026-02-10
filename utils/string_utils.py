@@ -1,63 +1,60 @@
 ```python
 """
-String utility functions.
-
-This module provides functions for string-related operations, including validation,
-formatting, and manipulation.
+Utilities for string manipulation and validation.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def is_valid_ip_address(ip_address: str) -> bool:
     """
-    Checks if a string is empty or contains only whitespace characters.
+    Check if the given string is a valid IP address.
 
     Args:
-        input_string (str): The string to check.
+        ip_address (str): The IP address to validate.
 
     Returns:
-        bool: True if the string is empty or contains only whitespace characters, False otherwise.
+        bool: True if the IP address is valid, False otherwise.
     """
-    return not input_string.strip()
+    ip_address_pattern = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_address_pattern, ip_address))
 
-def validate_email(email: str) -> bool:
+def is_valid_dns_name(name: str) -> bool:
     """
-    Validates an email address using a regular expression.
+    Check if the given string is a valid DNS name.
 
     Args:
-        email (str): The email address to validate.
+        name (str): The DNS name to validate.
 
     Returns:
-        bool: True if the email address is valid, False otherwise.
+        bool: True if the DNS name is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, email))
+    dns_name_pattern = r"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$"
+    return bool(re.match(dns_name_pattern, name, re.IGNORECASE))
+
+def escape_special_characters(input_string: str) -> str:
+    """
+    Escape special characters in the given string.
+
+    Args:
+        input_string (str): The string to escape.
+
+    Returns:
+        str: The escaped string.
+    """
+    return input_string.replace("'", "\\'").replace('"', '\\"').replace(';', '\\;')
 
 def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncates a string to a specified maximum length.
+    Truncate the given string to the specified maximum length.
 
     Args:
         input_string (str): The string to truncate.
-        max_length (int): The maximum length of the truncated string.
+        max_length (int): The maximum length of the string.
 
     Returns:
         str: The truncated string.
     """
-    if len(input_string) <= max_length:
-        return input_string
-    else:
-        return input_string[:max_length - 3] + "..."
-
-def remove_special_characters(input_string: str) -> str:
-    """
-    Removes special characters from a string.
-
-    Args:
-        input_string (str): The string to remove special characters from.
-
-    Returns:
-        str: The string with special characters removed.
-    """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+    if len(input_string) > max_length:
+        return input_string[:max_length] + "..."
+    return input_string
 ```

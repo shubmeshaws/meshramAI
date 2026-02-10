@@ -1,60 +1,60 @@
 ```python
 """
-Utilities for string manipulation and validation.
+Utility module for common string operations.
 """
 
 import re
 
-def is_valid_ip_address(ip_address: str) -> bool:
+def camel_case_to_snake_case(s):
     """
-    Check if the given string is a valid IP address.
-
+    Convert a camelCase string to snake_case.
+    
     Args:
-        ip_address (str): The IP address to validate.
-
+        s (str): The input string.
+    
     Returns:
-        bool: True if the IP address is valid, False otherwise.
+        str: The input string converted to snake_case.
     """
-    ip_address_pattern = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_address_pattern, ip_address))
+    s = re.sub(r'(?<!^)(?=[A-Z])', '_', s).lower()
+    return s
 
-def is_valid_dns_name(name: str) -> bool:
+def snake_case_to_camel_case(s):
     """
-    Check if the given string is a valid DNS name.
-
+    Convert a snake_case string to camelCase.
+    
     Args:
-        name (str): The DNS name to validate.
-
+        s (str): The input string.
+    
     Returns:
-        bool: True if the DNS name is valid, False otherwise.
+        str: The input string converted to camelCase.
     """
-    dns_name_pattern = r"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$"
-    return bool(re.match(dns_name_pattern, name, re.IGNORECASE))
+    components = s.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
 
-def escape_special_characters(input_string: str) -> str:
+def strip_whitespace(s):
     """
-    Escape special characters in the given string.
-
+    Remove leading and trailing whitespace from a string.
+    
     Args:
-        input_string (str): The string to escape.
-
+        s (str): The input string.
+    
     Returns:
-        str: The escaped string.
+        str: The input string with leading and trailing whitespace removed.
     """
-    return input_string.replace("'", "\\'").replace('"', '\\"').replace(';', '\\;')
+    return s.strip()
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def truncate_string(s, max_length):
     """
-    Truncate the given string to the specified maximum length.
-
+    Truncate a string to a specified maximum length.
+    
     Args:
-        input_string (str): The string to truncate.
-        max_length (int): The maximum length of the string.
-
+        s (str): The input string.
+        max_length (int): The maximum length of the output string.
+    
     Returns:
-        str: The truncated string.
+        str: The input string truncated to the specified maximum length.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
-    return input_string
+    if len(s) > max_length:
+        return s[:max_length] + '...'
+    return s
 ```

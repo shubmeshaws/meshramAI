@@ -89,6 +89,7 @@ function check_command() {
 }
 
 function s3_list() {
+  start_time=$(date +%s)
   # Check if AWS CLI is installed
   if ! check_command "aws" "AWS CLI" "sudo apt-get install awscli (on Ubuntu) or brew install awscli (on macOS)"; then
     return
@@ -128,6 +129,9 @@ function s3_list() {
       echo "[ERROR] Failed to process AWS CLI output with jq. Error: $processed_output"
     fi
   fi
+  end_time=$(date +%s)
+  execution_time=$((end_time - start_time))
+  echo "[INFO] Execution time: $execution_time seconds"
 }
 
 s3_list

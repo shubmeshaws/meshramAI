@@ -6,6 +6,7 @@ MAX_RETRIES=3
 TIMEOUT_SECONDS=30
 MAX_BACKOFF_DELAY=32
 INITIAL_BACKOFF_DELAY=1
+AWSCLI_PAGINATION_LIMIT=100  # New constant for pagination limit
 
 # Define error messages as an associative array
 declare -A error_messages
@@ -112,22 +113,14 @@ function s3_list() {
   fi
 
   echo "[INFO] Listing S3 buckets..."
-  command="aws s3api list-buckets"
+  command="aws s3api list-buckets --output text --query 'Buckets[].Name' --max-items $AWSCLI_PAGINATION_LIMIT"
   if output=$(retry_command "$command" $MAX_RETRIES); then
-    if processed_output=$(echo "$output" | jq -r '.Buckets[] | .Name' 2>&1); then
-      if echo "$processed_output" | grep -q "parse error"; then
-        echo "[ERROR] Failed to parse AWS CLI output with jq. Error: $processed_output"
-      else
-        if command -v column &> /dev/null; then
-          echo "$processed_output" | column -t
-        else
-          echo "$processed_output"
-        fi
-        echo "[INFO] S3 buckets listed successfully."
-      fi
+    if command -v column &> /dev/null; then
+      echo "$output" | column -t
     else
-      echo "[ERROR] Failed to process AWS CLI output with jq. Error: $processed_output"
+      echo "$output"
     fi
+    echo "[INFO] S3 buckets listed successfully."
   fi
   end_time=$(date +%s)
   execution_time=$((end_time - start_time))

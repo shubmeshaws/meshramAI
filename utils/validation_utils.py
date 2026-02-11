@@ -1,17 +1,17 @@
 ```python
 import re
 import ipaddress
-from urllib.parse import urlparse
+import urllib.parse
 
-def validate_ip_address(ip_address):
+def is_valid_ip_address(ip_address):
     """
     Validate an IP address.
 
     Args:
-    ip_address (str): The IP address to validate.
+        ip_address (str): The IP address to validate.
 
     Returns:
-    bool: True if the IP address is valid, False otherwise.
+        bool: True if the IP address is valid, False otherwise.
     """
     try:
         ipaddress.ip_address(ip_address)
@@ -19,50 +19,56 @@ def validate_ip_address(ip_address):
     except ValueError:
         return False
 
-def validate_url(url):
+def is_valid_url(url):
     """
     Validate a URL.
 
     Args:
-    url (str): The URL to validate.
+        url (str): The URL to validate.
 
     Returns:
-    bool: True if the URL is valid, False otherwise.
+        bool: True if the URL is valid, False otherwise.
     """
     try:
-        result = urlparse(url)
+        result = urllib.parse.urlparse(url)
         return all([result.scheme, result.netloc])
     except ValueError:
         return False
 
-def validate_aws_resource_name(name, resource_type):
+def is_valid_aws_resource_id(resource_id):
     """
-    Validate an AWS resource name.
+    Validate an AWS resource identifier.
 
     Args:
-    name (str): The resource name to validate.
-    resource_type (str): The type of AWS resource (e.g., 'vpc', 'subnet', 'sg').
+        resource_id (str): The AWS resource identifier to validate.
 
     Returns:
-    bool: True if the resource name is valid, False otherwise.
+        bool: True if the AWS resource identifier is valid, False otherwise.
     """
-    if resource_type == 'vpc':
-        # VPC names can be up to 255 characters long and can contain letters, numbers, and special characters
-        pattern = r'^[a-zA-Z0-9._-]{1,255}$'
-    elif resource_type == 'subnet':
-        # Subnet names can be up to 255 characters long and can contain letters, numbers, and special characters
-        pattern = r'^[a-zA-Z0-9._-]{1,255}$'
-    elif resource_type == 'sg':
-        # Security group names can be up to 255 characters long and can contain letters, numbers, and special characters
-        pattern = r'^[a-zA-Z0-9._-]{1,255}$'
-    else:
-        raise ValueError(f"Unsupported resource type: {resource_type}")
+    pattern = r'^[a-zA-Z0-9:/_-]+$'
+    return bool(re.match(pattern, resource_id))
 
-    return bool(re.match(pattern, name))
+def is_valid_aws_region(region):
+    """
+    Validate an AWS region.
+
+    Args:
+        region (str): The AWS region to validate.
+
+    Returns:
+        bool: True if the AWS region is valid, False otherwise.
+    """
+    valid_regions = ['us-east-1', 'us-west-1', 'us-west-2', 'eu-west-1', 'ap-northeast-1', 'ap-southeast-1']
+    return region in valid_regions
 
 # Example usage:
 if __name__ == "__main__":
-    print(validate_ip_address("192.168.1.1"))  # True
-    print(validate_url("https://www.example.com"))  # True
-    print(validate_aws_resource_name("my-vpc", "vpc"))  # True
+    print(is_valid_ip_address("192.168.1.1"))  # True
+    print(is_valid_ip_address("256.1.1.1"))  # False
+    print(is_valid_url("https://www.example.com"))  # True
+    print(is_valid_url("invalid_url"))  # False
+    print(is_valid_aws_resource_id("i-0123456789abcdef0"))  # True
+    print(is_valid_aws_resource_id("invalid_resource_id"))  # False
+    print(is_valid_aws_region("us-east-1"))  # True
+    print(is_valid_aws_region("invalid_region"))  # False
 ```

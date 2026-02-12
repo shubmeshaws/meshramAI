@@ -5,7 +5,7 @@ INVALID_VPC_ID_ERROR_MESSAGE="Invalid VPC ID: %s. A valid VPC ID should be in th
 EXIT_ON_MISSING_VPC_ID=10
 EXIT_ON_INVALID_VPC_ID=20
 EXIT_ON_INVALID_INPUT_TYPE=30
-VPC_ID_LENGTH=17
+VPC_ID_LENGTH=16  # corrected length without prefix
 
 function generate_error_message() {
   local vpc_id="$1"
@@ -17,7 +17,7 @@ function validate_vpc_id() {
   if [ -z "$vpc_id" ]; then
     echo "VPC ID is empty" >&2
     return $EXIT_ON_MISSING_VPC_ID
-  elif ! [[ "$vpc_id" =~ ^${VPC_ID_PREFIX}[${VPC_ID_CHAR_SET}]{${VPC_ID_LENGTH}-1}$ ]]; then
+  elif ! [[ "$vpc_id" =~ ^${VPC_ID_PREFIX}[${VPC_ID_CHAR_SET}]{${VPC_ID_LENGTH}}$ ]]; then
     local error_message=$(generate_error_message "$vpc_id")
     echo "$error_message" >&2
     return $EXIT_ON_INVALID_VPC_ID

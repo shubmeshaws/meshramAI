@@ -37,20 +37,20 @@ function handle_error() {
   case "$error_type" in
     missing)
       echo "ERROR: VPC ID is required." >&2
-      show_vpc_help
-      exit $EXIT_ON_MISSING_VPC_ID
       ;;
     invalid)
       local error_message=$(generate_error_message "$vpc_id")
       echo "ERROR: $error_message" >&2
-      show_vpc_help
-      exit $EXIT_ON_INVALID_VPC_ID
       ;;
     invalid_type)
       echo "ERROR: Invalid input type. VPC ID must be a string." >&2
-      show_vpc_help
-      exit $EXIT_ON_INVALID_INPUT_TYPE
       ;;
+  esac
+  show_vpc_help
+  case "$error_type" in
+    missing) exit $EXIT_ON_MISSING_VPC_ID ;;
+    invalid) exit $EXIT_ON_INVALID_VPC_ID ;;
+    invalid_type) exit $EXIT_ON_INVALID_INPUT_TYPE ;;
   esac
 }
 
@@ -74,13 +74,6 @@ function main() {
   fi
   local vpc_id="$1"
   if ! [[ "$vpc_id" =~ ^[a-zA-Z0-9-]+$ ]]; then
-    handle_error "invalid_type"
-  elif [ "${vpc_id:0:1}" == "-" ] && [ "${#vpc_id}" -eq 1 ]; then
-    handle_error "invalid_type"
-  fi
-  if ! declare -p vpc_id &>/dev/null; then
-    handle_error "invalid_type"
-  elif ! [[ "$(declare -p vpc_id)" =~ "declare --" ]]; then
     handle_error "invalid_type"
   fi
   validate_and_handle_vpc_id "$vpc_id"

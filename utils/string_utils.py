@@ -1,75 +1,58 @@
 ```python
 """
-Utility functions for string manipulation and validation.
+String utility functions.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def to_title_case(input_string: str) -> str:
     """
-    Check if a string is empty or contains only whitespace characters.
+    Convert a string to title case.
 
     Args:
-    input_string (str): The input string to check.
+        input_string (str): The input string to convert.
 
     Returns:
-    bool: True if the string is empty or contains only whitespace characters, False otherwise.
+        str: The input string in title case.
     """
-    return not input_string.strip()
+    return input_string.title()
 
 
-def validate_email(email: str) -> bool:
-    """
-    Validate an email address using a regular expression.
-
-    Args:
-    email (str): The email address to validate.
-
-    Returns:
-    bool: True if the email address is valid, False otherwise.
-    """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, email))
-
-
-def truncate_string(input_string: str, max_length: int) -> str:
-    """
-    Truncate a string to a specified maximum length.
-
-    Args:
-    input_string (str): The input string to truncate.
-    max_length (int): The maximum length of the output string.
-
-    Returns:
-    str: The truncated string.
-    """
-    if len(input_string) > max_length:
-        return input_string[:max_length] + "..."
-    return input_string
-
-
-def remove_special_characters(input_string: str) -> str:
+def remove_special_chars(input_string: str) -> str:
     """
     Remove special characters from a string.
 
     Args:
-    input_string (str): The input string to clean.
+        input_string (str): The input string to process.
 
     Returns:
-    str: The cleaned string with special characters removed.
+        str: The input string with special characters removed.
     """
     return re.sub('[^A-Za-z0-9\s]+', '', input_string)
 
 
-def camel_case_to_snake_case(input_string: str) -> str:
+def trim_whitespace(input_string: str) -> str:
     """
-    Convert a camel case string to snake case.
+    Trim whitespace from the start and end of a string.
 
     Args:
-    input_string (str): The input string to convert.
+        input_string (str): The input string to process.
 
     Returns:
-    str: The converted string in snake case.
+        str: The input string with whitespace trimmed.
     """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
+    return input_string.strip()
+
+
+def remove_empty_lines(input_string: str) -> str:
+    """
+    Remove empty lines from a string.
+
+    Args:
+        input_string (str): The input string to process.
+
+    Returns:
+        str: The input string with empty lines removed.
+    """
+    return '\n'.join(line for line in input_string.split('\n') if line.strip() != '')
 ```

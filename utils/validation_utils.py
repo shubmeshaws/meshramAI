@@ -1,74 +1,73 @@
 ```python
 import re
-import ipaddress
-import urllib.parse
+from typing import Any, Dict, List
 
-def is_valid_ip_address(ip_address):
+def validate_email(email: str) -> bool:
+    """
+    Validate an email address.
+
+    Args:
+    email (str): The email address to validate.
+
+    Returns:
+    bool: True if the email is valid, False otherwise.
+    """
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
+    return bool(re.match(email_regex, email))
+
+
+def validate_ip_address(ip_address: str) -> bool:
     """
     Validate an IP address.
 
     Args:
-        ip_address (str): The IP address to validate.
+    ip_address (str): The IP address to validate.
 
     Returns:
-        bool: True if the IP address is valid, False otherwise.
+    bool: True if the IP address is valid, False otherwise.
     """
-    try:
-        ipaddress.ip_address(ip_address)
-        return True
-    except ValueError:
-        return False
+    ip_address_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_address_regex, ip_address))
 
-def is_valid_url(url):
+
+def validate_port(port: int) -> bool:
     """
-    Validate a URL.
+    Validate a port number.
 
     Args:
-        url (str): The URL to validate.
+    port (int): The port number to validate.
 
     Returns:
-        bool: True if the URL is valid, False otherwise.
+    bool: True if the port number is valid, False otherwise.
     """
-    try:
-        result = urllib.parse.urlparse(url)
-        return all([result.scheme, result.netloc])
-    except ValueError:
-        return False
+    return 0 <= port <= 65535
 
-def is_valid_aws_resource_id(resource_id):
+
+def validate_dict_keys(dictionary: Dict[str, Any], required_keys: List[str]) -> bool:
     """
-    Validate an AWS resource identifier.
+    Validate if a dictionary contains all required keys.
 
     Args:
-        resource_id (str): The AWS resource identifier to validate.
+    dictionary (Dict[str, Any]): The dictionary to validate.
+    required_keys (List[str]): The required keys.
 
     Returns:
-        bool: True if the AWS resource identifier is valid, False otherwise.
+    bool: True if the dictionary contains all required keys, False otherwise.
     """
-    pattern = r'^[a-zA-Z0-9:/_-]+$'
-    return bool(re.match(pattern, resource_id))
+    return all(key in dictionary for key in required_keys)
 
-def is_valid_aws_region(region):
+
+def validate_dict_values(dictionary: Dict[str, Any], key: str, value_type: type) -> bool:
     """
-    Validate an AWS region.
+    Validate the type of a dictionary value.
 
     Args:
-        region (str): The AWS region to validate.
+    dictionary (Dict[str, Any]): The dictionary to validate.
+    key (str): The key to check.
+    value_type (type): The expected type of the value.
 
     Returns:
-        bool: True if the AWS region is valid, False otherwise.
+    bool: True if the value is of the expected type, False otherwise.
     """
-    valid_regions = ['us-east-1', 'us-west-1', 'us-west-2', 'eu-west-1', 'ap-northeast-1', 'ap-southeast-1']
-    return region in valid_regions
-
-# Example usage:
-if __name__ == "__main__":
-    print(is_valid_ip_address("192.168.1.1"))  # True
-    print(is_valid_ip_address("256.1.1.1"))  # False
-    print(is_valid_url("https://www.example.com"))  # True
-    print(is_valid_url("invalid_url"))  # False
-    print(is_valid_aws_resource_id("i-0123456789abcdef0"))  # True
-    print(is_valid_aws_resource_id("invalid_resource_id"))  # False
-    print(is_valid_aws_region("us-east-1"))  # True
-    print(is_valid_aws_region("invalid_region"))  # False
+    return key in dictionary and isinstance(dictionary[key], value_type)
 ```

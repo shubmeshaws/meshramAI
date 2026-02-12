@@ -48,6 +48,16 @@ function describe_images() {
   local filters="$2"
   local region="$3"
   local max_retries=${MAX_RETRIES:-3}
+
+  # Input validation for MAX_RETRIES
+  if ! [[ $max_retries =~ ^[0-9]+$ ]]; then
+    echo "Error: MAX_RETRIES must be a positive integer. Using default value of 3."
+    max_retries=3
+  elif [ $max_retries -le 0 ]; then
+    echo "Error: MAX_RETRIES must be a positive integer. Using default value of 3."
+    max_retries=3
+  fi
+
   local retry_count=0
 
   check_aws_cli
@@ -69,7 +79,7 @@ function describe_images() {
     return 1
   fi
 
-  local aws_cli_command="aws ec2 describe-images --owners \"$image_owner\" --filters \"$filters\" \"Name=state,Values=available\" --region \"$region\" --query 'Images[*].[ImageId,CreationDate]' --output text"
+  local aws_cli_command="aws ec2 describe-images --owners "$image_owner" --filters "$filters" "Name=state,Values=available" --region "$region" --query 'Images[*].[ImageId,CreationDate]' --output text"
 
   while [ $retry_count -lt $max_retries ]; do
     local command_output

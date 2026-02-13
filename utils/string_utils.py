@@ -1,58 +1,62 @@
 ```python
 """
-String utility functions.
+String utility module.
+
+This module provides functions for string manipulation, including text formatting and validation.
 """
 
 import re
 
-def to_title_case(input_string: str) -> str:
+def camel_case_to_snake_case(input_str):
     """
-    Convert a string to title case.
+    Convert a camel case string to snake case.
 
     Args:
-        input_string (str): The input string to convert.
+        input_str (str): The input string in camel case.
 
     Returns:
-        str: The input string in title case.
+        str: The input string in snake case.
     """
-    return input_string.title()
+    return re.sub('(?<!^)(?=[A-Z])', '_', input_str).lower()
 
-
-def remove_special_chars(input_string: str) -> str:
+def snake_case_to_camel_case(input_str):
     """
-    Remove special characters from a string.
+    Convert a snake case string to camel case.
 
     Args:
-        input_string (str): The input string to process.
+        input_str (str): The input string in snake case.
 
     Returns:
-        str: The input string with special characters removed.
+        str: The input string in camel case.
     """
-    return re.sub('[^A-Za-z0-9\s]+', '', input_string)
+    components = input_str.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
 
-
-def trim_whitespace(input_string: str) -> str:
+def validate_email(input_str):
     """
-    Trim whitespace from the start and end of a string.
+    Validate an email address.
 
     Args:
-        input_string (str): The input string to process.
+        input_str (str): The input string to validate.
 
     Returns:
-        str: The input string with whitespace trimmed.
+        bool: True if the input string is a valid email address, False otherwise.
     """
-    return input_string.strip()
+    email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    return bool(re.match(email_regex, input_str))
 
-
-def remove_empty_lines(input_string: str) -> str:
+def truncate_string(input_str, max_length):
     """
-    Remove empty lines from a string.
+    Truncate a string to a specified maximum length.
 
     Args:
-        input_string (str): The input string to process.
+        input_str (str): The input string to truncate.
+        max_length (int): The maximum length of the output string.
 
     Returns:
-        str: The input string with empty lines removed.
+        str: The truncated input string.
     """
-    return '\n'.join(line for line in input_string.split('\n') if line.strip() != '')
+    if len(input_str) > max_length:
+        return input_str[:max_length] + '...'
+    return input_str
 ```

@@ -43,6 +43,18 @@ function handle_aws_error() {
   fi
 }
 
+function is_valid_region() {
+  local region="$1"
+  local valid_regions
+  valid_regions=$(aws ec2 describe-regions --query 'Regions[*].RegionName' --output text)
+  for valid_region in $valid_regions; do
+    if [ "$region" = "$valid_region" ]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
 function describe_images() {
   local image_owner="$1"
   local filters="$2"
@@ -76,6 +88,11 @@ function describe_images() {
   fi
   if [ -z "$region" ]; then
     echo "Error: region is a required parameter. Please provide a valid AWS region."
+    return 1
+  fi
+
+  if ! is_valid_region "$region"; then
+    echo "Error: Invalid region '$region'. Please use a valid AWS region."
     return 1
   fi
 

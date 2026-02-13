@@ -1,73 +1,80 @@
 ```python
-import re
-from typing import Any, Dict, List
+"""
+Validation utility file for various data types.
+"""
 
-def validate_email(email: str) -> bool:
+import re
+from typing import List, Dict, Any
+
+def validate_string(input_string: str, min_length: int = 1, max_length: int = 100) -> bool:
     """
-    Validate an email address.
+    Validate a string based on its length.
 
     Args:
-    email (str): The email address to validate.
+    input_string (str): The string to be validated.
+    min_length (int): The minimum allowed length. Defaults to 1.
+    max_length (int): The maximum allowed length. Defaults to 100.
+
+    Returns:
+    bool: True if the string is valid, False otherwise.
+    """
+    return min_length <= len(input_string) <= max_length
+
+
+def validate_integer(input_integer: int, min_value: int = 0, max_value: int = 100) -> bool:
+    """
+    Validate an integer based on its value.
+
+    Args:
+    input_integer (int): The integer to be validated.
+    min_value (int): The minimum allowed value. Defaults to 0.
+    max_value (int): The maximum allowed value. Defaults to 100.
+
+    Returns:
+    bool: True if the integer is valid, False otherwise.
+    """
+    return min_value <= input_integer <= max_value
+
+
+def validate_list(input_list: List[Any], min_length: int = 1, max_length: int = 100) -> bool:
+    """
+    Validate a list based on its length.
+
+    Args:
+    input_list (List[Any]): The list to be validated.
+    min_length (int): The minimum allowed length. Defaults to 1.
+    max_length (int): The maximum allowed length. Defaults to 100.
+
+    Returns:
+    bool: True if the list is valid, False otherwise.
+    """
+    return min_length <= len(input_list) <= max_length
+
+
+def validate_email(input_email: str) -> bool:
+    """
+    Validate an email address using a regular expression.
+
+    Args:
+    input_email (str): The email address to be validated.
 
     Returns:
     bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"[^@]+@[^@]+\.[^@]+"
-    return bool(re.match(email_regex, email))
+    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return bool(re.match(email_regex, input_email))
 
 
-def validate_ip_address(ip_address: str) -> bool:
+def validate_dict(input_dict: Dict[str, Any], required_keys: List[str]) -> bool:
     """
-    Validate an IP address.
+    Validate a dictionary based on the presence of required keys.
 
     Args:
-    ip_address (str): The IP address to validate.
+    input_dict (Dict[str, Any]): The dictionary to be validated.
+    required_keys (List[str]): The list of required keys.
 
     Returns:
-    bool: True if the IP address is valid, False otherwise.
+    bool: True if the dictionary is valid, False otherwise.
     """
-    ip_address_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_address_regex, ip_address))
-
-
-def validate_port(port: int) -> bool:
-    """
-    Validate a port number.
-
-    Args:
-    port (int): The port number to validate.
-
-    Returns:
-    bool: True if the port number is valid, False otherwise.
-    """
-    return 0 <= port <= 65535
-
-
-def validate_dict_keys(dictionary: Dict[str, Any], required_keys: List[str]) -> bool:
-    """
-    Validate if a dictionary contains all required keys.
-
-    Args:
-    dictionary (Dict[str, Any]): The dictionary to validate.
-    required_keys (List[str]): The required keys.
-
-    Returns:
-    bool: True if the dictionary contains all required keys, False otherwise.
-    """
-    return all(key in dictionary for key in required_keys)
-
-
-def validate_dict_values(dictionary: Dict[str, Any], key: str, value_type: type) -> bool:
-    """
-    Validate the type of a dictionary value.
-
-    Args:
-    dictionary (Dict[str, Any]): The dictionary to validate.
-    key (str): The key to check.
-    value_type (type): The expected type of the value.
-
-    Returns:
-    bool: True if the value is of the expected type, False otherwise.
-    """
-    return key in dictionary and isinstance(dictionary[key], value_type)
+    return all(key in input_dict for key in required_keys)
 ```

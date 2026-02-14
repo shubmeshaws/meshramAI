@@ -1,8 +1,9 @@
 ```bash
 # Cache valid regions to reduce the number of AWS CLI calls
 VALID_REGIONS_CACHE_FILE="/tmp/valid_regions.txt"
+VALID_REGIONS_CACHE_EXPIRATION=3600 # cache expires after 1 hour
 function get_valid_regions() {
-  if [ ! -f "$VALID_REGIONS_CACHE_FILE" ]; then
+  if [ ! -f "$VALID_REGIONS_CACHE_FILE" ] || [ $(($(date +%s) - $(stat -c "%Y" "$VALID_REGIONS_CACHE_FILE"))) -gt $VALID_REGIONS_CACHE_EXPIRATION ]; then
     aws ec2 describe-regions --output text | awk '{print $2}' > "$VALID_REGIONS_CACHE_FILE" 2>/dev/null
     if [ $? -ne 0 ]; then
       log "ERROR" "Failed to retrieve valid regions. AWS CLI command failed with error code: $?. Please check your AWS credentials and try again."

@@ -1,62 +1,65 @@
 ```python
 """
-String utility module.
-
-This module provides functions for string manipulation, including text formatting and validation.
+Utility module for common string operations.
 """
 
 import re
 
-def camel_case_to_snake_case(input_str):
+def format_string(input_str, prefix=None, suffix=None):
     """
-    Convert a camel case string to snake case.
-
+    Format the input string by adding prefix and/or suffix.
+    
     Args:
-        input_str (str): The input string in camel case.
-
+        input_str (str): The input string to be formatted.
+        prefix (str, optional): The prefix to be added to the input string. Defaults to None.
+        suffix (str, optional): The suffix to be added to the input string. Defaults to None.
+    
     Returns:
-        str: The input string in snake case.
+        str: The formatted string.
     """
-    return re.sub('(?<!^)(?=[A-Z])', '_', input_str).lower()
+    if prefix:
+        input_str = prefix + input_str
+    if suffix:
+        input_str += suffix
+    return input_str
 
-def snake_case_to_camel_case(input_str):
+def validate_email(email):
     """
-    Convert a snake case string to camel case.
-
+    Validate the input email address using a regular expression.
+    
     Args:
-        input_str (str): The input string in snake case.
-
+        email (str): The email address to be validated.
+    
     Returns:
-        str: The input string in camel case.
+        bool: True if the email is valid, False otherwise.
     """
-    components = input_str.split('_')
-    return components[0] + ''.join(x.title() for x in components[1:])
-
-def validate_email(input_str):
-    """
-    Validate an email address.
-
-    Args:
-        input_str (str): The input string to validate.
-
-    Returns:
-        bool: True if the input string is a valid email address, False otherwise.
-    """
-    email_regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-    return bool(re.match(email_regex, input_str))
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(email_regex, email))
 
 def truncate_string(input_str, max_length):
     """
-    Truncate a string to a specified maximum length.
-
+    Truncate the input string to the specified maximum length.
+    
     Args:
-        input_str (str): The input string to truncate.
+        input_str (str): The input string to be truncated.
         max_length (int): The maximum length of the output string.
-
+    
     Returns:
-        str: The truncated input string.
+        str: The truncated string.
     """
     if len(input_str) > max_length:
-        return input_str[:max_length] + '...'
+        return input_str[:max_length] + "..."
     return input_str
+
+def remove_special_chars(input_str):
+    """
+    Remove special characters from the input string.
+    
+    Args:
+        input_str (str): The input string to be cleaned.
+    
+    Returns:
+        str: The cleaned string.
+    """
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_str)
 ```

@@ -1,80 +1,83 @@
 ```python
-"""
-Validation utility file for various data types.
-"""
-
 import re
-from typing import List, Dict, Any
+import logging
 
-def validate_string(input_string: str, min_length: int = 1, max_length: int = 100) -> bool:
+# Initialize logger
+logger = logging.getLogger(__name__)
+
+def validate_string(input_str, min_length=1, max_length=255):
     """
-    Validate a string based on its length.
+    Validate a string input.
 
     Args:
-    input_string (str): The string to be validated.
+    input_str (str): The input string to validate.
     min_length (int): The minimum allowed length. Defaults to 1.
-    max_length (int): The maximum allowed length. Defaults to 100.
+    max_length (int): The maximum allowed length. Defaults to 255.
 
     Returns:
-    bool: True if the string is valid, False otherwise.
+    bool: True if the input is a valid string, False otherwise.
     """
-    return min_length <= len(input_string) <= max_length
+    if not isinstance(input_str, str):
+        logger.error("Invalid input: expected a string")
+        return False
+    if len(input_str) < min_length or len(input_str) > max_length:
+        logger.error(f"Invalid input: string length must be between {min_length} and {max_length}")
+        return False
+    return True
 
-
-def validate_integer(input_integer: int, min_value: int = 0, max_value: int = 100) -> bool:
+def validate_number(input_num, min_value=None, max_value=None):
     """
-    Validate an integer based on its value.
+    Validate a numeric input.
 
     Args:
-    input_integer (int): The integer to be validated.
-    min_value (int): The minimum allowed value. Defaults to 0.
-    max_value (int): The maximum allowed value. Defaults to 100.
+    input_num (int or float): The input number to validate.
+    min_value (int or float): The minimum allowed value. Defaults to None.
+    max_value (int or float): The maximum allowed value. Defaults to None.
 
     Returns:
-    bool: True if the integer is valid, False otherwise.
+    bool: True if the input is a valid number, False otherwise.
     """
-    return min_value <= input_integer <= max_value
+    if not isinstance(input_num, (int, float)):
+        logger.error("Invalid input: expected a number")
+        return False
+    if min_value is not None and input_num < min_value:
+        logger.error(f"Invalid input: number must be greater than or equal to {min_value}")
+        return False
+    if max_value is not None and input_num > max_value:
+        logger.error(f"Invalid input: number must be less than or equal to {max_value}")
+        return False
+    return True
 
-
-def validate_list(input_list: List[Any], min_length: int = 1, max_length: int = 100) -> bool:
+def validate_aws_region(region):
     """
-    Validate a list based on its length.
+    Validate an AWS region.
 
     Args:
-    input_list (List[Any]): The list to be validated.
-    min_length (int): The minimum allowed length. Defaults to 1.
-    max_length (int): The maximum allowed length. Defaults to 100.
+    region (str): The AWS region to validate.
 
     Returns:
-    bool: True if the list is valid, False otherwise.
+    bool: True if the input is a valid AWS region, False otherwise.
     """
-    return min_length <= len(input_list) <= max_length
+    with open('regions.conf', 'r') as f:
+        valid_regions = [line.strip() for line in f.readlines()]
+    if region not in valid_regions:
+        logger.error(f"Invalid AWS region: {region}")
+        return False
+    return True
 
-
-def validate_email(input_email: str) -> bool:
+def validate_email(email):
     """
-    Validate an email address using a regular expression.
+    Validate an email address.
 
     Args:
-    input_email (str): The email address to be validated.
+    email (str): The email address to validate.
 
     Returns:
-    bool: True if the email is valid, False otherwise.
+    bool: True if the input is a valid email address, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    return bool(re.match(email_regex, input_email))
-
-
-def validate_dict(input_dict: Dict[str, Any], required_keys: List[str]) -> bool:
-    """
-    Validate a dictionary based on the presence of required keys.
-
-    Args:
-    input_dict (Dict[str, Any]): The dictionary to be validated.
-    required_keys (List[str]): The list of required keys.
-
-    Returns:
-    bool: True if the dictionary is valid, False otherwise.
-    """
-    return all(key in input_dict for key in required_keys)
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if not re.match(pattern, email):
+        logger.error(f"Invalid email address: {email}")
+        return False
+    return True
 ```

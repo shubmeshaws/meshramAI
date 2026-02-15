@@ -2,6 +2,17 @@
 function retry_command() {
   local command=$1
   local max_retries=$2
+
+  # Input validation
+  if [ -z "$command" ]; then
+    echo "[ERROR] Command is required" >&2
+    return 1
+  fi
+  if [ -z "$max_retries" ] || ! [[ $max_retries =~ ^[0-9]+$ ]] || [ $max_retries -le 0 ]; then
+    echo "[ERROR] max_retries must be a positive integer" >&2
+    return 1
+  fi
+
   local retry_count=0
   local initial_sleep_time=1
   local sleep_time=$initial_sleep_time

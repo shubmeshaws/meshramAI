@@ -4,9 +4,17 @@ VALID_REGIONS_CACHE_FILE="/tmp/valid_regions.txt"
 VALID_REGIONS_CACHE_EXPIRATION=3600 # cache expires after 1 hour
 function get_valid_regions() {
   if [ ! -f "$VALID_REGIONS_CACHE_FILE" ] || [ $(($(date +%s) - $(stat -c "%Y" "$VALID_REGIONS_CACHE_FILE"))) -gt $VALID_REGIONS_CACHE_EXPIRATION ]; then
+    if ! command -v aws &> /dev/null; then
+      log "ERROR" "AWS CLI command is not installed or not found in the system's PATH. Please install and configure AWS CLI before proceeding."
+      return 1
+    fi
+    if ! aws ec2 describe-regions --output text &> /dev/null; then
+      log "ERROR" "Failed to retrieve valid regions. AWS CLI command failed with error code: $?. Please check your AWS credentials and try again."
+      return 1
+    fi
     aws ec2 describe-regions --output text | awk '{print $2}' > "$VALID_REGIONS_CACHE_FILE" 2>/dev/null
     if [ $? -ne 0 ]; then
-      log "ERROR" "Failed to retrieve valid regions. AWS CLI command failed with error code: $?. Please check your AWS credentials and try again."
+      log "ERROR" "Failed to write valid regions to cache file. Error code: $?. Please check file system permissions and try again."
       return 1
     fi
   fi

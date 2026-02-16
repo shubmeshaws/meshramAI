@@ -1,60 +1,59 @@
 ```python
 """
-Utility functions for string operations.
+Utility functions for string manipulation and validation.
 """
 
 import re
 
-def is_valid_email(email: str) -> bool:
+def is_empty_string(input_string: str) -> bool:
     """
-    Checks if the given email is valid.
-    
+    Checks if a given string is empty or contains only whitespace characters.
+
     Args:
-    email (str): The email to validate.
-    
+    input_string (str): The input string to check.
+
     Returns:
-    bool: True if the email is valid, False otherwise.
+    bool: True if the string is empty or contains only whitespace characters, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    return not input_string.strip()
+
+def validate_email(email: str) -> bool:
+    """
+    Validates an email address using a regular expression.
+
+    Args:
+    email (str): The email address to validate.
+
+    Returns:
+    bool: True if the email address is valid, False otherwise.
+    """
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
     return bool(re.match(email_regex, email))
 
-def is_valid_ip(ip: str) -> bool:
+def remove_special_chars(input_string: str) -> str:
     """
-    Checks if the given IP address is valid.
-    
-    Args:
-    ip (str): The IP address to validate.
-    
-    Returns:
-    bool: True if the IP address is valid, False otherwise.
-    """
-    ip_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_regex, ip))
+    Removes special characters from a given string.
 
-def remove_special_chars(input_str: str) -> str:
-    """
-    Removes special characters from the given string.
-    
     Args:
-    input_str (str): The string to remove special characters from.
-    
-    Returns:
-    str: The string with special characters removed.
-    """
-    return re.sub('[^A-Za-z0-9]+', '', input_str)
+    input_string (str): The input string to remove special characters from.
 
-def truncate_string(input_str: str, max_length: int) -> str:
-    """
-    Truncates the given string to the specified maximum length.
-    
-    Args:
-    input_str (str): The string to truncate.
-    max_length (int): The maximum length of the string.
-    
     Returns:
-    str: The truncated string.
+    str: The input string with special characters removed.
     """
-    if len(input_str) > max_length:
-        return input_str[:max_length] + "..."
-    return input_str
+    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+
+def truncate_string(input_string: str, max_length: int) -> str:
+    """
+    Truncates a given string to a specified maximum length.
+
+    Args:
+    input_string (str): The input string to truncate.
+    max_length (int): The maximum length of the output string.
+
+    Returns:
+    str: The truncated input string.
+    """
+    if len(input_string) > max_length:
+        return input_string[:max_length] + "..."
+    return input_string
 ```

@@ -1,6 +1,6 @@
 ```python
 """
-String utility module for handling string operations.
+String utility functions for meshram project.
 """
 
 import re
@@ -10,12 +10,12 @@ def validate_email(email: str) -> bool:
     Validate an email address.
 
     Args:
-    email (str): The email address to validate.
+    email (str): Email address to be validated.
 
     Returns:
     bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
     return bool(re.match(email_regex, email))
 
 def validate_ip_address(ip_address: str) -> bool:
@@ -23,39 +23,52 @@ def validate_ip_address(ip_address: str) -> bool:
     Validate an IP address.
 
     Args:
-    ip_address (str): The IP address to validate.
+    ip_address (str): IP address to be validated.
 
     Returns:
     bool: True if the IP address is valid, False otherwise.
     """
-    ip_address_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_address_regex, ip_address))
+    ip_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_regex, ip_address))
 
 def camel_case_to_snake_case(input_string: str) -> str:
     """
     Convert a camel case string to snake case.
 
     Args:
-    input_string (str): The string to convert.
+    input_string (str): The string to be converted.
 
     Returns:
-    str: The converted string in snake case.
+    str: The input string converted to snake case.
     """
-    snake_case_string = re.sub(r"([A-Z])", r"_\1", input_string).lower()
-    return snake_case_string.lstrip("_")
+    words = re.sub("([A-Z])", r"_\1", input_string).lower().strip()
+    return words
+
+def snake_case_to_camel_case(input_string: str) -> str:
+    """
+    Convert a snake case string to camel case.
+
+    Args:
+    input_string (str): The string to be converted.
+
+    Returns:
+    str: The input string converted to camel case.
+    """
+    words = input_string.split("_")
+    return words[0] + "".join(word.capitalize() for word in words[1:])
 
 def truncate_string(input_string: str, max_length: int) -> str:
     """
-    Truncate a string to a specified maximum length.
+    Truncate a string to the specified length.
 
     Args:
-    input_string (str): The string to truncate.
-    max_length (int): The maximum length of the string.
+    input_string (str): The string to be truncated.
+    max_length (int): The maximum length of the output string.
 
     Returns:
-    str: The truncated string.
+    str: The input string truncated to the specified length.
     """
     if len(input_string) > max_length:
-        return input_string[:max_length - 3] + "..."
+        return input_string[:max_length] + "..."
     return input_string
 ```

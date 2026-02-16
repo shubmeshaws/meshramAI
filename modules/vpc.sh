@@ -65,6 +65,11 @@ function main() {
     exit $EXIT_ON_WRONG_ARGUMENTS
   fi
   local vpc_id="$1"
+  if ! [[ "$vpc_id" =~ ^[a-zA-Z0-9-]+$ ]]; then
+    echo "ERROR: Invalid input type. VPC ID must be a string containing only letters, numbers, and hyphens." >&2
+    show_vpc_help
+    exit $EXIT_ON_INVALID_INPUT_TYPE
+  fi
   validate_and_handle_vpc_id "$vpc_id"
 }
 

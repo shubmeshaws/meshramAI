@@ -129,8 +129,21 @@ function main() {
   local filters="$2"
   local region="$3"
 
+  # Additional input validation to prevent empty strings
   if [ -z "$image_owner" ] || [ -z "$filters" ] || [ -z "$region" ]; then
     echo "Error: All arguments (image_owner, filters, region) must be non-empty strings."
+    return 1
+  fi
+  if ! [[ "$image_owner" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+    echo "Error: image_owner must only contain alphanumeric characters, underscores, periods, and hyphens."
+    return 1
+  fi
+  if ! [[ "$filters" =~ ^[a-zA-Z0-9.,_=-]+$ ]]; then
+    echo "Error: filters must only contain alphanumeric characters, commas, periods, underscores, equals signs, and hyphens."
+    return 1
+  fi
+  if ! [[ "$region" =~ ^[a-zA-Z0-9-]+$ ]]; then
+    echo "Error: region must only contain alphanumeric characters and hyphens."
     return 1
   fi
 

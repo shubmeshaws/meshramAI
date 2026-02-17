@@ -9,11 +9,15 @@ function get_valid_regions() {
       return 1
     fi
     if ! aws ec2 describe-regions --output text &> /dev/null; then
-      log "ERROR" "Failed to retrieve valid regions. AWS CLI command failed with error code: $?. Please check your AWS credentials and try again."
+      local error_code=$?
+      case $error_code in
+        1) log "ERROR" "AWS CLI command failed with error code: $error_code. Please check your AWS credentials and try again.";;
+        2) log "ERROR" "AWS CLI command failed with error code: $error_code. This could be due to a network issue or the AWS service being unavailable. Please try again later.";;
+        *) log "ERROR" "AWS CLI command failed with unknown error code: $error_code. Please check the AWS CLI logs for more information.";;
+      esac
       return 1
     fi
-    aws ec2 describe-regions --output text | awk '{print $2}' > "$VALID_REGIONS_CACHE_FILE" 2>/dev/null
-    if [ $? -ne 0 ]; then
+    if ! aws ec2 describe-regions --output text | awk '{print $2}' > "$VALID_REGIONS_CACHE_FILE" 2>/dev/null; then
       log "ERROR" "Failed to write valid regions to cache file. Error code: $?. Please check file system permissions and try again."
       return 1
     fi

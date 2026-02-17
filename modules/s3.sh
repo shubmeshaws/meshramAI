@@ -2,19 +2,31 @@
 # Cache valid regions to reduce the number of AWS CLI calls
 VALID_REGIONS_CACHE_FILE="/tmp/valid_regions.txt"
 VALID_REGIONS_CACHE_EXPIRATION=3600 # cache expires after 1 hour
+MAX_RETRIES=3
+RETRY_DELAY=5 # seconds
+
 function get_valid_regions() {
   if [ ! -f "$VALID_REGIONS_CACHE_FILE" ] || [ $(($(date +%s) - $(stat -c "%Y" "$VALID_REGIONS_CACHE_FILE"))) -gt $VALID_REGIONS_CACHE_EXPIRATION ]; then
     if ! command -v aws &> /dev/null; then
       log "ERROR" "AWS CLI command is not installed or not found in the system's PATH. Please install and configure AWS CLI before proceeding."
       return 1
     fi
-    if ! aws ec2 describe-regions --output text &> /dev/null; then
+    local retries=0
+    while [ $retries -lt $MAX_RETRIES ]; do
+      if aws ec2 describe-regions --output text &> /dev/null; then
+        break
+      fi
       local error_code=$?
       case $error_code in
         1) log "ERROR" "AWS CLI command failed with error code: $error_code. Please check your AWS credentials and try again.";;
-        2) log "ERROR" "AWS CLI command failed with error code: $error_code. This could be due to a network issue or the AWS service being unavailable. Please try again later.";;
-        *) log "ERROR" "AWS CLI command failed with unknown error code: $error_code. Please check the AWS CLI logs for more information.";;
+        2) log "WARNING" "AWS CLI command failed with error code: $error_code. Retrying in $RETRY_DELAY seconds...";;
+        *) log "WARNING" "AWS CLI command failed with unknown error code: $error_code. Retrying in $RETRY_DELAY seconds...";;
       esac
+      sleep $RETRY_DELAY
+      retries=$((retries + 1))
+    done
+    if [ $retries -eq $MAX_RETRIES ]; then
+      log "ERROR" "AWS CLI command failed after $MAX_RETRIES retries. Please check the AWS CLI logs for more information."
       return 1
     fi
     if ! aws ec2 describe-regions --output text | awk '{print $2}' > "$VALID_REGIONS_CACHE_FILE" 2>/dev/null; then

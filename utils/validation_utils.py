@@ -1,90 +1,94 @@
 ```python
 import re
-import logging
 
-from utils.aws_config import AWSConfig
+def validate_string(input_str, min_length=1, max_length=100):
+    """
+    Validate a string input.
 
-logger = logging.getLogger(__name__)
+    Args:
+        input_str (str): The input string to validate.
+        min_length (int, optional): The minimum allowed length. Defaults to 1.
+        max_length (int, optional): The maximum allowed length. Defaults to 100.
+
+    Returns:
+        bool: True if the string is valid, False otherwise.
+    """
+    if not isinstance(input_str, str):
+        return False
+    if len(input_str) < min_length or len(input_str) > max_length:
+        return False
+    return True
+
+
+def validate_integer(input_int, min_value=0, max_value=100):
+    """
+    Validate an integer input.
+
+    Args:
+        input_int (int): The input integer to validate.
+        min_value (int, optional): The minimum allowed value. Defaults to 0.
+        max_value (int, optional): The maximum allowed value. Defaults to 100.
+
+    Returns:
+        bool: True if the integer is valid, False otherwise.
+    """
+    if not isinstance(input_int, int):
+        return False
+    if input_int < min_value or input_int > max_value:
+        return False
+    return True
+
+
+def validate_list(input_list, min_length=1, max_length=100):
+    """
+    Validate a list input.
+
+    Args:
+        input_list (list): The input list to validate.
+        min_length (int, optional): The minimum allowed length. Defaults to 1.
+        max_length (int, optional): The maximum allowed length. Defaults to 100.
+
+    Returns:
+        bool: True if the list is valid, False otherwise.
+    """
+    if not isinstance(input_list, list):
+        return False
+    if len(input_list) < min_length or len(input_list) > max_length:
+        return False
+    return True
+
+
+def validate_email(email):
+    """
+    Validate an email address.
+
+    Args:
+        email (str): The email address to validate.
+
+    Returns:
+        bool: True if the email is valid, False otherwise.
+    """
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if not re.match(email_regex, email):
+        return False
+    return True
+
 
 def validate_aws_region(region):
     """
-    Validate if the given region is a valid AWS region.
+    Validate an AWS region.
 
     Args:
-    region (str): The region to validate.
+        region (str): The AWS region to validate.
 
     Returns:
-    bool: True if the region is valid, False otherwise.
+        bool: True if the region is valid, False otherwise.
     """
-    aws_config = AWSConfig()
-    return region in aws_config.get_available_regions()
-
-def validate_aws_account_id(account_id):
-    """
-    Validate if the given account ID is a valid AWS account ID.
-
-    Args:
-    account_id (str): The account ID to validate.
-
-    Returns:
-    bool: True if the account ID is valid, False otherwise.
-    """
-    pattern = re.compile(r'^\d{12}$')
-    return bool(pattern.match(account_id))
-
-def validate_bucket_name(bucket_name):
-    """
-    Validate if the given bucket name is a valid S3 bucket name.
-
-    Args:
-    bucket_name (str): The bucket name to validate.
-
-    Returns:
-    bool: True if the bucket name is valid, False otherwise.
-    """
-    pattern = re.compile(r'^[a-z0-9.-]{3,63}$')
-    return bool(pattern.match(bucket_name))
-
-def validate_vpc_id(vpc_id):
-    """
-    Validate if the given VPC ID is a valid VPC ID.
-
-    Args:
-    vpc_id (str): The VPC ID to validate.
-
-    Returns:
-    bool: True if the VPC ID is valid, False otherwise.
-    """
-    pattern = re.compile(r'^vpc-[a-f0-9]{8}$')
-    return bool(pattern.match(vpc_id))
-
-def validate_ec2_id(ec2_id):
-    """
-    Validate if the given EC2 ID is a valid EC2 ID.
-
-    Args:
-    ec2_id (str): The EC2 ID to validate.
-
-    Returns:
-    bool: True if the EC2 ID is valid, False otherwise.
-    """
-    pattern = re.compile(r'^i-[a-f0-9]{8}$')
-    return bool(pattern.match(ec2_id))
-
-def main():
-    # Example usage:
-    region = "us-west-2"
-    account_id = "123456789012"
-    bucket_name = "my-bucket"
-    vpc_id = "vpc-12345678"
-    ec2_id = "i-12345678"
-
-    print(validate_aws_region(region))  # Output: True
-    print(validate_aws_account_id(account_id))  # Output: True
-    print(validate_bucket_name(bucket_name))  # Output: True
-    print(validate_vpc_id(vpc_id))  # Output: True
-    print(validate_ec2_id(ec2_id))  # Output: True
-
-if __name__ == "__main__":
-    main()
+    # For simplicity, we assume the list of valid regions is stored in a separate file
+    # In a real-world scenario, you would fetch the list of valid regions from AWS
+    with open("regions.conf", "r") as f:
+        valid_regions = [line.strip() for line in f.readlines()]
+    if region not in valid_regions:
+        return False
+    return True
 ```

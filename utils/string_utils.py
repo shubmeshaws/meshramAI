@@ -1,13 +1,27 @@
 ```python
 """
-Utility functions for handling string operations.
+String Utilities Module
+========================
+This module provides various string operations, including validation, formatting, and manipulation.
 """
 
 import re
 
+def is_empty(string: str) -> bool:
+    """
+    Checks if a string is empty or contains only whitespace characters.
+    
+    Args:
+        string (str): The input string to check.
+    
+    Returns:
+        bool: True if the string is empty, False otherwise.
+    """
+    return not string.strip()
+
 def validate_email(email: str) -> bool:
     """
-    Validate an email address.
+    Validates an email address using a regular expression.
     
     Args:
         email (str): The email address to validate.
@@ -15,46 +29,40 @@ def validate_email(email: str) -> bool:
     Returns:
         bool: True if the email is valid, False otherwise.
     """
-    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    return bool(re.match(email_regex, email))
+    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    return bool(re.match(pattern, email))
 
-def validate_ip_address(ip_address: str) -> bool:
+def camel_case_to_snake_case(string: str) -> str:
     """
-    Validate an IP address.
+    Converts a camelCase string to snake_case.
     
     Args:
-        ip_address (str): The IP address to validate.
+        string (str): The input string to convert.
     
     Returns:
-        bool: True if the IP address is valid, False otherwise.
+        str: The converted string in snake_case.
     """
-    ip_address_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-    return bool(re.match(ip_address_regex, ip_address))
+    return re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower()
 
-def camel_case_to_snake_case(camel_case_string: str) -> str:
+def truncate_string(string: str, length: int) -> str:
     """
-    Convert a camel case string to snake case.
+    Truncates a string to a specified length, appending an ellipsis if necessary.
     
     Args:
-        camel_case_string (str): The camel case string to convert.
+        string (str): The input string to truncate.
+        length (int): The maximum length of the output string.
     
     Returns:
-        str: The snake case version of the input string.
+        str: The truncated string.
     """
-    snake_case_string = re.sub("([A-Z])", r"_\1", camel_case_string).lower()
-    return snake_case_string.lstrip("_")
+    if len(string) <= length:
+        return string
+    return string[:length - 3] + '...'
 
-def snake_case_to_camel_case(snake_case_string: str) -> str:
-    """
-    Convert a snake case string to camel case.
-    
-    Args:
-        snake_case_string (str): The snake case string to convert.
-    
-    Returns:
-        str: The camel case version of the input string.
-    """
-    words = snake_case_string.split("_")
-    camel_case_string = words[0] + "".join(word.capitalize() for word in words[1:])
-    return camel_case_string
+# Example usage:
+if __name__ == "__main__":
+    print(is_empty("   "))  # True
+    print(validate_email("example@example.com"))  # True
+    print(camel_case_to_snake_case("camelCaseString"))  # camel_case_string
+    print(truncate_string("This is a very long string", 15))  # This is a very...
 ```

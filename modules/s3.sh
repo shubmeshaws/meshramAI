@@ -12,11 +12,13 @@ function get_valid_regions() {
       return 1
     fi
     local retries=0
+    local last_error_code
     while [ $retries -lt $MAX_RETRIES ]; do
       if aws ec2 describe-regions --output text &> /dev/null; then
         break
       fi
       local error_code=$?
+      last_error_code=$error_code
       case $error_code in
         1) log "ERROR" "AWS CLI command failed with error code: $error_code. Please check your AWS credentials and try again.";;
         2) log "WARNING" "AWS CLI command failed with error code: $error_code. Retrying in $RETRY_DELAY seconds...";;
@@ -26,7 +28,11 @@ function get_valid_regions() {
       retries=$((retries + 1))
     done
     if [ $retries -eq $MAX_RETRIES ]; then
-      log "ERROR" "AWS CLI command failed after $MAX_RETRIES retries. Please check the AWS CLI logs for more information."
+      if [ $last_error_code -eq 255 ]; then
+        log "ERROR" "Failed to connect to AWS service after $MAX_RETRIES retries. Please check your network connection and try again."
+      else
+        log "ERROR" "AWS CLI command failed after $MAX_RETRIES retries. Please check the AWS CLI logs for more information."
+      fi
       return 1
     fi
     if ! aws ec2 describe-regions --output text | awk '{print $2}' > "$VALID_REGIONS_CACHE_FILE" 2>/dev/null; then

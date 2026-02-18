@@ -1,68 +1,61 @@
 ```python
 """
-String Utilities Module
-========================
-This module provides various string operations, including validation, formatting, and manipulation.
+Utility module for common string operations.
+
+This module provides functions for validating, formatting, and manipulating strings.
 """
 
 import re
 
-def is_empty(string: str) -> bool:
-    """
-    Checks if a string is empty or contains only whitespace characters.
-    
-    Args:
-        string (str): The input string to check.
-    
-    Returns:
-        bool: True if the string is empty, False otherwise.
-    """
-    return not string.strip()
-
 def validate_email(email: str) -> bool:
     """
-    Validates an email address using a regular expression.
-    
-    Args:
-        email (str): The email address to validate.
-    
-    Returns:
-        bool: True if the email is valid, False otherwise.
-    """
-    pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
-    return bool(re.match(pattern, email))
+    Validate an email address.
 
-def camel_case_to_snake_case(string: str) -> str:
-    """
-    Converts a camelCase string to snake_case.
-    
     Args:
-        string (str): The input string to convert.
-    
-    Returns:
-        str: The converted string in snake_case.
-    """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower()
+    email (str): The email address to validate.
 
-def truncate_string(string: str, length: int) -> str:
+    Returns:
+    bool: True if the email is valid, False otherwise.
     """
-    Truncates a string to a specified length, appending an ellipsis if necessary.
-    
+    email_regex = r"[^@]+@[^@]+\.[^@]+"
+    return bool(re.match(email_regex, email))
+
+def format_string(input_str: str, max_length: int = 50) -> str:
+    """
+    Format a string to a specified maximum length.
+
     Args:
-        string (str): The input string to truncate.
-        length (int): The maximum length of the output string.
-    
-    Returns:
-        str: The truncated string.
-    """
-    if len(string) <= length:
-        return string
-    return string[:length - 3] + '...'
+    input_str (str): The input string to format.
+    max_length (int): The maximum length of the formatted string. Defaults to 50.
 
-# Example usage:
-if __name__ == "__main__":
-    print(is_empty("   "))  # True
-    print(validate_email("example@example.com"))  # True
-    print(camel_case_to_snake_case("camelCaseString"))  # camel_case_string
-    print(truncate_string("This is a very long string", 15))  # This is a very...
+    Returns:
+    str: The formatted string.
+    """
+    if len(input_str) > max_length:
+        return input_str[:max_length - 3] + "..."
+    return input_str
+
+def remove_special_chars(input_str: str) -> str:
+    """
+    Remove special characters from a string.
+
+    Args:
+    input_str (str): The input string to remove special characters from.
+
+    Returns:
+    str: The string with special characters removed.
+    """
+    return re.sub(r"[^a-zA-Z0-9\s]", "", input_str)
+
+def camel_case_to_snake_case(input_str: str) -> str:
+    """
+    Convert a camel case string to snake case.
+
+    Args:
+    input_str (str): The input string to convert.
+
+    Returns:
+    str: The converted string in snake case.
+    """
+    return re.sub(r"([A-Z])", r"_\1", input_str).lower().lstrip("_")
 ```

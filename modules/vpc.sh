@@ -17,7 +17,7 @@ function validate_vpc_id() {
   local vpc_id="$1"
   if [ -z "$vpc_id" ]; then
     return $EXIT_ON_MISSING_VPC_ID
-  elif ! [[ "$vpc_id" =~ ^[a-zA-Z0-9-]+$ ]]; then
+  elif ! [[ "$vpc_id" =~ ^[a-z0-9-]+$ ]]; then
     return $EXIT_ON_INVALID_INPUT_TYPE
   elif ! [[ "$vpc_id" =~ ^${VPC_ID_PREFIX}[${VPC_ID_CHAR_SET}]{${VPC_ID_LENGTH}}$ ]]; then
     return $EXIT_ON_INVALID_VPC_ID
@@ -43,7 +43,7 @@ function handle_validation_result() {
       echo "ERROR: $error_message" >&2
       ;;
     $EXIT_ON_INVALID_INPUT_TYPE)
-      echo "ERROR: Invalid input type. VPC ID must be a string containing only letters, numbers, and hyphens." >&2
+      echo "ERROR: Invalid input type. VPC ID must be a string containing only lowercase letters, numbers, and hyphens." >&2
       ;;
   esac
   show_vpc_help

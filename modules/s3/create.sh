@@ -17,6 +17,7 @@ function retry_command() {
   local delay=$initial_delay
   while [ $retry_count -lt $max_retries ]; do
     if output=$($cmd 2>&1); then
+      echo "$output"
       return 0
     else
       retry_count=$((retry_count + 1))
@@ -31,6 +32,7 @@ function retry_command() {
       fi
     fi
   done
+  echo "$output"
   return 1
 }
 
@@ -46,7 +48,8 @@ function s3_create() {
   fi
 
   # Try to execute the command with retry
-  if ! retry_command "$create_bucket_cmd" $MAX_RETRIES $INITIAL_RETRY_DELAY $MAX_RETRY_DELAY; then
+  output=$(retry_command "$create_bucket_cmd" $MAX_RETRIES $INITIAL_RETRY_DELAY $MAX_RETRY_DELAY)
+  if [ $? -ne 0 ]; then
     handle_error "Failed to create bucket '$BUCKET_NAME' in region '$REGION' after $MAX_RETRIES attempts: $output" $ERROR_FAILED_TO_CREATE_BUCKET
     return
   fi

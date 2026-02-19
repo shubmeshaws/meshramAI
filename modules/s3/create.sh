@@ -14,6 +14,25 @@ function retry_command() {
   local max_retries="$2"
   local initial_delay="$3"
   local max_delay="$4"
+
+  # Input validation
+  if [ -z "$cmd" ]; then
+    echo "[ERROR] Command is required" >&2
+    return 1
+  fi
+  if ! [[ $max_retries =~ ^[0-9]+$ ]] || [ $max_retries -le 0 ]; then
+    echo "[ERROR] Max retries must be a positive integer" >&2
+    return 1
+  fi
+  if ! [[ $initial_delay =~ ^[0-9]+$ ]] || [ $initial_delay -le 0 ]; then
+    echo "[ERROR] Initial delay must be a positive integer" >&2
+    return 1
+  fi
+  if ! [[ $max_delay =~ ^[0-9]+$ ]] || [ $max_delay -le 0 ]; then
+    echo "[ERROR] Max delay must be a positive integer" >&2
+    return 1
+  fi
+
   local retry_count=0
   local delay=$initial_delay
   local timeout=$MAX_TIMEOUT

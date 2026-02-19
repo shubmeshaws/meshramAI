@@ -7,6 +7,7 @@
 MAX_RETRIES=3
 INITIAL_RETRY_DELAY=5
 MAX_RETRY_DELAY=30
+MAX_TIMEOUT=60 # Maximum time to wait in seconds
 
 function retry_command() {
   local cmd="$1"
@@ -15,6 +16,7 @@ function retry_command() {
   local max_delay="$4"
   local retry_count=0
   local delay=$initial_delay
+  local timeout=$MAX_TIMEOUT
   while [ $retry_count -lt $max_retries ]; do
     if output=$($cmd 2>&1); then
       echo "$output"
@@ -23,6 +25,12 @@ function retry_command() {
       retry_count=$((retry_count + 1))
       if [ $retry_count -lt $max_retries ]; then
         echo "[WARNING] Failed to execute command (attempt $retry_count/$max_retries): $output. Retrying in $delay seconds..."
+        # Check if there is enough time left to wait for the next retry
+        if [ $((delay + retry_count)) -gt $timeout ]; then
+          echo "[ERROR] Maximum timeout of $MAX_TIMEOUT seconds exceeded. Giving up."
+          echo "$output"
+          return 1
+        fi
         sleep $delay
         # exponential backoff
         delay=$((delay * 2))

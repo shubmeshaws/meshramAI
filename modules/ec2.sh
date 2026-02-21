@@ -7,6 +7,11 @@ function check_directory() {
       log_error "Failed to create directory: $dir. Error: $?" 1
       return 1
     fi
+  fi
+  # Check again after creation attempt to handle potential race conditions
+  if [ ! -d "$dir" ]; then
+    log_error "Directory $dir does not exist after creation attempt" 1
+    return 1
   elif [ ! -w "$dir" ]; then
     log_error "Directory $dir is not writable. Permission denied" 1
     return 1

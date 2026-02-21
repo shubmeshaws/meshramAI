@@ -1,71 +1,62 @@
 ```python
 """
-String utility functions for string manipulation and validation.
+String utility functions.
+
+This module provides functions for string manipulation and validation.
 """
 
 import re
 
-def is_empty_string(input_string: str) -> bool:
+def is_valid_email(email: str) -> bool:
     """
-    Checks if a given string is empty or contains only whitespace characters.
+    Checks if the provided email address is valid.
 
     Args:
-        input_string (str): The input string to check.
+    email (str): The email address to validate.
 
     Returns:
-        bool: True if the string is empty or contains only whitespace characters, False otherwise.
-    """
-    return not input_string.strip()
-
-def validate_email(email: str) -> bool:
-    """
-    Validates an email address using a regular expression.
-
-    Args:
-        email (str): The email address to validate.
-
-    Returns:
-        bool: True if the email address is valid, False otherwise.
+    bool: True if the email is valid, False otherwise.
     """
     email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
     return bool(re.match(email_regex, email))
 
-def truncate_string(input_string: str, max_length: int) -> str:
+def is_valid_ip_address(ip_address: str) -> bool:
     """
-    Truncates a given string to a specified maximum length.
+    Checks if the provided IP address is valid.
 
     Args:
-        input_string (str): The input string to truncate.
-        max_length (int): The maximum length of the output string.
+    ip_address (str): The IP address to validate.
 
     Returns:
-        str: The truncated string.
+    bool: True if the IP address is valid, False otherwise.
     """
-    if len(input_string) > max_length:
-        return input_string[:max_length - 3] + "..."
-    return input_string
+    ip_address_regex = r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+    return bool(re.match(ip_address_regex, ip_address))
 
-def remove_special_chars(input_string: str) -> str:
+def truncate_string(s: str, max_length: int) -> str:
     """
-    Removes special characters from a given string.
+    Truncates a string to a specified maximum length.
 
     Args:
-        input_string (str): The input string to process.
+    s (str): The string to truncate.
+    max_length (int): The maximum length of the string.
 
     Returns:
-        str: The string with special characters removed.
+    str: The truncated string.
     """
-    return re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
+    if len(s) > max_length:
+        return s[:max_length] + "..."
+    return s
 
-def convert_to_snake_case(input_string: str) -> str:
+def remove_special_chars(s: str) -> str:
     """
-    Converts a given string to snake case.
+    Removes special characters from a string.
 
     Args:
-        input_string (str): The input string to convert.
+    s (str): The string to remove special characters from.
 
     Returns:
-        str: The string in snake case.
+    str: The string without special characters.
     """
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', input_string).lower()
+    return re.sub(r'[^a-zA-Z0-9\s]', '', s)
 ```
